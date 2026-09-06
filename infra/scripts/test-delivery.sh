@@ -22,6 +22,14 @@ assert pvc['metadata']['annotations']['argocd.argoproj.io/sync-options'] == 'Pru
 pod = deployment['spec']['template']['spec']
 assert not pod['automountServiceAccountToken'] and pod['securityContext']['runAsUser'] == 1000
 assert pod['containers'][0]['readinessProbe']['httpGet']['path'] == '/healthz'
+mail_env = {item['name']: item for item in pod['containers'][0]['env']}
+assert mail_env['CONTACT_SENDER']['value'] == 'noreply@swirlit.dev'
+mail_ref = mail_env['RESEND_API_KEY']['valueFrom']['secretKeyRef']
+mail_secret = yaml.safe_load((source / 'infra/k8s/contact-notifications.yaml').read_text())
+assert mail_ref['name'] == mail_secret['spec']['target']['name']
+assert mail_ref['key'] == mail_secret['spec']['data'][0]['secretKey']
+assert mail_secret['spec']['data'][0]['remoteRef'] == {'key': 'apps/website/contact', 'property': 'RESEND_API_KEY'}
+assert 'contact-notifications.yaml' in yaml.safe_load((source / 'infra/k8s/kustomization.yaml').read_text())['resources']
 ingress = yaml.safe_load((source / 'infra/k8s/ingress.yaml').read_text())
 assert ingress['spec']['rules'][0]['host'] == 'swirlit.dev'
 assert ingress['spec']['tls'][0]['secretName'] == 'swirlit-dev-tls'

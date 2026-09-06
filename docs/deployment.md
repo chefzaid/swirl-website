@@ -143,10 +143,41 @@ Cloudflare [honors `no-transform` for JavaScript Detection injection](https://de
 This is scoped to website documents; it does not relax CSP or change the zone's
 WAF settings. Static assets retain their separate cache policy.
 
-The contact form persists enquiries without an email provider. Microsoft Graph
-notifications remain optional and require the server-side credentials described
+The contact form persists enquiries without an email provider. Resend and
+Microsoft Graph notifications require the server-side credentials described
 in the main README. Deploying this website does not send a test email or import
 data from the separate Sites database.
+
+## Contact email credentials
+
+Production uses Resend to notify `contact@swirlit.dev` from
+`noreply@swirlit.dev`; the visitor's email is Reply-To. Incoming mail continues
+through Cloudflare Email Routing. Verify `swirlit.dev` in Resend for sending
+only, leaving its Receiving option off and retaining Cloudflare's apex MX
+records. The main README describes the separate sending DNS records.
+
+Store the domain-restricted Sending access key as the `RESEND_API_KEY` field
+at Vault KV v2 path `secret/apps/website/contact` before deploying the email
+integration. `infra/k8s/contact-notifications.yaml` synchronizes it to the
+`apps/website-contact-email` Secret through `vault-backend`. The website
+Deployment reads only that key through `secretKeyRef`; the sender is a
+non-secret environment setting. Do not place credentials in manifests,
+CI variables, build arguments, Git, or browser code.
+
+The Secret reference is optional so a missing Secret does not prevent the
+website from serving pages or saving enquiries. Email remains unconfigured
+until the key is present. The ExternalSecret itself will report a sync error
+until its Vault field exists; provision it before expecting a healthy Argo CD
+release. After provisioning or rotating the key, wait for the ExternalSecret
+to become Ready and restart the Deployment to pick up the new environment
+value. External Secrets refreshes hourly by default; request a refresh when
+rotating rather than assuming a restart refreshes Vault data.
+
+The provider's successful response records `notification_status = sent`,
+meaning accepted for sending, not guaranteed inbox delivery. Check Resend logs
+for delivery or bounce events. Stored enquiries and failed notifications are
+not automatically replayed. Unit tests mock the provider; live delivery needs
+a separate contact submission after the domain and credentials are ready.
 
 ## Local delivery verification
 

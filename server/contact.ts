@@ -7,6 +7,7 @@ import {
 } from './contact-limits.ts';
 export interface ContactEnv {
   DB?: ContactDatabase;
+  RESEND_API_KEY?: string;
   MS_TENANT_ID?: string;
   MS_CLIENT_ID?: string;
   MS_CLIENT_SECRET?: string;
@@ -114,6 +115,54 @@ async function readLimited(request: Request) {
   } finally {
     clearTimeout(timer!);
     reader.releaseLock();
+  }
+}
+export async function notifyContact(
+  env: ContactEnv,
+  data: ContactData,
+  send: typeof fetch = fetch,
+): Promise<'unconfigured' | 'sent' | 'failed'> {
+  // Select one provider; falling back after a timeout could send two emails.
+  return env.RESEND_API_KEY
+    ? notifyResend(env, data, send)
+    : notifyExchange(env, data, send);
+}
+export async function notifyResend(
+  env: ContactEnv,
+  data: ContactData,
+  send: typeof fetch = fetch,
+): Promise<'unconfigured' | 'sent' | 'failed'> {
+  if (!env.RESEND_API_KEY || !env.CONTACT_SENDER) return 'unconfigured';
+  try {
+    const response = await send('https://api.resend.com/emails', {
+      method: 'POST',
+      redirect: 'error',
+      headers: {
+        Authorization: `Bearer ${env.RESEND_API_KEY}`,
+        'Content-Type': 'application/json',
+        'Idempotency-Key': `contact/${data.id}`,
+      },
+      body: JSON.stringify({
+        from: `Swirl IT <${env.CONTACT_SENDER}>`,
+        to: ['contact@swirlit.dev'],
+        reply_to: data.email,
+        subject: `Swirl IT — ${data.subject} — ${data.name}`,
+        text: `Nom : ${data.name}\nE-mail : ${data.email}\nSujet : ${data.subject}\n\n${data.message}\n\nRéférence : ${data.id}`,
+      }),
+      signal: AbortSignal.timeout(6000),
+    });
+    if (!response.ok) return 'failed';
+    const result: unknown = await response.json();
+    // "sent" means accepted by the provider, not confirmed inbox delivery.
+    return result !== null &&
+      typeof result === 'object' &&
+      'id' in result &&
+      typeof result.id === 'string' &&
+      result.id.length > 0
+      ? 'sent'
+      : 'failed';
+  } catch {
+    return 'failed';
   }
 }
 export async function notifyExchange(
@@ -286,7 +335,7 @@ export async function handleContact(
         return json({ error: 'conflict' }, 409);
       return json({ ok: true, notified: raced.notification_status === 'sent' });
     }
-    const status = await notifyExchange(env, data);
+    const status = await notifyContact(env, data);
     // Persist before notifying so an email-service failure never loses the enquiry.
     try {
       await db

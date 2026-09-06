@@ -59,6 +59,15 @@ spec:
               value: /data
             - name: PUBLIC_ORIGIN
               value: https://swirlit.dev
+            - name: CONTACT_SENDER
+              value: noreply@swirlit.dev
+            - name: RESEND_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: website-contact-email
+                  key: RESEND_API_KEY
+                  # Keep storage available while email is being configured.
+                  optional: true
             # Ingress overwrites X-Real-IP; arbitrary forwarded headers from
             # sockets outside the cluster pod network remain untrusted.
             - name: TRUSTED_PROXY_CIDRS

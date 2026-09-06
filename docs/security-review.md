@@ -24,7 +24,7 @@ The live Site was owner-only at review time. An authenticated read-only HEAD req
 
 - SQL queries bind visitor values as parameters. SQL metacharacters remain literal data.
 - React renders messages as escaped text; the application has no user-controlled raw-HTML sink, dynamic script evaluation or redirect target. Contact values are not reflected in API responses.
-- Email is server-side structured JSON, plain text, fixed to `contact@swirlit.dev`, with the visitor as Reply-To. Tests mock Microsoft; no live mail is sent.
+- Email is server-side structured JSON, plain text, fixed to `contact@swirlit.dev`, with the visitor as Reply-To. Tests mock Resend and Microsoft; no live mail is sent. Resend uses the enquiry ID as its idempotency key. Credentials stay server-side, and provider errors never remove stored enquiries.
 - Required fields, consent, lengths, origin, content type, honeypot and body timing are checked; failures do not expose internal errors or enquiry contents.
 - Persistent and atomic quotas remain authoritative across concurrent Worker requests. Request limits include retries, and rejected transactions leave no temporary reservations.
 - All 24 built pages have matching hashes for their inline scripts and styles. The public artifact check rejects database files, SQL, source maps, environment files and private-key file extensions.

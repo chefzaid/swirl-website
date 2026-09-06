@@ -39,7 +39,7 @@ npm start
 - `components/ContactForm.tsx`: accessible form and submission feedback, hydrated near the viewport.
 - `app/globals.css`: shared theme and responsive styles.
 - `src/layouts/Layout.astro`: SEO, language and social metadata.
-- `server/contact.ts`: validation, persistence, rate limits and optional Exchange notifications.
+- `server/contact.ts`: validation, persistence, rate limits and optional Resend or Exchange notifications.
 
 The archive's `prompt.txt` was treated as design context, not as authorization for unrelated features. The Intranet is an external link; this site does not implement an employee portal or LDAP login. No invented staff or third-party CV reference details are published. Client names represent assignments described in the CV, including work through consulting partners.
 
@@ -53,7 +53,48 @@ For hosted enquiries, use the Site's owner database tools to read `contact_messa
 npx wrangler d1 execute swirl-it-contact --local --command "SELECT id, name, email, service, message, created_at, notification_status FROM contact_messages ORDER BY created_at DESC"
 ```
 
-## Future Microsoft Exchange connection
+## Email notifications with Resend
+
+Resend can send from `noreply@swirlit.dev` without a Microsoft 365 mailbox.
+Verify `swirlit.dev` for **sending only**, then create a Sending access API key
+restricted to that domain. Keep Cloudflare Email Routing enabled: retain its
+apex MX records, leave Resend's Receiving option off, and add only the sending
+records Resend provides (normally MX and SPF at `send.swirlit.dev`, plus DKIM
+at `resend._domainkey.swirlit.dev`). Do not replace the apex MX/SPF records or
+add a second SPF record at an existing hostname. See
+[Resend's Cloudflare guide](https://resend.com/docs/knowledge-base/cloudflare).
+
+Configure these values server-side (an ignored `.dev.vars` file for local
+Wrangler development, or the Vault-backed Secret described in
+[K3s deployment](docs/deployment.md#contact-email-credentials) for production):
+
+```dotenv
+RESEND_API_KEY=your-sending-api-key
+CONTACT_SENDER=noreply@swirlit.dev
+```
+
+The sender setting is a plain email address; the adapter adds the Swirl IT
+display name. Notifications go only to `contact@swirlit.dev`, which can continue
+forwarding to your existing inbox. The visitor is Reply-To. No acknowledgement
+is sent to the visitor. The website calls Resend over HTTPS; no new runtime
+dependency or SMTP connection is required.
+
+Enquiries are saved before sending. The existing `notification_status = sent`
+means the provider accepted the request, not that the recipient inbox confirmed
+delivery. Provider failures and timeouts leave the enquiry saved as `failed`.
+Resend receives an idempotency key derived from the enquiry ID, and repeated
+form submissions do not send another notification. Saved and failed enquiries
+are not automatically replayed when email is enabled. Use the provider's logs
+to investigate delivery after acceptance.
+
+When `RESEND_API_KEY` is present, Resend is selected even if Microsoft credentials
+also exist. A Resend failure never falls back to Microsoft, avoiding duplicate
+delivery after an ambiguous timeout. Without a Resend key, the existing Microsoft
+adapter remains available; without either provider's settings, storage continues
+with `notification_status = unconfigured`. Never expose API keys in browser
+code, logs, or Git.
+
+## Microsoft Exchange alternative
 
 Notifications are prepared for **Microsoft Exchange Online / Microsoft 365** using Microsoft Graph. An on-premises Exchange server would need a different adapter.
 
@@ -68,11 +109,11 @@ CONTACT_SENDER=contact@swirlit.dev
 
 `.env.example` lists the same keys. Keep credentials server-side. The destination is fixed to `contact@swirlit.dev`; the visitor's address is used only as Reply-To. Scope the application's sending access to the intended mailbox. See [Microsoft Graph sendMail](https://learn.microsoft.com/en-us/graph/api/user-sendmail?view=graph-rest-1.0) and [Exchange application RBAC](https://learn.microsoft.com/en-us/exchange/permissions-exo/application-rbac).
 
-When configured, new submissions are saved first and then passed to Exchange. If notification fails, the enquiry remains saved with `notification_status = failed`. Old enquiries and failed notifications are not automatically replayed when Exchange is later enabled. No live email has been sent or tested during initial setup.
+When configured without a Resend key, new submissions are saved first and then passed to Exchange. If notification fails, the enquiry remains saved with `notification_status = failed`. Old enquiries and failed notifications are not automatically replayed when Exchange is later enabled. No live email has been sent or tested during initial setup.
 
 ## Validation
 
-Tests use a real in-memory SQLite database with the generated migrations. They cover input validation, durable inserts, retries, rate limits, cross-origin requests, oversized bodies, storage failures and the Exchange request contract with mocked HTTP. No real email or third-party request is made by these tests.
+Tests use a real in-memory SQLite database with the generated migrations. They cover input validation, durable inserts, retries, rate limits, cross-origin requests, oversized bodies, storage failures, and the Resend and Exchange request contracts with mocked HTTP. Resend tests also check provider selection, invalid responses, preservation after sending failures, and duplicate submissions. No real email or third-party request is made by these tests.
 
 ## Hero diagram and social preview
 
@@ -84,7 +125,7 @@ The contact API now accepts `subject` as free text, and still accepts the former
 
 ## Cookies and privacy
 
-The application has no advertising or analytics trackers, browser cookies, localStorage, sessionStorage or IndexedDB usage. Fonts, images, CSS and scripts are served from the site. Contact requests go to the same-origin `/api/contact` endpoint. Submission timing and retry identifiers stay in React memory; enquiry records and temporary anti-abuse hashes are stored server-side in D1. Intranet is a regular external link, and Exchange notifications are server-side.
+The application has no advertising or analytics trackers, browser cookies, localStorage, sessionStorage or IndexedDB usage. Fonts, images, CSS and scripts are served from the site. Contact requests go to the same-origin `/api/contact` endpoint. Submission timing and retry identifiers stay in React memory; enquiry records and temporary anti-abuse hashes are stored server-side in SQLite on K3s, or D1 on Sites. Intranet is a regular external link, and email notifications are server-side.
 
 No cookie banner is installed because the current application has no consent-requiring tracker. This follows the [CNIL distinction between necessary functions and trackers requiring consent](https://www.cnil.fr/fr/cookies-et-autres-traceurs/que-dit-la-loi). Reassess this decision before adding analytics, advertising, embedded media or third-party widgets. The hosting platform’s private sign-in and the separate Intranet have their own privacy scope.
 
