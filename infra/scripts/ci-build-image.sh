@@ -26,12 +26,18 @@ registry_auth="$(printf '%s:%s' "$CI_REGISTRY_USER" "$CI_REGISTRY_PASSWORD" | ba
 printf '{"auths":{"%s":{"auth":"%s"}}}\n' "$REGISTRY_PUSH_HOST" "$registry_auth" > "$DOCKER_CONFIG/config.json"
 unset registry_auth
 
-"$KANIKO_EXECUTOR" \
-  --context "dir://$CI_PROJECT_DIR" \
-  --dockerfile "$CI_PROJECT_DIR/Dockerfile" \
-  --target prebuilt \
-  --destination "$REGISTRY_PUSH_HOST/$CI_PROJECT_PATH/site:$CI_COMMIT_SHA" \
-  --insecure-registry "$REGISTRY_PUSH_HOST" \
-  --cache=false \
-  --digest-file "$CI_PROJECT_DIR/image-digest.txt"
+# Kaniko creates implicit COPY parent directories with its inherited umask.
+# Keep credentials private, but let the image's non-root user traverse newly
+# created directories. This subshell leaves our credential umask unchanged.
+(
+  umask 022
+  "$KANIKO_EXECUTOR" \
+    --context "dir://$CI_PROJECT_DIR" \
+    --dockerfile "$CI_PROJECT_DIR/Dockerfile" \
+    --target prebuilt \
+    --destination "$REGISTRY_PUSH_HOST/$CI_PROJECT_PATH/site:$CI_COMMIT_SHA" \
+    --insecure-registry "$REGISTRY_PUSH_HOST" \
+    --cache=false \
+    --digest-file "$CI_PROJECT_DIR/image-digest.txt"
+)
 grep -Eq '^sha256:[a-f0-9]{64}$' image-digest.txt || { echo 'The builder returned an invalid image digest'; exit 1; }

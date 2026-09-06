@@ -47,6 +47,14 @@ args = sys.argv[1:]
 with open(os.environ['MOCK_LOG'], 'a') as log:
     log.write(json.dumps({'tool':name,'args':args})+'\n')
 if name == 'kaniko':
+    # Regression: a private credential umask must not produce root-only image
+    # parent directories. Check both sides of that boundary at execution time.
+    inherited_umask = os.umask(0)
+    os.umask(inherited_umask)
+    assert inherited_umask == 0o022, f'Kaniko inherited unsafe image umask {inherited_umask:04o}'
+    docker_config = pathlib.Path(os.environ['DOCKER_CONFIG'])
+    assert docker_config.stat().st_mode & 0o777 == 0o700
+    assert (docker_config/'config.json').stat().st_mode & 0o777 == 0o600
     pathlib.Path(args[args.index('--digest-file')+1]).write_text(os.environ['MOCK_DIGEST'])
     if os.environ.get('MOCK_ADVANCE_REPO'):
         repository = pathlib.Path(os.environ['MOCK_ADVANCE_REPO'])
