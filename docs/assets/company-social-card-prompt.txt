@@ -1,0 +1,13 @@
+Use case: ads-marketing
+Asset type: premium company social preview card, raster PNG, 1536 × 1024 landscape.
+Primary request: Create a simple premium editorial typography card for Swirl IT, a company working in Web, embedded/IoT, and Cloud/AI.
+Scene/backdrop: completely flat charcoal background #101211.
+Style/medium: immaculate flat graphic design; confident, restrained editorial typography.
+Color palette: pale-lime #d7ee92 typography, thin understated gray rules, exactly one tiny restrained blue paper-plane accent.
+Composition/framing: generous side margins of at least 130 px. Keep ALL lettering and the tiny accent between y=245 and y=765, safely inside the middle two-thirds of the height and a centered 1.91:1 crop. Use a left-aligned editorial composition. The company name is largest and bold, the domains line medium sized below, the final sentence smaller but legible. Thin gray horizontal rules define the composition with ample breathing room. Let the empty charcoal space feel deliberate.
+Text (verbatim, exactly these three lines and no other text):
+"Swirl IT"
+"Web. IoT. Cloud & IA."
+"Des idées ambitieuses. Des solutions solides."
+Constraints: render the text exactly, including accents and punctuation. Crisp contemporary sans-serif typography. The paper-plane accent is tiny, blue, flat, and visually secondary. No extra words, letters, numbers, labels, or watermark.
+Avoid: 3D sculpture, humans, photographs, busy graphics, gradients, invented text, extra icons, decorative noise, large illustrations.

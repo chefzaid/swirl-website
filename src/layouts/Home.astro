@@ -1,0 +1,18 @@
+---
+import Layout from './Layout.astro';
+import Portfolio from '../../components/Portfolio';
+import SiteHeader from '../../components/SiteHeader';
+import ProjectGallery from '../../components/ProjectGallery';
+import ContactForm from '../../components/ContactForm';
+import type { Lang } from '../../data/portfolio';
+import { projectViews } from '../../data/project-view';
+interface Props { lang: Lang; }
+const { lang } = Astro.props;
+---
+<Layout lang={lang}>
+  <Portfolio lang={lang}>
+    <SiteHeader slot="header" lang={lang} client:media="(max-width: 1100px)" />
+    <ProjectGallery slot="projects-content" lang={lang} projects={projectViews(lang)} client:visible={{ rootMargin: '300px' }} />
+    <ContactForm slot="contact-form" lang={lang} client:visible={{ rootMargin: '300px' }} />
+  </Portfolio>
+</Layout>

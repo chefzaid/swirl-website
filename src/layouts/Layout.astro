@@ -1,0 +1,80 @@
+---
+import '../../app/globals.css';
+import '../styles/fonts.css';
+import headingFont from '@fontsource-variable/manrope/files/manrope-latin-wght-normal.woff2?url';
+import type { Lang } from '../../data/portfolio';
+import { services } from '../../data/portfolio';
+import { absoluteUrl, documentRoutes, homePath, siteConfig } from '../../data/site';
+interface Props {
+  lang: Lang; title?: string; description?: string; path?: string;
+  structuredData?: Record<string, unknown>[];
+  shareImage?: boolean;
+}
+const { lang, path = homePath(Astro.props.lang), structuredData = [] } = Astro.props;
+const shareImage = Astro.props.shareImage ?? true;
+const en = lang === 'en';
+const title = Astro.props.title ?? (en ? 'Swirl IT - Software Engineering' : 'Swirl IT - Ingénierie Logicielle');
+const description = Astro.props.description ?? (en
+  ? 'Swirl IT builds business web applications, connected devices and cloud & AI solutions. Explore projects across banking, energy and industry.'
+  : 'Swirl IT conçoit vos applications web, objets connectés et solutions cloud & IA. Découvrez nos projets en banque, énergie et industrie.');
+const route = documentRoutes.find(item => item.path === path);
+if (!route) throw new Error(`Missing SEO route: ${path}`);
+const canonical = absoluteUrl(path);
+const image = absoluteUrl('/og.png');
+const imageAlt = en ? 'Swirl IT — Web, IoT, cloud and AI' : 'Swirl IT — Web, IoT, cloud et IA';
+const organizationId = absoluteUrl('/#organization');
+const websiteId = absoluteUrl('/#website');
+const graph: Record<string, unknown>[] = [
+  { '@type': 'Organization', '@id': organizationId, name: siteConfig.name, url: absoluteUrl('/'), email: siteConfig.email,
+    logo: { '@type': 'ImageObject', url: absoluteUrl('/assets/mark.svg') },
+    contactPoint: { '@type': 'ContactPoint', email: siteConfig.email, contactType: 'customer service', availableLanguage: ['French', 'English'] } },
+  { '@type': 'WebSite', '@id': websiteId, name: siteConfig.name, url: absoluteUrl('/'), inLanguage: ['fr', 'en'], publisher: { '@id': organizationId } },
+  { '@type': 'WebPage', '@id': canonical + '#webpage', url: canonical, name: title, description, inLanguage: lang,
+    isPartOf: { '@id': websiteId }, about: { '@id': organizationId } },
+];
+if (path === homePath(lang)) {
+  graph.push({ '@type': 'Person', '@id': absoluteUrl('/#ceo'), name: siteConfig.ceo, jobTitle: 'CEO',
+    worksFor: { '@id': organizationId }, sameAs: [siteConfig.linkedin], image: absoluteUrl('/assets/portrait.webp') });
+  for (const service of services) graph.push({ '@type': 'Service', '@id': canonical + '#service-' + service.id,
+    name: service.title[lang], description: service.text[lang], provider: { '@id': organizationId }, url: canonical + '#expertises' });
+}
+// Escape '<' so content cannot terminate the JSON-LD script element.
+const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': [...graph, ...structuredData] }).replace(/</g, '\\u003c');
+---
+<!doctype html>
+<html lang={lang} class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta name="theme-color" content="#101211" />
+    <link rel="icon" type="image/svg+xml" href="/assets/mark.svg" />
+    <link rel="preload" href={headingFont} as="font" type="font/woff2" crossorigin />
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" hreflang="fr" href={absoluteUrl(route.alternates.fr)} />
+    <link rel="alternate" hreflang="en" href={absoluteUrl(route.alternates.en)} />
+    <link rel="alternate" hreflang="x-default" href={absoluteUrl(route.alternates.fr)} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={siteConfig.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content={en ? 'en_US' : 'fr_FR'} />
+    <meta property="og:locale:alternate" content={en ? 'fr_FR' : 'en_US'} />
+    {shareImage && <>
+    <meta property="og:image" content={image} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1536" />
+    <meta property="og:image:height" content="1024" />
+    <meta property="og:image:alt" content={imageAlt} />
+    </>}
+    <meta name="twitter:card" content={shareImage ? "summary_large_image" : "summary"} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    {shareImage && <><meta name="twitter:image" content={image} /><meta name="twitter:image:alt" content={imageAlt} /></>}
+    <script is:inline type="application/ld+json" set:html={jsonLd} />
+  </head>
+  <body id="top"><slot /></body>
+</html>
