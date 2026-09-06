@@ -9,4 +9,4 @@ resources:
   - network-policy.yaml
 images:
   - name: registry.swirlit.dev/swirlit/website/site
-    newTag: bootstrap
+    digest: sha256:82bb8e88ab402e0e6c2c5659fc22fe472c3c411f9dd3674e5583828dd51beeac
