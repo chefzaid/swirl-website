@@ -132,6 +132,7 @@ void test('Node serves bundled pages, headers, safe assets, durable contact, ali
   const home = await fetch(base);
   assert.equal(await home.text(), '<h1>Home</h1>');
   assert.equal(home.headers.get('x-frame-options'), 'DENY');
+  assert.equal(home.headers.get('cache-control'), 'no-cache, no-transform');
   assert.match(
     home.headers.get('content-security-policy') ?? '',
     /frame-ancestors 'none'/,

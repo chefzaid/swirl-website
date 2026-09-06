@@ -36,7 +36,9 @@ export function createWorker(pages: Record<string, string> = {}) {
           new Response(request.method === 'HEAD' ? null : html, {
             headers: {
               'Content-Type': 'text/html; charset=utf-8',
-              'Cache-Control': 'no-cache',
+              // Preserve the generated HTML and its hash-based script policy
+              // when passing through Cloudflare or another transforming CDN.
+              'Cache-Control': 'no-cache, no-transform',
             },
           }),
         );

@@ -137,6 +137,12 @@ only the `infra` ingress controller and the shared CI jobs used for smoke tests.
 Update this CIDR if the cluster pod network changes. An arbitrary Internet
 `X-Forwarded-For` or `CF-Connecting-IP` header is not trusted by the runtime.
 
+HTML responses use `Cache-Control: no-cache, no-transform` so intermediary
+modifications cannot invalidate the generated hash-based Content Security Policy.
+Cloudflare [honors `no-transform` for JavaScript Detection injection](https://developers.cloudflare.com/cloudflare-challenges/challenge-types/javascript-detections/#if-your-origin-sends-a-no-transform-header).
+This is scoped to website documents; it does not relax CSP or change the zone's
+WAF settings. Static assets retain their separate cache policy.
+
 The contact form persists enquiries without an email provider. Microsoft Graph
 notifications remain optional and require the server-side credentials described
 in the main README. Deploying this website does not send a test email or import
