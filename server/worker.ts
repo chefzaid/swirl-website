@@ -1,7 +1,7 @@
 import { handleContact, type ContactEnv } from './contact.ts';
 import { secureResponse } from './security.ts';
-interface Env extends ContactEnv {
-  ASSETS: Fetcher;
+export interface Env extends ContactEnv {
+  ASSETS: { fetch(request: Request): Promise<Response> };
 }
 export function createWorker(pages: Record<string, string> = {}) {
   return {

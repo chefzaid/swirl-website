@@ -1,8 +1,9 @@
 import { isIP } from 'node:net';
+import type { ContactDatabase, DatabaseStatement } from '../db/index.ts';
 
 const HOUR = 3_600_000;
 export const MAX_ATTEMPTS_PER_MINUTE = 30;
-const deniedWindows = new WeakMap<D1Database, Map<string, number>>();
+const deniedWindows = new WeakMap<ContactDatabase, Map<string, number>>();
 const MAX_CACHED_BLOCKS = 1000;
 export function sourceBucket(request: Request): string {
   // Only the hosting edge's header is used, never X-Forwarded-For or form data.
@@ -43,7 +44,7 @@ export async function contactKeys(request: Request, email: string) {
   return { ip, email: address };
 }
 export async function limitAttempts(
-  db: D1Database,
+  db: ContactDatabase,
   ip: string,
   now: number,
 ): Promise<number> {
@@ -86,7 +87,7 @@ export async function limitAttempts(
   return 0;
 }
 export async function insertWithinLimits(
-  db: D1Database,
+  db: ContactDatabase,
   row: {
     id: string;
     name: string;
@@ -111,7 +112,7 @@ export async function insertWithinLimits(
         'COALESCE((SELECT count < ? OR expires_at <= ? FROM contact_rate_limits WHERE key = ?),1)',
     )
     .join(' AND ');
-  const statements: D1PreparedStatement[] = [
+  const statements: DatabaseStatement[] = [
     db
       .prepare(`
     INSERT INTO contact_rate_limits (key,count,expires_at)
@@ -171,7 +172,7 @@ export async function insertWithinLimits(
 }
 
 export async function quotaRetryAfter(
-  db: D1Database,
+  db: ContactDatabase,
   keys: { ip: string; email: string },
   now: number,
 ): Promise<number> {

@@ -8,7 +8,7 @@ import {
 // Keep this origin aligned with the deployed domain. Change it once a custom
 // domain is connected; metadata, alternates and the sitemap share this value.
 export const siteConfig = {
-  origin: 'https://swirl-it-portfolio.chefzaid.chatgpt.site',
+  origin: 'https://swirlit.dev',
   name: 'Swirl IT',
   email: 'contact@swirlit.dev',
   ceo: 'Zaïd Chefchaouni',

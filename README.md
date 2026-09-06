@@ -4,7 +4,12 @@ An Astro + React company website based on the supplied Swirl IT archive. Source 
 
 ## Local development
 
-Requires Node 22.13+ and npm.
+Requires Node 24.15+ and npm.
+
+Production on the bare-metal K3s cluster uses Node 24 and serves
+`https://swirlit.dev`. Its delivery and persistent contact database are described
+in [K3s deployment](docs/deployment.md). GitHub `chefzaid/website` and GitLab
+`swirlit/website` remain private; the public website is a separate deployment.
 
 ```sh
 npm install

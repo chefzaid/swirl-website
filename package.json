@@ -3,12 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-    "node": ">=22.13.0"
+    "node": ">=24.15.0"
   },
   "scripts": {
     "dev": "astro dev --host 127.0.0.1",
     "build": "astro build && node --experimental-strip-types scripts/security-headers.ts && vite build --config vite.worker.config.ts",
     "start": "wrangler dev --config wrangler.jsonc",
+    "start:node": "node runtime/main.ts",
     "lint": "oxlint",
     "format": "oxfmt",
     "db:generate": "drizzle-kit generate",

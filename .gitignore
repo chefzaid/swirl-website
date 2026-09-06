@@ -6,6 +6,9 @@
 /coverage/
 /outputs/
 /work/
+/.cache/
+/release.env
+/image-digest.txt
 
 # local secrets
 .env*

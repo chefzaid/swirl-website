@@ -1,0 +1,13 @@
+.git
+node_modules
+.astro
+.wrangler
+coverage
+outputs
+work
+.env*
+.dev.vars
+*.pem
+*.sqlite*
+*.db*
+npm-debug.log*

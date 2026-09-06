@@ -1,4 +1,4 @@
-import { getDb } from '../db/index.ts';
+import { getDb, type ContactDatabase } from '../db/index.ts';
 import {
   contactKeys,
   limitAttempts,
@@ -6,7 +6,7 @@ import {
   quotaRetryAfter,
 } from './contact-limits.ts';
 export interface ContactEnv {
-  DB?: D1Database;
+  DB?: ContactDatabase;
   MS_TENANT_ID?: string;
   MS_CLIENT_ID?: string;
   MS_CLIENT_SECRET?: string;

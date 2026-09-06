@@ -1,0 +1,33 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: website
+  annotations:
+    gethomepage.dev/description: Swirl IT company website
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: Applications
+    gethomepage.dev/href: https://swirlit.dev
+    gethomepage.dev/icon: mdi-web
+    gethomepage.dev/name: Swirl IT
+    gethomepage.dev/pod-selector: app=website
+    nginx.ingress.kubernetes.io/proxy-body-size: "18k"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "30"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - swirlit.dev
+      secretName: swirlit-dev-tls
+  rules:
+    - host: swirlit.dev
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: website
+                port:
+                  number: 80

@@ -1,0 +1,59 @@
+---
+- name: Reconcile the Swirl IT website through Argo CD
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+    - name: Read the previous Argo CD reconciliation timestamp
+      ansible.builtin.command:
+        argv: [kubectl, get, application, website, -n, infra, -o, "jsonpath={.status.reconciledAt}"]
+      register: previous_reconciliation
+      changed_when: false
+      failed_when: previous_reconciliation.rc not in [0, 1]
+
+    - name: Apply Vault-backed private GitLab repository credentials
+      ansible.builtin.command:
+        argv:
+          - kubectl
+          - apply
+          - -f
+          - "{{ playbook_dir }}/../argocd/repository-credentials.yaml"
+      register: credential_apply
+      changed_when: "'created' in credential_apply.stdout or 'configured' in credential_apply.stdout"
+
+    - name: Wait for the private repository credentials
+      ansible.builtin.command:
+        argv: [kubectl, wait, --for=condition=Ready, externalsecret/website-gitlab-repository, -n, infra, --timeout=120s]
+      changed_when: false
+
+    - name: Apply the repository-owned Argo CD application
+      ansible.builtin.command:
+        argv:
+          - kubectl
+          - apply
+          - -f
+          - "{{ playbook_dir }}/../argocd/application.yaml"
+      register: application_apply
+      changed_when: "'created' in application_apply.stdout or 'configured' in application_apply.stdout"
+
+    - name: Request a fresh source reconciliation
+      ansible.builtin.command:
+        argv: [kubectl, annotate, application, website, -n, infra, argocd.argoproj.io/refresh=hard, --overwrite]
+      changed_when: true
+
+    - name: Wait for the application to be synced and healthy
+      ansible.builtin.command:
+        argv: [kubectl, get, application, website, -n, infra, -o, json]
+      register: application_status
+      changed_when: false
+      until:
+        - previous_reconciliation.rc != 0 or (application_status.stdout | from_json).status.reconciledAt | default('') != previous_reconciliation.stdout
+        - (application_status.stdout | from_json).status.sync.status | default('') == 'Synced'
+        - (application_status.stdout | from_json).status.health.status | default('') == 'Healthy'
+      retries: 90
+      delay: 10
+
+    - name: Wait for the website deployment
+      ansible.builtin.command:
+        argv: [kubectl, rollout, status, deployment/website, -n, apps, --timeout=120s]
+      changed_when: false

@@ -16,9 +16,13 @@ Run `npm run check`, `npm run build`, `python3 scripts/check-built-security.py`,
 
 ## Public launch
 
-The current Sites publication is owner-private and has no connected custom domain. Its authentication gate prevents Google from accessing page content; these changes do not make it publicly indexed or guarantee a ranking. No audience change, Search Console submission, or domain change has been performed.
+The separate Sites publication remains owner-private. K3s production uses the
+public canonical domain `https://swirlit.dev`; see [deployment](deployment.md).
+The repository stays private. A successful deployment permits crawling but does
+not guarantee indexing or ranking; Search Console ownership and submission are
+separate operator steps.
 
-Once public access and the final domain are explicitly chosen:
+After production deployment:
 
 1. Connect and verify the final domain, then update `siteConfig.origin` in `data/site.ts` and rebuild. Do not point canonicals at an unconnected domain.
 2. Verify the real public pages return HTTP 200 without sign-in and preserve canonicals, language alternates and security headers. Redirect any alternative public domain to the chosen one.

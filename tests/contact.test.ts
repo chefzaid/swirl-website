@@ -1,7 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { DatabaseSync } from 'node:sqlite';
-import { readFileSync, readdirSync } from 'node:fs';
+import { SqliteContactDatabase } from '../runtime/sqlite.ts';
 import {
   handleContact,
   notifyExchange,
@@ -21,44 +20,8 @@ const valid = (): ContactData => ({
   website: '',
 });
 function database() {
-  const sqlite = new DatabaseSync(':memory:');
-  for (const file of readdirSync('drizzle').filter((f) => f.endsWith('.sql')))
-    sqlite.exec(readFileSync(`drizzle/${file}`, 'utf8'));
-  const wrap = (sql: string, bindings: unknown[] = []) => ({
-    bind(...values: unknown[]) {
-      return wrap(sql, values);
-    },
-    async first() {
-      return sqlite.prepare(sql).get(...(bindings as never[])) || null;
-    },
-    run() {
-      const stmt = sqlite.prepare(sql);
-      if (/RETURNING/.test(sql))
-        return {
-          results: stmt.all(...(bindings as never[])),
-          meta: { changes: 1 },
-        };
-      const r = stmt.run(...(bindings as never[]));
-      return { results: [], meta: { changes: Number(r.changes) } };
-    },
-  });
-  return {
-    sqlite,
-    DB: {
-      prepare: wrap,
-      async batch(statements: Array<{ run: () => unknown }>) {
-        sqlite.exec('BEGIN');
-        try {
-          const results = statements.map((statement) => statement.run());
-          sqlite.exec('COMMIT');
-          return results;
-        } catch (error) {
-          sqlite.exec('ROLLBACK');
-          throw error;
-        }
-      },
-    },
-  };
+  const DB = new SqliteContactDatabase(':memory:', 'drizzle');
+  return { sqlite: DB.sqlite, DB };
 }
 const request = (data: unknown, headers: Record<string, string> = {}) =>
   new Request('https://portfolio.test/api/contact', {
