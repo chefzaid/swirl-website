@@ -158,7 +158,7 @@ export default function Portfolio({
             <p className="section-intro">
               {t(
                 'Une approche de bout en bout pour donner vie à vos projets et moderniser vos flux de travail.',
-                'An end-to-end approach to bring your projects to life and modernise your workflows.',
+                'An end-to-end approach to bring your projects to life and modernize your workflows.',
               )}
             </p>
           </div>

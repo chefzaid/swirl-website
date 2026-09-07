@@ -3,12 +3,12 @@ export type Bilingual = { fr: string; en: string };
 export const services = [
   {
     id: 'web',
-    title: { fr: 'Développement Web', en: 'Web Development' },
+    title: { fr: 'Applications Web & Mobile', en: 'Web & Mobile Apps' },
     text: {
       fr: 'Des interfaces aux systèmes distribués, construire des applications métier performantes, maintenables et utiles.',
       en: 'From user interfaces to distributed systems, build business applications that are fast, maintainable and useful.',
     },
-    tags: ['UI/UX', 'API & intégration', 'System design'],
+    tags: ['UI/UX', 'Android · iOS', 'API · System Design'],
   },
   {
     id: 'embedded',
@@ -17,7 +17,7 @@ export const services = [
       fr: 'Concevoir des logiciels embarqués, connecter les équipements et superviser leurs échanges avec le système d’information, du prototype à la production.',
       en: 'Build embedded software, connect devices and monitor their exchanges with business systems, from prototype to production.',
     },
-    tags: ['Rust / Kotlin', 'ARM / ESP32', 'Linux / IoT'],
+    tags: ['Rust · Kotlin', 'ARM · ESP32', 'Linux · Yocto'],
   },
   {
     id: 'cloud-ai',
@@ -26,7 +26,7 @@ export const services = [
       fr: 'Déployer des systèmes distribués dans le cloud, intégrer les résultats de modèles d’IA et automatiser leur mise en production.',
       en: 'Deploy distributed systems in the cloud, integrate AI model outputs and automate delivery.',
     },
-    tags: ['AWS · Kubernetes', 'CI/CD · GitOps', 'Machine Learning / GPU'],
+    tags: ['AWS · GCP', 'CI/CD · DevOps', 'Machine Learning · GPU'],
   },
 ];
 export const fixedPriceService = {
@@ -37,7 +37,7 @@ export const fixedPriceService = {
   },
   description: {
     fr: 'De l’idée à la mise en production, Swirl IT développe vos logiciels sur mesure au forfait : des solutions fiables, performantes et pensées pour durer.',
-    en: 'From idea to launch, Swirl IT develops custom software at a fixed price: reliable, high-performing solutions built to last.',
+    en: 'From idea to launch, Swirl IT develops tailored software at a fixed price: reliable, high-performing solutions built to last.',
   },
 };
 export const projects = [
@@ -144,15 +144,15 @@ export const projects = [
     },
     text: {
       fr: 'Moderniser les outils qui accompagnent les offres commerciales, les contrats et les flux financiers de l’assurance-crédit.',
-      en: 'Modernise the tools behind credit insurance offers, contracts and financial flows.',
+      en: 'Modernize the tools behind credit insurance offers, contracts and financial flows.',
     },
     detail: {
       fr: 'Des offres commerciales au suivi des contrats et des flux financiers, les outils de l’assurance-crédit évoluent dans un contexte international. La modernisation des fonctions existantes et l’automatisation des mises à jour facilitent leur évolution au fil des besoins métier.',
-      en: 'From commercial offers to contracts and financial flows, credit insurance tools evolve in an international setting. Modernised features and automated software releases help the platform keep pace with changing business needs.',
+      en: 'From commercial offers to contracts and financial flows, credit insurance tools evolve in an international setting. Modernized features and automated software releases help the platform keep pace with changing business needs.',
     },
     tags: {
       fr: ['Applications métier', 'Modernisation', 'Automatisation'],
-      en: ['Business applications', 'Modernisation', 'Automation'],
+      en: ['Business applications', 'Modernization', 'Automation'],
     },
     color: 'blue',
   },
@@ -271,7 +271,7 @@ export const projects = [
     },
     tags: {
       fr: ['Portail client', 'Souscription en ligne', 'Personnalisation'],
-      en: ['Customer portal', 'Online subscriptions', 'Personalisation'],
+      en: ['Customer portal', 'Online subscriptions', 'Personalization'],
     },
     color: 'green',
   },

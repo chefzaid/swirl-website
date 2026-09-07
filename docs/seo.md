@@ -12,8 +12,7 @@ Home social previews retain the existing image with its actual dimensions, local
 
 The homepage's hero introduction mentions custom software development at a
 fixed price. Its localized title targets custom software development; the meta
-description and `Service` JSON-LD retain the fixed-price development target. See
-[French-market wording, keyword targets and sources](forfait-positioning.md).
+description and `Service` JSON-LD retain the fixed-price development target. 
 The introduction in `data/portfolio.ts` is shared with the structured description,
 and the service URL points to `#home`. No `meta keywords` tag is added; the
 terms appear in useful content and descriptive metadata.
