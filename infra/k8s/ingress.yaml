@@ -9,6 +9,7 @@ metadata:
     gethomepage.dev/href: https://swirlit.dev
     gethomepage.dev/icon: mdi-web
     gethomepage.dev/name: Swirl IT
+    gethomepage.dev/weight: "10"
     gethomepage.dev/pod-selector: app=website
     nginx.ingress.kubernetes.io/proxy-body-size: "18k"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "30"
