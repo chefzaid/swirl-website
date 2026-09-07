@@ -199,7 +199,8 @@ files remain on the dedicated `/tmp` volume.
 ## Automatic Sonar coverage
 
 The default branch automatically runs the non-blocking `sonar` job after `verify`,
-using Node test LCOV coverage and the source paths in `sonar-project.properties`.
+including when verification reports a failure, using available Node test LCOV
+coverage and the source paths in `sonar-project.properties`.
 Sonar analyzes supported TypeScript/TSX, JavaScript, CSS and other supported source
 files; Astro templates are not a supported Sonar language and remain checked by
 `astro check`, the build and the compiled security/SEO checks.

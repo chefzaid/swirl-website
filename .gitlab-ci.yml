@@ -53,6 +53,7 @@ verify:
     - npm audit --audit-level=high
     - bash infra/scripts/test-delivery.sh
   artifacts:
+    when: always
     name: website-build-$CI_COMMIT_SHORT_SHA
     expire_in: 7 days
     paths:
@@ -130,3 +131,4 @@ sonar:
       - quality-reports/
   rules:
     - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+      when: always
