@@ -20,7 +20,7 @@ pvc = next(doc for doc in documents if doc['kind'] == 'PersistentVolumeClaim')
 assert deployment['spec']['replicas'] == 1 and deployment['spec']['strategy']['type'] == 'Recreate'
 assert pvc['metadata']['annotations']['argocd.argoproj.io/sync-options'] == 'Prune=false'
 pod = deployment['spec']['template']['spec']
-assert not pod['automountServiceAccountToken'] and pod['securityContext']['runAsUser'] == 1000
+assert not pod['automountServiceAccountToken'] and pod['securityContext']['runAsUser'] == 10001
 assert pod['containers'][0]['readinessProbe']['httpGet']['path'] == '/healthz'
 mail_env = {item['name']: item for item in pod['containers'][0]['env']}
 assert mail_env['CONTACT_SENDER']['value'] == 'noreply@swirlit.dev'

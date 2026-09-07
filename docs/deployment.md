@@ -191,3 +191,7 @@ The delivery tests use temporary local Git repositories and mock registry and
 Kubernetes commands. They verify immutable release updates, credential/resource
 contracts, and source changes before and during image construction without
 touching a live cluster.
+
+The website container runs with UID/GID 10001 and a read-only root filesystem.
+The contact database volume receives group access through `fsGroup`; temporary
+files remain on the dedicated `/tmp` volume.
