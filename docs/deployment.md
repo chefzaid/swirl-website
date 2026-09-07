@@ -115,7 +115,7 @@ workflow is present on GitHub's default branch to send a dispatch test.
 
 ## Runtime and stored enquiries
 
-The Node 24.15 container listens on port 8080 as UID/GID 1000 with a read-only root
+The Node 24.19 container listens on port 8080 as UID/GID 1000 with a read-only root
 filesystem. `PUBLIC_ORIGIN=https://swirlit.dev` fixes the origin used by the
 application. `/healthz` checks the SQLite connection. The single replica uses
 the `website-data` Longhorn PVC at `/data`; the Node adapter stores

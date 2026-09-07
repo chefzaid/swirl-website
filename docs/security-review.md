@@ -67,3 +67,13 @@ This review does not establish full GDPR compliance. The operational retention p
 - [Cloudflare DDoS protection](https://developers.cloudflare.com/ddos-protection/)
 - [OWASP denial-of-service guidance](https://cheatsheetseries.owasp.org/cheatsheets/Denial_of_Service_Cheat_Sheet.html)
 - [esbuild security advisory](https://github.com/evanw/esbuild/security/advisories/GHSA-67mh-4wv8-2f99)
+
+## Container runtime dependency maintenance
+
+The K3s runtime uses digest-pinned Node 24.19.0 on Alpine and applies Alpine
+security updates during image construction. The bundled Worker and SQLite
+adapter run with Node built-ins, so the final runtime removes npm and Yarn.
+The independent build stage retains npm for installing and bundling the site.
+The runtime still runs as the `node` user with a read-only root filesystem
+and a separate writable `/data` mount. Validate both the bundled image and
+its SQLite-backed tests when changing the base distribution or Node release.

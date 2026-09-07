@@ -1,7 +1,11 @@
-FROM node:24.15.0-bookworm-slim@sha256:4e6b70dd6cbfc88c8157ba19aa3d9f9cce6ba4703576d55459e45efcbc9c5f5d AS runtime-base
+FROM node:24.19.0-alpine@sha256:d32cdf619f63fe0471182d08996dd516c6275bb5fd31ae06e55a570bd9e1ad43 AS runtime-base
 ENV NODE_ENV=production PORT=8080 DATA_DIR=/data PUBLIC_ORIGIN=https://swirlit.dev
 WORKDIR /app
-RUN mkdir -p /data /app/dist/client /app/dist/server \
+# The bundled Worker uses only Node built-ins at runtime.
+RUN apk upgrade --no-cache \
+    && rm -rf /usr/local/lib/node_modules/npm /opt/yarn-* \
+    && rm -f /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/yarn /usr/local/bin/yarnpkg \
+    && mkdir -p /data /app/dist/client /app/dist/server \
     && chmod 0755 /app/dist /app/dist/client /app/dist/server \
     && chown node:node /data
 COPY --chown=node:node package.json ./
@@ -20,7 +24,7 @@ COPY --chown=node:node dist/server/index.js ./dist/server/index.js
 RUN test -r ./dist/server/index.js && test -r ./dist/client/robots.txt \
     && node --input-type=module -e "await import('./dist/server/index.js')"
 
-FROM node:24.15.0-bookworm-slim@sha256:4e6b70dd6cbfc88c8157ba19aa3d9f9cce6ba4703576d55459e45efcbc9c5f5d AS build
+FROM node:24.19.0-alpine@sha256:d32cdf619f63fe0471182d08996dd516c6275bb5fd31ae06e55a570bd9e1ad43 AS build
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci --no-audit --no-fund
