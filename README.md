@@ -32,9 +32,11 @@ npm start
 
 - `data/portfolio.ts`: bilingual services and all 11 client projects.
 - `components/Portfolio.tsx`: static company presentation, rendered on the server.
+- The hero introduction mentions custom software development at a fixed price; [SEO research](docs/forfait-positioning.md) records the wording, keyword targets and sources.
 - `src/layouts/Home.astro`: combines the static presentation with independent interactive components.
 - `components/SiteHeader.tsx`: mobile menu, hydrated only below 1100px.
 - `components/ProjectGallery.tsx`: project filters and dialogs, hydrated near the viewport; `data/project-view.ts` supplies only the active language.
+- `components/ClientLogo.tsx`: shared client wordmarks in the reference rows and projects; [asset sources and theme treatment](docs/assets/client-logos.md).
 - `components/SoftwareLifecycle.tsx`: accessible four-step diagram, with modular building blocks and translated labels.
 - `components/ContactForm.tsx`: accessible form and submission feedback, hydrated near the viewport.
 - `app/globals.css`: shared theme and responsive styles.

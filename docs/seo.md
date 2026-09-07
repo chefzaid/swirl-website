@@ -10,6 +10,14 @@ JSON-LD describes the organization, website, page, visible services and CEO; pro
 
 Home social previews retain the existing image with its actual dimensions, localized description and alternative text. Project previews have their own title and description, and omit the generic home image. Only the two Latin variable font files used by French/English are emitted; the heading font is preloaded and both use `font-display: swap`. Images keep explicit dimensions, and the below-the-fold portrait remains lazy-loaded. No tracker or external font request was introduced.
 
+The homepage's hero introduction mentions custom software development at a
+fixed price. Its localized title targets custom software development; the meta
+description and `Service` JSON-LD retain the fixed-price development target. See
+[French-market wording, keyword targets and sources](forfait-positioning.md).
+The introduction in `data/portfolio.ts` is shared with the structured description,
+and the service URL points to `#home`. No `meta keywords` tag is added; the
+terms appear in useful content and descriptive metadata.
+
 ## Validation
 
 Run `npm run check`, `npm run build`, `python3 scripts/check-built-security.py`, and `python3 scripts/check-built-seo.py`. The SEO checker covers every route, metadata uniqueness, language reciprocity, internal links, structured data, sitemap parity and initial-HTML project discoverability. The existing contact/security suite remains available through `npm test`.

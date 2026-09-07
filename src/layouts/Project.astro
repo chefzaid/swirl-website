@@ -1,6 +1,7 @@
 ---
 import Layout from './Layout.astro';
 import SiteFooter from '../../components/SiteFooter';
+import ClientLogo from '../../components/ClientLogo';
 import { projects, type Lang, type Project } from '../../data/portfolio';
 import { absoluteUrl, homePath, projectPath } from '../../data/site';
 interface Props { project: Project; lang: Lang; }
@@ -35,6 +36,7 @@ const breadcrumbs = {
     <nav class="breadcrumbs" aria-label={en ? 'Breadcrumb' : 'Fil d’Ariane'}><a href={home}>Swirl IT</a><span aria-hidden="true">/</span><span aria-current="page">{project.client}</span></nav>
     <article>
       <header class="case-intro">
+        <ClientLogo id={project.id} />
         <p class="eyebrow section-kicker">{project.client} · {project.date}</p>
         <h1>{project.title[lang]}</h1>
         <p class="case-lead">{project.text[lang]}</p>

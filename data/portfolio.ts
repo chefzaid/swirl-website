@@ -29,6 +29,17 @@ export const services = [
     tags: ['AWS · Kubernetes', 'CI/CD · GitOps', 'Machine Learning / GPU'],
   },
 ];
+export const fixedPriceService = {
+  id: 'developpement-au-forfait',
+  name: {
+    fr: 'Développement logiciel sur mesure, au forfait',
+    en: 'Custom software development at a fixed price',
+  },
+  description: {
+    fr: 'De l’idée à la mise en production, Swirl IT développe vos logiciels sur mesure au forfait : des solutions fiables, performantes et pensées pour durer.',
+    en: 'From idea to launch, Swirl IT develops custom software at a fixed price: reliable, high-performing solutions built to last.',
+  },
+};
 export const projects = [
   {
     id: 'cacib',

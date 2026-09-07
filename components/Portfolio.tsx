@@ -8,7 +8,15 @@ import {
   MapPin,
   Check,
 } from 'lucide-react';
-import { services, partners, projects, type Lang } from '@/data/portfolio';
+import {
+  services,
+  fixedPriceService,
+  partners,
+  projects,
+  type Lang,
+} from '@/data/portfolio';
+import { clientRows } from '@/data/client-logos';
+import ClientLogo from './ClientLogo';
 import SoftwareLifecycle from './SoftwareLifecycle';
 import SiteFooter from './SiteFooter';
 interface Props {
@@ -71,10 +79,7 @@ export default function Portfolio({
               )}
             </h1>
             <p className="hero-description">
-              {t(
-                'De l’idée au résultat final, Swirl IT transforme vos défis techniques en solutions fiables, performantes et pensées pour durer.',
-                'From the first idea to the final result, Swirl IT turns your technical challenges into reliable, high-performing solutions built to last.',
-              )}
+              {fixedPriceService.description[lang]}
             </p>
             <div className="hero-actions">
               <a className="button" href="#projects">
@@ -128,30 +133,13 @@ export default function Portfolio({
             )}
             tabIndex={0}
           >
-            <div className="client-row">
-              <span>
-                Crédit Agricole <small>CIB</small>
-              </span>
-              <span>
-                BPCE <small>Natixis</small>
-              </span>
-              <span>
-                Société <small>Générale</small>
-              </span>
-              <span className="enedis">enedis</span>
-              <span>
-                Bouygues <small>Construction</small>
-              </span>
-            </div>
-            <div className="client-row">
-              <span>ENGIE</span>
-              <span>
-                Allianz <small>Trade</small>
-              </span>
-              <span>Caisse des Dépôts</span>
-              <span>Ingenico</span>
-              <span>IDEMIA</span>
-            </div>
+            {clientRows.map((row) => (
+              <div className="client-row" key={row[0]}>
+                {row.map((id) => (
+                  <ClientLogo key={id} id={id} />
+                ))}
+              </div>
+            ))}
           </section>
           {/* oxlint-enable jsx-a11y/no-noninteractive-tabindex */}
         </section>
@@ -256,8 +244,8 @@ export default function Portfolio({
             </p>
             <p>
               {t(
-                'Swirl IT s’appuie sur une expérience technique acquise depuis 2013 dans la banque, l’assurance, l’énergie, les transports et la construction. Nous accompagnons les entreprises du développement web aux systèmes embarqués, jusqu’au cloud et à l’IA, avec une même exigence de qualité et de fiabilité.',
-                'Swirl IT draws on technical experience built since 2013 across banking, insurance, energy, transport and construction. We support businesses in web development, embedded systems, cloud and AI, with the same commitment to quality and reliability.',
+                'Swirl IT s’appuie sur une expérience technique acquise depuis 2013 dans la banque, l’assurance, l’énergie, l’industrie et les services. Nous accompagnons les entreprises du développement web aux systèmes embarqués, jusqu’au cloud et à l’IA, avec une même exigence de qualité et de fiabilité.',
+                'Swirl IT draws on technical experience built since 2013 across banking, insurance, energy, industry and services. We support businesses in web development, embedded systems, cloud and AI, with the same commitment to quality and reliability.',
               )}
             </p>
             <ul className="values">
@@ -328,8 +316,8 @@ export default function Portfolio({
               </h2>
               <p>
                 {t(
-                  'Un défi technique, une équipe à accompagner ou simplement une idée à explorer. Tout commence par une conversation.',
-                  'A technical challenge, a team to support, or an idea to explore. It all starts with a conversation.',
+                  'Un défi technique ou simplement une idée à explorer. Tout commence par une conversation.',
+                  'A technical challenge or an idea to explore. It all starts with a conversation.',
                 )}
               </p>
               <a className="contact-email" href="mailto:contact@swirlit.dev">

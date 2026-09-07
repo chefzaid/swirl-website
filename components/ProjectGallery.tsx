@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/dialog';
 import type { Lang } from '@/data/portfolio';
 import type { ProjectView } from '@/data/project-view';
+import ClientLogo from './ClientLogo';
 export default function ProjectGallery({
   lang,
   projects,
@@ -37,8 +38,7 @@ export default function ProjectGallery({
         <span>{p.date}</span>
       </div>
       <div className="project-client">
-        {p.client}
-        <span className="client-underline" />
+        <ClientLogo id={p.id} />
       </div>
       <div className="project-info">
         <h3>{p.title}</h3>
@@ -91,8 +91,8 @@ export default function ProjectGallery({
             </div>
             <p className="section-intro">
               {t(
-                'Banque, énergie, industrie : des projets qui simplifient le quotidien et font avancer les entreprises.',
-                'Banking, energy, industry: projects that simplify everyday work and help businesses move forward.',
+                'Banque, assurance, énergie, industrie et services : des projets qui simplifient le quotidien et font avancer les entreprises.',
+                'Banking, insurance, energy, industry and services: projects that simplify everyday work and help businesses move forward.',
               )}
             </p>
           </div>
@@ -169,6 +169,7 @@ export default function ProjectGallery({
               >
                 <X size={20} />
               </DialogClose>
+              <ClientLogo id={selected.id} />
               <p className="eyebrow section-kicker">
                 {selected.client} · {selected.date}
               </p>
