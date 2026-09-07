@@ -196,6 +196,27 @@ The website container runs with UID/GID 10001 and a read-only root filesystem.
 The contact database volume receives group access through `fsGroup`; temporary
 files remain on the dedicated `/tmp` volume.
 
+## Application logs
+
+Open [Website — Application Logs](https://kibana.swirlit.dev/app/dashboards#/view/website-logs)
+in Kibana for Website's container output, with separate recent-log and
+warnings/errors panels. The dashboard opens the last 24 hours and refreshes every
+30 seconds; widen the time picker when the application has been quiet.
+
+Fluent Bit automatically collects stdout and stderr from every container in
+`apps`. Website is selected with `kubernetes.namespace_name : "apps" and
+app : "website"` in the shared `kubernetes-logs-*` data view. The warnings/errors
+panel includes stderr so unstructured Node diagnostics are visible alongside
+structured warning/error levels. These are application-emitted logs; the runtime
+does not emit an access log for every HTTP request.
+
+`infra/k8s/observability.yaml` owns the saved searches and dashboard. Its Argo CD
+PostSync hook imports them using the platform-managed
+`apps/kibana-bootstrap-credentials` Secret and the shared
+`kubernetes-container-logs` data view. The hook deletes itself after success.
+Logs continue to use the platform's seven-day lifecycle policy; this dashboard
+requires no additional collector, index, persistent volume, or application image.
+
 ## Automatic Sonar coverage
 
 The default branch automatically runs the non-blocking `sonar` job after `verify`,

@@ -8,6 +8,7 @@ resources:
   - website.yaml
   - ingress.yaml
   - network-policy.yaml
+  - observability.yaml
 images:
   - name: registry.swirlit.dev/swirlit/website/site
     digest: sha256:99cdcb75a0a1564baa05fb87871ecf9395e6f90958de1e5bd1fa131c9bd994f2
