@@ -10,4 +10,4 @@ resources:
   - network-policy.yaml
 images:
   - name: registry.swirlit.dev/swirlit/website/site
-    digest: sha256:a77856a1b515bdf70006656b46dd0074ce94394b70f380dfcbc889e2c2c357d9
+    digest: sha256:4fa5753389c1e6a7fb4be0d15f0c15c54d12b1e85198157ec950421022aff53e
