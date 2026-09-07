@@ -1,5 +1,6 @@
 workflow:
   rules:
+    - if: '$SONAR_SCAN_ONLY == "true" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
     - if: '$CI_COMMIT_MESSAGE =~ /\[skip ci\]|\[ci skip\]/i'
       when: never
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
@@ -19,6 +20,9 @@ default:
 
 variables:
   GIT_DEPTH: "0"
+  SONAR_SCAN_ONLY: "false"
+  SONAR_HOST_URL: "http://sonarqube.infra.svc.cluster.local:9000"
+  SONAR_USER_HOME: "$CI_PROJECT_DIR/.cache/sonar"
   NPM_CONFIG_CACHE: "$CI_PROJECT_DIR/.cache/npm"
   REGISTRY_PUSH_HOST: gitlab-registry.swirlit.internal:5050
   REGISTRY_PULL_IMAGE: registry.swirlit.dev/swirlit/website/site
@@ -42,7 +46,7 @@ verify:
     - npm ci --no-fund --prefer-offline
     - npm run check
     - npm run lint
-    - npm test
+    - npm run test:coverage
     - npm run build
     - python3 scripts/check-built-security.py
     - python3 scripts/check-built-seo.py
@@ -53,6 +57,7 @@ verify:
     expire_in: 7 days
     paths:
       - dist/
+      - coverage/
 
 image-build:
   stage: image
@@ -70,6 +75,8 @@ image-build:
     paths:
       - image-digest.txt
   rules:
+    - if: '$SONAR_SCAN_ONLY == "true"'
+      when: never
     - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
 
 release:
@@ -94,5 +101,32 @@ release:
     name: production
     url: https://swirlit.dev
     deployment_tier: production
+  rules:
+    - if: '$SONAR_SCAN_ONLY == "true"'
+      when: never
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+
+sonar:
+  stage: verify
+  image: node:24.15.0-bookworm-slim@sha256:4e6b70dd6cbfc88c8157ba19aa3d9f9cce6ba4703576d55459e45efcbc9c5f5d
+  needs:
+    - job: verify
+      artifacts: true
+  cache:
+    key: website-sonar-v1
+    paths:
+      - .cache/sonar/cache/
+  before_script:
+    - npm ci --no-fund --prefer-offline
+    - npm install --global @sonar/scan@5.0.0
+  script:
+    - bash infra/scripts/test-quality.sh
+    - bash infra/scripts/ci-quality.sh
+  allow_failure: true
+  artifacts:
+    when: always
+    expire_in: 7 days
+    paths:
+      - quality-reports/
   rules:
     - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'

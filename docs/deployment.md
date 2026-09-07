@@ -195,3 +195,18 @@ touching a live cluster.
 The website container runs with UID/GID 10001 and a read-only root filesystem.
 The contact database volume receives group access through `fsGroup`; temporary
 files remain on the dedicated `/tmp` volume.
+
+## Automatic Sonar coverage
+
+The default branch automatically runs the non-blocking `sonar` job after `verify`,
+using Node test LCOV coverage and the source paths in `sonar-project.properties`.
+Sonar analyzes supported TypeScript/TSX, JavaScript, CSS and other supported source
+files; Astro templates are not a supported Sonar language and remain checked by
+`astro check`, the build and the compiled security/SEO checks.
+
+The platform discovers Website from its Argo CD workloads in `apps`, provisions a
+private Sonar project and masked analysis token, and refreshes missing or stale
+analysis. `.sonar-auto.json` declares this contract. A default-branch pipeline with
+`SONAR_SCAN_ONLY=true` runs `verify` and `sonar` without building an image or
+releasing. Its reports expire after seven days. Private repository and Sonar
+visibility are preserved.

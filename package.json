@@ -14,7 +14,8 @@
     "format": "oxfmt",
     "db:generate": "drizzle-kit generate",
     "check": "astro check",
-    "test": "node --experimental-strip-types --test tests/*.test.ts"
+    "test": "node --experimental-strip-types --test tests/*.test.ts",
+    "test:coverage": "mkdir -p coverage && node --experimental-strip-types --experimental-test-coverage --test-coverage-exclude=\"tests/**\" --test-coverage-exclude=\"node_modules/**\" --test-reporter=spec --test-reporter-destination=stdout --test-reporter=lcov --test-reporter-destination=coverage/lcov.info --test tests/*.test.ts"
   },
   "dependencies": {
     "@astrojs/react": "6.0.5",

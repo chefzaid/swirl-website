@@ -19,3 +19,6 @@
 # local files and logs
 .DS_Store
 npm-debug.log*
+
+.scannerwork/
+quality-reports/
