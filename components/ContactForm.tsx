@@ -5,8 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import type { Lang } from '@/data/portfolio';
-export default function ContactForm({ lang }: { lang: Lang }) {
-  const en = lang === 'en';
+export default function ContactForm({ lang }: Readonly<{ lang: Lang }>) {
+  const t = (fr: string, en: string) => (lang === 'en' ? en : fr);
   const [state, setState] = useState<'idle' | 'sending' | 'success' | 'error'>(
     'idle',
   );
@@ -50,25 +50,31 @@ export default function ContactForm({ lang }: { lang: Lang }) {
       if (result.error === 'expired') {
         started.current = Date.now() - 3000;
         throw new Error(
-          en
-            ? 'The form expired. Please send your message again.'
-            : 'Le formulaire a expiré. Vous pouvez renvoyer votre message.',
+          t(
+            'Le formulaire a expiré. Vous pouvez renvoyer votre message.',
+            'The form expired. Please send your message again.',
+          ),
         );
       }
-      if (!response.ok)
+      if (!response.ok) {
+        const messages: Record<string, string> = {
+          rate_limit: t(
+            'Trop de demandes. Réessayez plus tard ou écrivez à contact@swirlit.dev.',
+            'Too many requests. Please try again later or email contact@swirlit.dev.',
+          ),
+          too_fast: t(
+            'Patientez un instant, puis réessayez.',
+            'Please wait a moment, then send again.',
+          ),
+        };
         throw new Error(
-          result.error === 'rate_limit'
-            ? en
-              ? 'Too many requests. Please try again later or email contact@swirlit.dev.'
-              : 'Trop de demandes. Réessayez plus tard ou écrivez à contact@swirlit.dev.'
-            : result.error === 'too_fast'
-              ? en
-                ? 'Please wait a moment, then send again.'
-                : 'Patientez un instant, puis réessayez.'
-              : en
-                ? 'Your message could not be saved. Please try again or email contact@swirlit.dev.'
-                : 'Votre message n’a pas pu être enregistré. Réessayez ou écrivez à contact@swirlit.dev.',
+          messages[result.error ?? ''] ??
+            t(
+              'Votre message n’a pas pu être enregistré. Réessayez ou écrivez à contact@swirlit.dev.',
+              'Your message could not be saved. Please try again or email contact@swirlit.dev.',
+            ),
         );
+      }
       setNotification(result.notified === true);
       setState('success');
       form.reset();
@@ -76,9 +82,10 @@ export default function ContactForm({ lang }: { lang: Lang }) {
       setError(
         e instanceof Error && e.name !== 'TimeoutError'
           ? e.message
-          : en
-            ? 'Connection interrupted. Please try again; your message will not be duplicated.'
-            : 'Connexion interrompue. Réessayez : votre message ne sera pas dupliqué.',
+          : t(
+              'Connexion interrompue. Réessayez : votre message ne sera pas dupliqué.',
+              'Connection interrupted. Please try again; your message will not be duplicated.',
+            ),
       );
       setState('error');
     }
@@ -89,19 +96,22 @@ export default function ContactForm({ lang }: { lang: Lang }) {
         <output className="form-success">
           <CheckCircle2 size={36} />
           <h3>
-            {en ? 'Thank you for reaching out.' : 'Merci pour votre message.'}
+            {t('Merci pour votre message.', 'Thank you for reaching out.')}
           </h3>
           <p>
-            {en
-              ? 'Your message has been saved.'
-              : 'Votre message a bien été enregistré.'}{' '}
+            {t(
+              'Votre message a bien été enregistré.',
+              'Your message has been saved.',
+            )}{' '}
             {notification
-              ? en
-                ? 'An email notification has been sent to Swirl IT.'
-                : 'Une notification a été envoyée à Swirl IT.'
-              : en
-                ? 'You can also contact us directly by email.'
-                : 'Vous pouvez aussi nous contacter directement par e-mail.'}
+              ? t(
+                  'Une notification a été envoyée à Swirl IT.',
+                  'An email notification has been sent to Swirl IT.',
+                )
+              : t(
+                  'Vous pouvez aussi nous contacter directement par e-mail.',
+                  'You can also contact us directly by email.',
+                )}
           </p>
           <a className="text-link" href="mailto:contact@swirlit.dev">
             contact@swirlit.dev <ArrowUpRight size={16} />
@@ -114,7 +124,7 @@ export default function ContactForm({ lang }: { lang: Lang }) {
               setState('idle');
             }}
           >
-            {en ? 'Send another message' : 'Envoyer un autre message'}
+            {t('Envoyer un autre message', 'Send another message')}
           </Button>
         </output>
       ) : (
@@ -126,21 +136,22 @@ export default function ContactForm({ lang }: { lang: Lang }) {
         >
           <noscript>
             <p>
-              {en
-                ? 'Please enable JavaScript to use this form, or email contact@swirlit.dev directly.'
-                : 'Activez JavaScript pour utiliser ce formulaire, ou écrivez directement à contact@swirlit.dev.'}
+              {t(
+                'Activez JavaScript pour utiliser ce formulaire, ou écrivez directement à contact@swirlit.dev.',
+                'Please enable JavaScript to use this form, or email contact@swirlit.dev directly.',
+              )}
             </p>
           </noscript>
           <div className="form-row">
             <div className="form-field">
               <Label htmlFor="name">
-                {en ? 'Your name' : 'Votre nom'} <span>*</span>
+                {t('Votre nom', 'Your name')} <span>*</span>
               </Label>
               <Input
                 id="name"
                 name="name"
                 autoComplete="name"
-                placeholder={en ? 'First and last name' : 'Prénom et nom'}
+                placeholder={t('Prénom et nom', 'First and last name')}
                 required
                 minLength={2}
                 maxLength={100}
@@ -148,7 +159,7 @@ export default function ContactForm({ lang }: { lang: Lang }) {
             </div>
             <div className="form-field">
               <Label htmlFor="email">
-                {en ? 'Your email' : 'Votre e-mail'} <span>*</span>
+                {t('Votre e-mail', 'Your email')} <span>*</span>
               </Label>
               <Input
                 id="email"
@@ -163,17 +174,16 @@ export default function ContactForm({ lang }: { lang: Lang }) {
           </div>
           <div className="form-field">
             <Label htmlFor="subject">
-              {en ? 'Subject' : 'Sujet'} <span>*</span>
+              {t('Sujet', 'Subject')} <span>*</span>
             </Label>
             <Input
               id="subject"
               name="subject"
               type="text"
-              placeholder={
-                en
-                  ? 'What would you like to discuss?'
-                  : 'De quoi souhaitez-vous parler ?'
-              }
+              placeholder={t(
+                'De quoi souhaitez-vous parler ?',
+                'What would you like to discuss?',
+              )}
               required
               minLength={1}
               maxLength={160}
@@ -181,9 +191,7 @@ export default function ContactForm({ lang }: { lang: Lang }) {
           </div>
           <div className="form-field">
             <Label htmlFor="message">
-              {en
-                ? 'Tell us about your project'
-                : 'Parlez-nous de votre projet'}{' '}
+              {t('Parlez-nous de votre projet', 'Tell us about your project')}{' '}
               <span>*</span>
             </Label>
             <Textarea
@@ -192,11 +200,10 @@ export default function ContactForm({ lang }: { lang: Lang }) {
               rows={5}
               minLength={20}
               maxLength={5000}
-              placeholder={
-                en
-                  ? 'Your context, your challenges, your ideas…'
-                  : 'Votre contexte, vos enjeux, vos idées…'
-              }
+              placeholder={t(
+                'Votre contexte, vos enjeux, vos idées…',
+                'Your context, your challenges, your ideas…',
+              )}
               required
             />
           </div>
@@ -213,16 +220,18 @@ export default function ContactForm({ lang }: { lang: Lang }) {
           <label className="consent">
             <input type="checkbox" name="consent" required />
             <span>
-              {en
-                ? 'I agree that my details may be used to reply to my request.'
-                : 'J’accepte que mes informations soient utilisées pour répondre à ma demande.'}
+              {t(
+                'J’accepte que mes informations soient utilisées pour répondre à ma demande.',
+                'I agree that my details may be used to reply to my request.',
+              )}
             </span>
           </label>
           <p className="form-privacy">
-            <a href={en ? '/en/privacy/' : '/confidentialite/'}>
-              {en
-                ? 'How we use your information and how to exercise your rights'
-                : 'Utilisation de vos informations et exercice de vos droits'}
+            <a href={t('/confidentialite/', '/en/privacy/')}>
+              {t(
+                'Utilisation de vos informations et exercice de vos droits',
+                'How we use your information and how to exercise your rights',
+              )}
             </a>
           </p>
           <p className="form-error" role="alert">
@@ -236,20 +245,21 @@ export default function ContactForm({ lang }: { lang: Lang }) {
             {state === 'sending' ? (
               <>
                 <Loader2 size={17} className="spin" />
-                {en ? 'Sending…' : 'Envoi en cours…'}
+                {t('Envoi en cours…', 'Sending…')}
               </>
             ) : (
               <>
-                {en ? 'Send message' : 'Envoyer le message'}
+                {t('Envoyer le message', 'Send message')}
                 <ArrowUpRight size={18} />
               </>
             )}
           </Button>
           <p className="form-note">
             <ShieldCheck size={13} />
-            {en
-              ? 'Your details stay private. No marketing emails.'
-              : 'Vos informations restent privées. Aucun démarchage.'}
+            {t(
+              'Vos informations restent privées. Aucun démarchage.',
+              'Your details stay private. No marketing emails.',
+            )}
           </p>
         </form>
       )}

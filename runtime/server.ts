@@ -28,15 +28,15 @@ export function trustedProxy(cidrs: string): (ip: string) => boolean {
     .filter(Boolean)) {
     const parts = entry.split('/');
     const family = isIP(parts[0]);
-    const prefix =
-      parts.length === 1 ? (family === 4 ? 32 : 128) : Number(parts[1]);
+    const addressBits = family === 4 ? 32 : 128;
+    const prefix = parts.length === 1 ? addressBits : Number(parts[1]);
     if (
       !family ||
       parts.length > 2 ||
       !/^\d+$/.test(String(parts[1] ?? prefix)) ||
       !Number.isInteger(prefix) ||
       prefix < 1 ||
-      prefix > (family === 4 ? 32 : 128)
+      prefix > addressBits
     )
       throw new Error(
         'TRUSTED_PROXY_CIDRS must contain explicit IP addresses or bounded CIDRs',
@@ -178,6 +178,56 @@ function requestBody(incoming: IncomingMessage): ReadableStream<Uint8Array> {
   );
 }
 
+function incomingRequest(
+  incoming: IncomingMessage,
+  path: string,
+  origin: URL,
+  trust: (ip: string) => boolean,
+): Request {
+  const headers = new Headers();
+  for (const [name, value] of Object.entries(incoming.headers)) {
+    if (value !== undefined)
+      headers.set(name, Array.isArray(value) ? value.join(', ') : value);
+  }
+  const ip = clientIp(incoming.socket.remoteAddress ?? '', headers, trust);
+  for (const name of [
+    'cf-connecting-ip',
+    'x-forwarded-for',
+    'x-real-ip',
+    'forwarded',
+    'x-forwarded-host',
+    'x-forwarded-proto',
+  ])
+    headers.delete(name);
+  headers.set('cf-connecting-ip', ip);
+  const method = incoming.method ?? 'GET';
+  const init = {
+    method,
+    headers,
+    duplex: 'half',
+    ...(!['GET', 'HEAD'].includes(method)
+      ? { body: requestBody(incoming) }
+      : {}),
+  };
+  return new Request(new URL(path, origin).href, init);
+}
+
+function healthResponse(method: string, healthy: boolean): Response {
+  const message = healthy ? 'ok\n' : 'unavailable\n';
+  let status = healthy ? 200 : 503;
+  if (!['GET', 'HEAD'].includes(method)) status = 405;
+  return secureResponse(
+    new Response(method === 'HEAD' ? null : message, {
+      status,
+      headers: {
+        'Content-Type': 'text/plain',
+        'Cache-Control': 'no-store',
+        Allow: 'GET, HEAD',
+      },
+    }),
+  );
+}
+
 export function createNodeServer(options: {
   worker: Worker;
   env: Env;
@@ -216,48 +266,11 @@ export function createNodeServer(options: {
         outgoing.end();
         return;
       }
-      const headers = new Headers();
-      for (const [name, value] of Object.entries(incoming.headers)) {
-        if (value !== undefined)
-          headers.set(name, Array.isArray(value) ? value.join(', ') : value);
-      }
-      const ip = clientIp(incoming.socket.remoteAddress ?? '', headers, trust);
-      for (const name of [
-        'cf-connecting-ip',
-        'x-forwarded-for',
-        'x-real-ip',
-        'forwarded',
-        'x-forwarded-host',
-        'x-forwarded-proto',
-      ])
-        headers.delete(name);
-      headers.set('cf-connecting-ip', ip);
-      const method = incoming.method ?? 'GET';
-      const init = {
-        method,
-        headers,
-        duplex: 'half',
-        ...(!['GET', 'HEAD'].includes(method)
-          ? { body: requestBody(incoming) }
-          : {}),
-      };
-      const request = new Request(new URL(path, origin).href, init);
+      const request = incomingRequest(incoming, path, origin, trust);
+      const method = request.method;
       let response: Response;
       if (new URL(request.url).pathname === '/healthz') {
-        const ok = options.healthy();
-        response = secureResponse(
-          new Response(
-            method === 'HEAD' ? null : ok ? 'ok\n' : 'unavailable\n',
-            {
-              status: !['GET', 'HEAD'].includes(method) ? 405 : ok ? 200 : 503,
-              headers: {
-                'Content-Type': 'text/plain',
-                'Cache-Control': 'no-store',
-                Allow: 'GET, HEAD',
-              },
-            },
-          ),
-        );
+        response = healthResponse(method, options.healthy());
       } else response = await options.worker.fetch(request, options.env);
       if (
         !incoming.complete ||

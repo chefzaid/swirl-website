@@ -3,6 +3,8 @@ from html.parser import HTMLParser
 from urllib.parse import urlsplit
 import json, re, xml.etree.ElementTree as ET
 
+JSON_LD_TYPE = '@type'
+
 class Page(HTMLParser):
     def __init__(self, html):
         super().__init__(convert_charrefs=True)
@@ -70,10 +72,10 @@ for path, page in pages.items():
     graph = page.graphs[0]
     assert graph['@context'] == 'https://schema.org'
     entities = graph['@graph']
-    assert any(e['@type'] == 'WebPage' and e['url'] == page.canonical() for e in entities)
+    assert any(e[JSON_LD_TYPE] == 'WebPage' and e['url'] == page.canonical() for e in entities)
     project = path.startswith(('/projets/', '/en/projects/'))
     if project:
-        assert any(e['@type'] == 'BreadcrumbList' for e in entities)
+        assert any(e[JSON_LD_TYPE] == 'BreadcrumbList' for e in entities)
         assert 'og:image' not in page.meta and 'twitter:image' not in page.meta
         assert 'astro-island' not in raw[path], 'Project page should not need client JS'
         assert not re.search(r'\b(?:équipes?|teams?)\b', raw[path], re.I), path
@@ -90,9 +92,10 @@ for home, prefix in [('/', '/projets/'), ('/en/', '/en/projects/')]:
     assert {path for path in pages if path.startswith(prefix)} <= hrefs, 'All projects must be crawlable without JS'
     social = [a for tag, a in page.links if tag == 'a' and a.get('href') == 'https://www.linkedin.com/in/chefzaid/']
     assert len(social) == 1 and social[0].get('aria-label')
-    people = [e for e in page.graphs[0]['@graph'] if e['@type'] == 'Person']
+    people = [e for e in page.graphs[0]['@graph'] if e[JSON_LD_TYPE] == 'Person']
     assert len(people) == 1 and people[0]['sameAs'] == ['https://www.linkedin.com/in/chefzaid/']
 
+# These are XML namespace identifiers, not network requests; HTTPS would identify different elements.
 ns = {'s': 'http://www.sitemaps.org/schemas/sitemap/0.9', 'x': 'http://www.w3.org/1999/xhtml'}
 urls = ET.parse('dist/client/sitemap.xml').getroot().findall('s:url', ns)
 assert len(urls) == len(pages)

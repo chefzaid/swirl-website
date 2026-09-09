@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { ArrowUpRight, LockKeyhole, Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type { Lang } from '@/data/portfolio';
-export default function SiteHeader({ lang }: { lang: Lang }) {
+export default function SiteHeader({ lang }: Readonly<{ lang: Lang }>) {
   const en = lang === 'en';
   const t = (fr: string, eng: string) => (en ? eng : fr);
   const [menu, setMenu] = useState(false);
@@ -16,8 +16,8 @@ export default function SiteHeader({ lang }: { lang: Lang }) {
     <>
       <header className="header wrap">
         <a className="brand" href="#home" aria-label="Swirl IT">
-          <img src="/assets/mark.svg" alt="" width="40" height="38" />
-          Swirl <span>IT</span>
+          <img src="/assets/mark.svg" alt="" width="40" height="38" /> Swirl{' '}
+          <span>IT</span>
           <i>.</i>
         </a>
         <nav aria-label={t('Navigation principale', 'Main navigation')}>

@@ -14,10 +14,10 @@ import ClientLogo from './ClientLogo';
 export default function ProjectGallery({
   lang,
   projects,
-}: {
+}: Readonly<{
   lang: Lang;
   projects: ProjectView[];
-}) {
+}>) {
   const en = lang === 'en';
   const t = (fr: string, eng: string) => (en ? eng : fr);
   const [filter, setFilter] = useState('all');
@@ -25,16 +25,16 @@ export default function ProjectGallery({
   const matching = projects.filter(
     (p) => filter === 'all' || p.sector === filter,
   );
+  function sectorLabel(sector: string) {
+    if (sector === 'finance')
+      return t('BANQUE & ASSURANCE', 'BANKING & INSURANCE');
+    if (sector === 'energy') return t('ÉNERGIE', 'ENERGY');
+    return t('INDUSTRIE & SERVICES', 'INDUSTRY & SERVICES');
+  }
   const renderProject = (p: ProjectView) => (
     <article className={`project-card ${p.color}`} key={p.id}>
       <div className="project-top">
-        <span>
-          {p.sector === 'finance'
-            ? t('BANQUE & ASSURANCE', 'BANKING & INSURANCE')
-            : p.sector === 'energy'
-              ? t('ÉNERGIE', 'ENERGY')
-              : t('INDUSTRIE & SERVICES', 'INDUSTRY & SERVICES')}
-        </span>
+        <span>{sectorLabel(p.sector)}</span>
         <span>{p.date}</span>
       </div>
       <div className="project-client">

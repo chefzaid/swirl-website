@@ -6,17 +6,17 @@ import LinkedInIcon from './LinkedInIcon';
 export default function SiteFooter({
   lang,
   homeHref = homePath(lang),
-}: {
+}: Readonly<{
   lang: Lang;
   homeHref?: string;
-}) {
+}>) {
   const en = lang === 'en';
   return (
     <footer className="footer wrap">
       <div className="footer-branding">
         <a className="brand" href={homeHref} aria-label="Swirl IT">
-          <img src="/assets/mark.svg" alt="" width="32" height="32" />
-          Swirl <span>IT</span>
+          <img src="/assets/mark.svg" alt="" width="32" height="32" /> Swirl{' '}
+          <span>IT</span>
           <i>.</i>
         </a>
         <a

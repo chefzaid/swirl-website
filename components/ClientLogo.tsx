@@ -1,6 +1,8 @@
 import { clientLogos } from '@/data/client-logos';
 
-export default function ClientLogo({ id }: { id: keyof typeof clientLogos }) {
+export default function ClientLogo({
+  id,
+}: Readonly<{ id: keyof typeof clientLogos }>) {
   return (
     <span className={`client-logo client-logo--${id}`}>
       {clientLogos[id].map((logo) => (

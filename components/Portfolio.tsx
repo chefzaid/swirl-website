@@ -31,7 +31,7 @@ export default function Portfolio({
   header,
   projectsContent,
   contactForm,
-}: Props) {
+}: Readonly<Props>) {
   const en = lang === 'en';
   const t = (fr: string, eng: string) => (en ? eng : fr);
   return (

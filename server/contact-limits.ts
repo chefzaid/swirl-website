@@ -17,8 +17,12 @@ export function sourceBucket(request: Request): string {
   const words =
     halves.length === 1
       ? left
-      : [...left, ...Array(8 - left.length - right.length).fill('0'), ...right];
-  const values = words.map((word) => parseInt(word, 16));
+      : [
+          ...left,
+          ...Array.from({ length: 8 - left.length - right.length }, () => '0'),
+          ...right,
+        ];
+  const values = words.map((word) => Number.parseInt(word, 16));
   if (values.slice(0, 5).every((value) => value === 0) && values[5] === 65535) {
     return `v4:${values[6] >> 8}.${values[6] & 255}.${values[7] >> 8}.${values[7] & 255}`;
   }
@@ -158,8 +162,6 @@ export async function insertWithinLimits(
         'unconfigured',
         reservation,
       ),
-  );
-  statements.push(
     db
       .prepare('DELETE FROM contact_rate_limits WHERE key = ?')
       .bind(reservation),

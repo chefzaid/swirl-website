@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 import type { Lang } from '@/data/portfolio';
 
-export default function SoftwareLifecycle({ lang }: { lang: Lang }) {
+export default function SoftwareLifecycle({ lang }: Readonly<{ lang: Lang }>) {
   const en = lang === 'en';
   const t = (fr: string, english: string) => (en ? english : fr);
   const stages = [
@@ -59,7 +59,10 @@ export default function SoftwareLifecycle({ lang }: { lang: Lang }) {
       </figcaption>
       <ol className="lifecycle-stages">
         {stages.map(({ title, description, Icon }, i) => (
-          <li className={`lifecycle-stage lifecycle-stage-${i + 1}`} key={i}>
+          <li
+            className={`lifecycle-stage lifecycle-stage-${i + 1}`}
+            key={title}
+          >
             <span className="lifecycle-number" aria-hidden="true">
               {String(i + 1).padStart(2, '0')}
             </span>

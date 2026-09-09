@@ -43,6 +43,13 @@ void test('validates required fields, normalises email and rejects invalid types
   for (const patch of [
     { name: 'x' },
     { email: 'invalid' },
+    { email: 'visitor@@example.test' },
+    { email: '@example.test' },
+    { email: 'visitor@.test' },
+    { email: 'visitor@example.' },
+    { email: 'visitor@example' },
+    { email: 'visitor@exam ple.test' },
+    { email: 'visitor@' + '.'.repeat(240) },
     { message: 'short' },
     { consent: false },
     { subject: '   ' },

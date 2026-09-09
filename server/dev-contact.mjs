@@ -15,7 +15,7 @@ export function devContact() {
             });
             for (const file of (await readdir('drizzle'))
               .filter((name) => name.endsWith('.sql'))
-              .sort()) {
+              .sort((left, right) => left.localeCompare(right))) {
               const sql = await readFile(`drizzle/${file}`, 'utf8');
               for (const statement of sql
                 .split('--> statement-breakpoint')

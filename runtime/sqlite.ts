@@ -84,7 +84,7 @@ export class SqliteContactDatabase implements ContactDatabase {
     try {
       for (const name of readdirSync(directory)
         .filter((file) => file.endsWith('.sql'))
-        .sort()) {
+        .sort((left, right) => left.localeCompare(right))) {
         const sql = readFileSync(join(directory, name), 'utf8');
         const checksum = createHash('sha256').update(sql).digest('hex');
         const previous = this.sqlite

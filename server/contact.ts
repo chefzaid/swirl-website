@@ -37,6 +37,16 @@ const json = (
       ...extraHeaders,
     },
   });
+function validEmail(email: string): boolean {
+  if (/\s/.test(email)) return false;
+  const parts = email.split('@');
+  if (parts.length !== 2 || !parts[0]) return false;
+  const domain = parts[1];
+  // A separate domain check avoids overlapping repetitions and backtracking.
+  const dot = domain.lastIndexOf('.');
+  return dot > 0 && dot < domain.length - 1;
+}
+
 export function validateContact(value: unknown): ContactData | null {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
   const v = value as Record<string, unknown>;
@@ -63,11 +73,11 @@ export function validateContact(value: unknown): ContactData | null {
     data.name.length < 2 ||
     data.name.length > 100 ||
     // oxlint-disable-next-line no-control-regex -- Reject control bytes in single-line input.
-    /[\r\n\x00-\x1f]/.test(data.name) ||
+    /[\x00-\x1f]/.test(data.name) ||
     data.email.length > 254 ||
     // oxlint-disable-next-line no-control-regex -- Reject address control bytes before storage or mail delivery.
     /[\x00-\x20\x7f<>]/.test(data.email) ||
-    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email) ||
+    !validEmail(data.email) ||
     data.message.length < 20 ||
     data.message.length > 5000 ||
     data.subject.length < 1 ||
@@ -117,11 +127,13 @@ async function readLimited(request: Request) {
     reader.releaseLock();
   }
 }
+type NotificationStatus = 'unconfigured' | 'sent' | 'failed';
+
 export async function notifyContact(
   env: ContactEnv,
   data: ContactData,
   send: typeof fetch = fetch,
-): Promise<'unconfigured' | 'sent' | 'failed'> {
+): Promise<NotificationStatus> {
   // Select one provider; falling back after a timeout could send two emails.
   return env.RESEND_API_KEY
     ? notifyResend(env, data, send)
@@ -131,7 +143,7 @@ export async function notifyResend(
   env: ContactEnv,
   data: ContactData,
   send: typeof fetch = fetch,
-): Promise<'unconfigured' | 'sent' | 'failed'> {
+): Promise<NotificationStatus> {
   if (!env.RESEND_API_KEY || !env.CONTACT_SENDER) return 'unconfigured';
   try {
     const response = await send('https://api.resend.com/emails', {
@@ -169,7 +181,7 @@ export async function notifyExchange(
   env: ContactEnv,
   data: ContactData,
   send: typeof fetch = fetch,
-): Promise<'unconfigured' | 'sent' | 'failed'> {
+): Promise<NotificationStatus> {
   if (
     !env.MS_TENANT_ID ||
     !env.MS_CLIENT_ID ||
@@ -227,10 +239,7 @@ export async function notifyExchange(
     return 'failed';
   }
 }
-export async function handleContact(
-  request: Request,
-  env: ContactEnv,
-): Promise<Response> {
+function validateRequestHeaders(request: Request): Response | null {
   if (request.method !== 'POST')
     return new Response(null, {
       status: 405,
@@ -255,6 +264,15 @@ export async function handleContact(
   )
     return json({ error: 'content_encoding' }, 415);
   if (Number(length || 0) > 18000) return json({ error: 'too_large' }, 413);
+  return null;
+}
+
+export async function handleContact(
+  request: Request,
+  env: ContactEnv,
+): Promise<Response> {
+  const rejected = validateRequestHeaders(request);
+  if (rejected) return rejected;
   let body: unknown;
   try {
     body = await readLimited(request);
@@ -272,84 +290,83 @@ export async function handleContact(
   if (now - data.startedAt < 2000) return json({ error: 'too_fast' }, 400);
   try {
     const db = getDb(env);
-    const keys = await contactKeys(request, data.email);
-    const retryAfter = await limitAttempts(db, keys.ip, now);
-    if (retryAfter)
-      return json({ error: 'rate_limit' }, 429, {
-        'Retry-After': String(retryAfter),
-      });
-    const existing = await db
-      .prepare(
-        'SELECT id,email,name,message,service,notification_status FROM contact_messages WHERE id = ?',
-      )
-      .bind(data.id)
-      .first<{
-        id: string;
-        email: string;
-        name: string;
-        message: string;
-        service: string;
-        notification_status: string;
-      }>();
-    if (existing) {
-      if (
-        existing.email !== data.email ||
-        existing.name !== data.name ||
-        existing.message !== data.message ||
-        existing.service !== data.subject
-      )
-        return json({ error: 'conflict' }, 409);
-      return json({
-        ok: true,
-        notified: existing.notification_status === 'sent',
-      });
-    }
-    await db
-      .prepare('DELETE FROM contact_rate_limits WHERE expires_at <= ?')
-      .bind(now)
-      .run();
-    const inserted = await insertWithinLimits(db, data, keys, now);
-    if (!inserted) {
-      const raced = await db
-        .prepare(
-          'SELECT email,name,message,service,notification_status FROM contact_messages WHERE id = ?',
-        )
-        .bind(data.id)
-        .first<{
-          email: string;
-          name: string;
-          message: string;
-          service: string;
-          notification_status: string;
-        }>();
-      if (!raced)
-        return json({ error: 'rate_limit' }, 429, {
-          'Retry-After': String(await quotaRetryAfter(db, keys, now)),
-        });
-      if (
-        raced.email !== data.email ||
-        raced.name !== data.name ||
-        raced.message !== data.message ||
-        raced.service !== data.subject
-      )
-        return json({ error: 'conflict' }, 409);
-      return json({ ok: true, notified: raced.notification_status === 'sent' });
-    }
-    const status = await notifyContact(env, data);
-    // Persist before notifying so an email-service failure never loses the enquiry.
-    try {
-      await db
-        .prepare(
-          'UPDATE contact_messages SET notification_status = ? WHERE id = ?',
-        )
-        .bind(status, data.id)
-        .run();
-    } catch {
-      console.error('Unable to update contact notification status');
-    }
-    return json({ ok: true, notified: status === 'sent' }, 201);
+    return await storeContact(request, env, db, data, now);
   } catch {
     console.error('Contact storage unavailable');
     return json({ error: 'unavailable' }, 503);
   }
+}
+
+interface StoredContact {
+  email: string;
+  name: string;
+  message: string;
+  service: string;
+  notification_status: string;
+}
+
+function findContact(db: ContactDatabase, id: string) {
+  return db
+    .prepare(
+      'SELECT email,name,message,service,notification_status FROM contact_messages WHERE id = ?',
+    )
+    .bind(id)
+    .first<StoredContact>();
+}
+
+function duplicateResponse(
+  existing: StoredContact,
+  data: ContactData,
+): Response {
+  if (
+    existing.email !== data.email ||
+    existing.name !== data.name ||
+    existing.message !== data.message ||
+    existing.service !== data.subject
+  )
+    return json({ error: 'conflict' }, 409);
+  return json({ ok: true, notified: existing.notification_status === 'sent' });
+}
+
+async function storeContact(
+  request: Request,
+  env: ContactEnv,
+  db: ContactDatabase,
+  data: ContactData,
+  now: number,
+): Promise<Response> {
+  const keys = await contactKeys(request, data.email);
+  const retryAfter = await limitAttempts(db, keys.ip, now);
+  if (retryAfter)
+    return json({ error: 'rate_limit' }, 429, {
+      'Retry-After': String(retryAfter),
+    });
+  const existing = await findContact(db, data.id);
+  if (existing) return duplicateResponse(existing, data);
+  await db
+    .prepare('DELETE FROM contact_rate_limits WHERE expires_at <= ?')
+    .bind(now)
+    .run();
+  const inserted = await insertWithinLimits(db, data, keys, now);
+  if (!inserted) {
+    const raced = await findContact(db, data.id);
+    if (!raced)
+      return json({ error: 'rate_limit' }, 429, {
+        'Retry-After': String(await quotaRetryAfter(db, keys, now)),
+      });
+    return duplicateResponse(raced, data);
+  }
+  const status = await notifyContact(env, data);
+  // Persist before notifying so an email-service failure never loses the enquiry.
+  try {
+    await db
+      .prepare(
+        'UPDATE contact_messages SET notification_status = ? WHERE id = ?',
+      )
+      .bind(status, data.id)
+      .run();
+  } catch {
+    console.error('Unable to update contact notification status');
+  }
+  return json({ ok: true, notified: status === 'sent' }, 201);
 }

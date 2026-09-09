@@ -27,6 +27,7 @@
   --input: #3a413b;
   --ring: #d7ee92;
   --radius: 0.5rem;
+  --popover: #1c211d;
 }
 * {
   box-sizing: border-box;
@@ -135,6 +136,10 @@ nav a.active::before {
   gap: 25px;
 }
 .language {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  line-height: 1;
   font-size: 12px;
   white-space: nowrap;
 }
@@ -254,6 +259,8 @@ h1 > span {
   white-space: nowrap;
 }
 .hero-visual {
+  padding: 0;
+  margin-bottom: 0;
   position: relative;
   align-self: center;
 }
@@ -459,10 +466,6 @@ h1 > span {
   --color-secondary-foreground: var(--foreground);
   --color-accent: var(--muted);
   --color-accent-foreground: var(--foreground);
-}
-:root,
-.dark {
-  --popover: #1c211d;
 }
 .section {
   padding-block: 110px;
@@ -1238,12 +1241,6 @@ h2 span {
   background: transparent;
   padding: 5px;
 }
-.language {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  line-height: 1;
-}
 .language a {
   color: #818b80;
   padding-block: 8px;
@@ -1533,10 +1530,6 @@ h2 span {
 }
 
 /* A readable, bilingual diagram of the software lifecycle. */
-.hero-visual {
-  padding: 0;
-  margin-bottom: 0;
-}
 .lifecycle-figure {
   margin: 0;
   padding: 28px;
