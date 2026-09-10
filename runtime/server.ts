@@ -232,6 +232,7 @@ export function createNodeServer(options: {
   worker: Worker;
   env: Env;
   origin: string;
+  aliasHost?: string;
   trustedProxyCidrs?: string;
   healthy: () => boolean | Promise<boolean>;
 }) {
@@ -248,6 +249,17 @@ export function createNodeServer(options: {
       'PUBLIC_ORIGIN must be an HTTP(S) origin without a path or credentials',
     );
   const trust = trustedProxy(options.trustedProxyCidrs ?? '');
+  const aliasHost = options.aliasHost ?? `www.${origin.hostname}`;
+  if (
+    aliasHost.length > 253 ||
+    aliasHost === origin.hostname ||
+    !aliasHost
+      .split('.')
+      .every((label) => /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/.test(label))
+  )
+    throw new Error(
+      'PUBLIC_ALIAS_HOST must be a hostname distinct from PUBLIC_ORIGIN',
+    );
   async function handle(incoming: IncomingMessage, outgoing: ServerResponse) {
     try {
       const path = incoming.url ?? '/';
@@ -270,7 +282,7 @@ export function createNodeServer(options: {
       const method = request.method;
       let response: Response;
       const host = incoming.headers.host?.toLowerCase().replace(/:\d+$/, '');
-      if (host === `www.${origin.hostname}`) {
+      if (host === aliasHost) {
         response = secureResponse(
           new Response(null, {
             status: 308,

@@ -5,6 +5,9 @@ umask 077
 
 repository_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$repository_root"
+# shellcheck source=infra/scripts/check-onboarding.sh
+source "$repository_root/infra/scripts/check-onboarding.sh"
+check_onboarding_source
 for required in CI_COMMIT_SHA CI_DEFAULT_BRANCH REGISTRY_PULL_IMAGE; do
   [[ -n "${!required:-}" ]] || { printf '%s is required\n' "$required" >&2; exit 1; }
 done
@@ -17,12 +20,25 @@ source_is_current() {
 }
 
 skip_stale_release() {
+  if [[ "${APP_ONBOARDING:-false}" == true ]]; then
+    echo 'The onboarding revision is stale; rerun repository onboarding' >&2
+    exit 1
+  fi
   printf 'DEPLOY_SKIPPED=true\nSOURCE_REVISION=%s\n' "$CI_COMMIT_SHA" > release.env
   printf 'A newer source commit is on %s; this pipeline will not change production.\n' "$CI_DEFAULT_BRANCH"
   exit 0
 }
 
-if ! source_is_current; then skip_stale_release; fi
+resume_release=false
+if ! source_is_current; then
+  previous_release="$(git rev-parse "origin/$CI_DEFAULT_BRANCH")"
+  if onboarding_release_matches "$previous_release"; then
+    resume_release=true
+    printf 'Resuming rollout of onboarding publication %s.\n' "$previous_release"
+  else
+    skip_stale_release
+  fi
+fi
 [[ -s image-digest.txt ]] || { echo 'The image-build digest artifact is missing'; exit 1; }
 image_digest="$(< image-digest.txt)"
 [[ "$image_digest" =~ ^sha256:[a-f0-9]{64}$ ]] || { echo 'The image builder returned an invalid digest'; exit 1; }
@@ -30,13 +46,15 @@ image_digest="$(< image-digest.txt)"
 # This job starts in a fresh tools image after Kaniko exits. The source check
 # above excludes stale builds; a normal push rejects any race after the check.
 git checkout --quiet -B "$CI_DEFAULT_BRANCH" "origin/$CI_DEFAULT_BRANCH"
-bash infra/scripts/set-image-digest.sh "$image_digest"
-git config user.name 'Website GitLab CI'
-git config user.email 'gitlab-ci@swirlit.dev'
-git add infra/k8s/kustomization.yaml
-if ! git diff --cached --quiet; then
-  git commit --quiet -m "deploy: website ${CI_COMMIT_SHA:0:12} [skip ci]"
-  git push origin "HEAD:$CI_DEFAULT_BRANCH"
+if [[ "$resume_release" == false ]]; then
+  bash infra/scripts/set-image-digest.sh "$image_digest"
+  git config user.name 'Website GitLab CI'
+  git config user.email 'gitlab-ci@swirlit.dev'
+  git add infra/k8s/kustomization.yaml
+  if [[ "${APP_ONBOARDING:-false}" == true ]] || ! git diff --cached --quiet; then
+    infra/scripts/commit-deployment.sh "deploy: website ${CI_COMMIT_SHA:0:12} [skip ci]"
+    git push origin "HEAD:$CI_DEFAULT_BRANCH"
+  fi
 fi
 deploy_revision="$(git rev-parse HEAD)"
 printf 'DEPLOY_SKIPPED=false\nSOURCE_REVISION=%s\nDEPLOY_REVISION=%s\nIMAGE=%s@%s\n' \
@@ -66,6 +84,10 @@ while (( SECONDS < deadline )); do
   # report its own release as the current deployment or reset that revision.
   git fetch --quiet origin "$CI_DEFAULT_BRANCH"
   if [[ "$(git rev-parse "origin/$CI_DEFAULT_BRANCH")" != "$deploy_revision" ]]; then
+    if [[ "${APP_ONBOARDING:-false}" == true ]]; then
+      echo 'A newer revision replaced onboarding during deployment' >&2
+      exit 1
+    fi
     printf 'Production has a newer source revision; stopping the superseded rollout wait.\n'
     exit 0
   fi

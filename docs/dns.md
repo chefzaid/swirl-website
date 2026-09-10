@@ -1,9 +1,13 @@
 # Public DNS
 
-This repository owns `swirlit.dev`, `www.swirlit.dev`, including DNS, Kubernetes Ingress routing
+This repository owns `swirlit.dev` and `www.swirlit.dev` by default, including DNS, Kubernetes Ingress routing
 and application redirects. The platform supplies the shared zone, TLS,
-ingress and optional HA Tunnel; its installer does not create or remove these
-application DNS records.
+ingress and optional HA Tunnel. [Repository onboarding](onboarding.md) asks the
+platform to reconcile the primary host and redirect alias declared by this
+application. Ordinary platform installation without selecting the repository
+leaves its DNS alone.
+For a customized deployment, use the primary host, alias and zone saved by
+onboarding instead of the default examples below.
 
 ## Direct ingress
 

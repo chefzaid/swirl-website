@@ -1,6 +1,7 @@
 workflow:
   rules:
     - if: '$SONAR_SCAN_ONLY == "true" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+    - if: '$CI_PIPELINE_SOURCE == "api" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $APP_ONBOARDING == "true"'
     - if: '$CI_COMMIT_MESSAGE =~ /\[skip ci\]|\[ci skip\]/i'
       when: never
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
@@ -21,6 +22,7 @@ default:
 variables:
   GIT_DEPTH: "0"
   SONAR_SCAN_ONLY: "false"
+  APP_ONBOARDING: "false"
   SONAR_HOST_URL: "http://sonarqube.infra.svc.cluster.local:9000"
   SONAR_USER_HOME: "$CI_PROJECT_DIR/.cache/sonar"
   NPM_CONFIG_CACHE: "$CI_PROJECT_DIR/.cache/npm"
@@ -52,6 +54,7 @@ verify:
     - python3 scripts/check-built-seo.py
     - npm audit --audit-level=high
     - bash infra/scripts/test-delivery.sh
+    - python3 infra/scripts/test-onboarding.py
   artifacts:
     when: always
     name: website-build-$CI_COMMIT_SHORT_SHA

@@ -31,13 +31,15 @@ assert mail_ref['key'] == mail_secret['spec']['data'][0]['secretKey']
 assert mail_secret['spec']['data'][0]['remoteRef'] == {'key': 'apps/website/contact', 'property': 'RESEND_API_KEY'}
 assert 'contact-notifications.yaml' in yaml.safe_load((source / 'infra/k8s/kustomization.yaml').read_text())['resources']
 ingress = yaml.safe_load((source / 'infra/k8s/ingress.yaml').read_text())
-assert [rule['host'] for rule in ingress['spec']['rules']] == ['swirlit.dev', 'www.swirlit.dev']
+hosts = [rule['host'] for rule in ingress['spec']['rules']]
+assert len(hosts) == len(set(hosts)) == 2
 assert ingress['spec']['ingressClassName'] == 'nginx'
 assert ingress['metadata']['annotations']['nginx.ingress.kubernetes.io/force-ssl-redirect'] == 'true'
 assert ingress['metadata']['annotations']['nginx.ingress.kubernetes.io/preserve-trailing-slash'] == 'true'
-assert set(ingress['spec']['tls'][0]['hosts']) == {'swirlit.dev', 'www.swirlit.dev'}
-assert ingress['spec']['tls'][0]['secretName'] == 'swirlit-dev-tls'
+assert set(ingress['spec']['tls'][0]['hosts']) == set(hosts)
+assert ingress['spec']['tls'][0]['secretName']
 assert mail_env['PUBLIC_ORIGIN']['value'] == 'https://' + ingress['spec']['rules'][0]['host']
+assert mail_env['PUBLIC_ALIAS_HOST']['value'] == hosts[1]
 assert ingress['spec']['rules'][1]['http']['paths'] == ingress['spec']['rules'][0]['http']['paths']
 assert 'nginx.ingress.kubernetes.io/permanent-redirect' not in ingress['metadata']['annotations']
 credentials = yaml.safe_load((source / 'infra/argocd/repository-credentials.yaml').read_text())
@@ -118,12 +120,10 @@ with tempfile.TemporaryDirectory(prefix='website-delivery-test.') as directory:
     git(workspace, 'config', 'user.email', 'test@example.invalid')
     git(workspace, 'remote', 'add', 'origin', str(remote))
     shutil.copytree(source / 'infra', workspace / 'infra')
-    (workspace / 'dist/server').mkdir(parents=True)
     (workspace / 'dist/client').mkdir(parents=True)
     (workspace / 'dist/runtime').mkdir(parents=True)
     (workspace / 'dist/runtime/main.js').write_text('// verified runtime artifact\n')
     (workspace / 'dist/runtime/migrate-postgres.js').write_text('// verified migration artifact\n')
-    (workspace / 'dist/server/index.js').write_text('// verified worker artifact\n')
     (workspace / 'dist/client/site.css').write_text('body{}\n')
     (workspace / 'Dockerfile').write_text('FROM scratch\n')
     git(workspace, 'add', '.')
@@ -137,15 +137,18 @@ with tempfile.TemporaryDirectory(prefix='website-delivery-test.') as directory:
         path.write_text(mock)
         path.chmod(0o700)
     digest = 'sha256:' + 'a' * 64
-    image = 'registry.swirlit.dev/swirlit/website/site@' + digest
+    image_name = yaml.safe_load((source/'infra/k8s/kustomization.yaml').read_text())['images'][0]['name']
+    image = image_name + '@' + digest
     log = temporary / 'calls.jsonl'
     environment = dict(os.environ, PATH=str(commands)+':'+os.environ['PATH'], MOCK_LOG=str(log),
                        MOCK_DIGEST=digest, MOCK_IMAGE=image, CI_COMMIT_SHA=revision,
+                       APP_ONBOARDING='true', ONBOARDING_EXPECTED_SHA=revision,
+                       CI_PIPELINE_SOURCE='api', CI_PIPELINE_ID='73', CI_COMMIT_BRANCH='main',
                        CI_PROJECT_DIR=str(workspace), DOCKER_CONFIG=str(temporary / 'docker-config'),
                        CI_DEFAULT_BRANCH='main', CI_PROJECT_PATH='swirlit/website',
                        CI_REGISTRY_USER='fixture', CI_REGISTRY_PASSWORD='fixture-secret',
                        REGISTRY_PUSH_HOST='registry.internal:5050',
-                       REGISTRY_PULL_IMAGE='registry.swirlit.dev/swirlit/website/site',
+                       REGISTRY_PULL_IMAGE=image_name,
                        KANIKO_EXECUTOR=str(commands / 'kaniko'))
 
     def execute(script, shell='bash'):
@@ -169,6 +172,7 @@ with tempfile.TemporaryDirectory(prefix='website-delivery-test.') as directory:
     assert any(call['tool'] == 'curl' and call['args'][-1].endswith('/healthz') for call in calls)
 
     # Retrying an old pipeline never overwrites the newer GitOps commit.
+    environment['APP_ONBOARDING'] = 'false'
     git(workspace, 'checkout', '-q', '--detach', revision)
     calls = execute('ci-release.sh')
     assert 'DEPLOY_SKIPPED=true' in (workspace / 'release.env').read_text()

@@ -22,6 +22,86 @@ import {
 } from '../runtime/server.ts';
 import { createWorker } from '../server/worker.ts';
 
+void test('a configured alias redirects to a custom primary host without trusting forwarding headers', async (t) => {
+  const directory = await mkdtemp(join(tmpdir(), 'website-alias-'));
+  t.after(() => rm(directory, { recursive: true, force: true }));
+  const db = new SqliteContactDatabase(
+    join(directory, 'contact.sqlite'),
+    'drizzle',
+  );
+  t.after(() => db.close());
+  const options = {
+    worker: createWorker({ '/': '<h1>Home</h1>' }),
+    env: { DB: db, ASSETS: assetFetcher(directory) },
+    origin: 'https://portal.example.test',
+    healthy: () => true,
+  };
+  for (const aliasHost of [
+    'portal.example.test',
+    '@.example.test',
+    'evil.test/path',
+    'bad..test',
+    'host:443',
+    'https://evil.test',
+  ]) {
+    assert.throws(
+      () => createNodeServer({ ...options, aliasHost }),
+      /PUBLIC_ALIAS_HOST/,
+    );
+  }
+  const server = createNodeServer({
+    ...options,
+    aliasHost: 'welcome.example.test',
+  });
+  server.listen(0, '127.0.0.1');
+  await once(server, 'listening');
+  t.after(
+    () =>
+      new Promise<void>((resolve, reject) => {
+        server.close((error) => (error ? reject(error) : resolve()));
+        server.closeAllConnections();
+      }),
+  );
+  for (const [host, expectedStatus] of [
+    ['WELCOME.EXAMPLE.TEST:443', 308],
+    ['www.portal.example.test', 200],
+    ['welcome.example.test.evil.test', 200],
+  ] as const) {
+    const response = await new Promise<{ status: number; location?: string }>(
+      (resolve, reject) => {
+        const request = httpRequest(
+          {
+            host: '127.0.0.1',
+            port: (server.address() as AddressInfo).port,
+            path: '/?next=%2Fpath%2F&trailing=/',
+            headers: {
+              host,
+              'x-forwarded-host': 'attacker.test',
+              'x-forwarded-proto': 'http',
+            },
+          },
+          (result) => {
+            result.resume();
+            resolve({
+              status: result.statusCode ?? 0,
+              location: result.headers.location,
+            });
+          },
+        );
+        request.on('error', reject);
+        request.end();
+      },
+    );
+    assert.equal(response.status, expectedStatus);
+    assert.equal(
+      response.location,
+      expectedStatus === 308
+        ? 'https://portal.example.test/?next=%2Fpath%2F&trailing=/'
+        : undefined,
+    );
+  }
+});
+
 void test('SQLite survives reopening, migrates once, and rolls a failed batch back', async (t) => {
   const directory = await mkdtemp(join(tmpdir(), 'website-db-'));
   t.after(() => rm(directory, { recursive: true, force: true }));

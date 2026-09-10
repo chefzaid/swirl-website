@@ -25,6 +25,9 @@ reach the apex before using the same-origin contact form.
 
 ## Automatic delivery
 
+[Repository onboarding](onboarding.md) configures a new deployment through the
+platform's `add-repos.sh` entrypoint, using this repository's declaration.
+
 GitLab runs the required `verify` job for every branch or merge request. It
 installs the lockfile dependencies, performs Astro/TypeScript and lint checks,
 runs contact/runtime tests, builds all documents, verifies the compiled CSP and

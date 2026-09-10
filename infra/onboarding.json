@@ -1,0 +1,134 @@
+{
+  "version": 1,
+  "application": "infra/argocd/application.yaml",
+  "inputs": [
+    {
+      "name": "APP_SUBDOMAIN",
+      "label": "Public subdomain (@ for apex)",
+      "type": "subdomain",
+      "default": "@"
+    },
+    {
+      "name": "APP_ALIAS",
+      "label": "Redirect alias subdomain",
+      "type": "subdomain",
+      "default": "www"
+    },
+    {
+      "name": "TRUSTED_PROXY_CIDRS",
+      "label": "Trusted ingress pod CIDRs",
+      "type": "cidrs",
+      "default": "{{POD_CIDR}}"
+    }
+  ],
+  "files": [
+    ".gitlab-ci.yml",
+    ".github/workflows/sync-gitlab.yml",
+    "sonar-project.properties",
+    "data/site.ts",
+    "runtime/main.ts",
+    "infra/argocd/application.yaml",
+    "infra/argocd/repository-credentials.yaml",
+    "infra/k8s/kustomization.yaml",
+    "infra/k8s/website.yaml",
+    "infra/k8s/ingress.yaml",
+    "infra/k8s/observability.yaml",
+    "infra/overlays/ha/database-setup.yaml"
+  ],
+  "replacements": [
+    {
+      "from": "targetRevision: main",
+      "to": "targetRevision: {{DEFAULT_BRANCH}}"
+    },
+    {
+      "from": "http://gitlab.swirlit.internal/swirlit/website.git",
+      "to": "{{GITLAB_REPOSITORY_URL}}"
+    },
+    {
+      "from": "https://gitlab.swirlit.dev/swirlit/website.git",
+      "to": "{{GITLAB_PUBLIC_URL}}/{{GITLAB_PROJECT_PATH}}.git"
+    },
+    {
+      "from": "https://gitlab.swirlit.dev",
+      "to": "{{GITLAB_PUBLIC_URL}}"
+    },
+    {
+      "from": "gitlab-registry.swirlit.internal:5050",
+      "to": "{{REGISTRY_PUSH_HOST}}"
+    },
+    {
+      "from": "registry.swirlit.dev/swirlit/website",
+      "to": "{{REGISTRY_HOST}}/{{GITLAB_PROJECT_PATH}}"
+    },
+    {
+      "from": "https://swirlit.dev",
+      "to": "https://{{APP_HOST}}"
+    },
+    {
+      "from": "www.swirlit.dev",
+      "to": "{{APP_ALIAS}}.{{PUBLIC_DOMAIN}}"
+    },
+    {
+      "from": "host: swirlit.dev",
+      "to": "host: {{APP_HOST}}"
+    },
+    {
+      "from": "- swirlit.dev",
+      "to": "- {{APP_HOST}}"
+    },
+    {
+      "from": "swirlit-dev-tls",
+      "to": "{{TLS_SECRET_NAME}}"
+    },
+    {
+      "from": "swirlit.internal",
+      "to": "{{INTERNAL_DNS_ZONE}}"
+    },
+    {
+      "from": "swirlit:website",
+      "to": "{{SONAR_PROJECT_KEY}}"
+    },
+    {
+      "from": "10.42.0.0/16",
+      "to": "{{TRUSTED_PROXY_CIDRS}}"
+    }
+  ],
+  "registry": {
+    "path": "apps/website/registry"
+  },
+  "vault": [
+    {
+      "path": "apps/website/contact",
+      "fields": {
+        "RESEND_API_KEY": {
+          "value": ""
+        }
+      }
+    }
+  ],
+  "bootstrap": [
+    "infra/k8s/delivery-rbac.yaml",
+    "infra/argocd/repository-credentials.yaml"
+  ],
+  "dns": {
+    "hosts": [
+      "{{APP_HOST}}",
+      "{{APP_ALIAS}}.{{PUBLIC_DOMAIN}}"
+    ]
+  },
+  "pipeline": {
+    "variables": {
+      "APP_ONBOARDING": "true"
+    },
+    "jobs": [
+      "verify",
+      "image-build",
+      "release"
+    ]
+  },
+  "readiness": {
+    "deployments": [
+      "website"
+    ]
+  }
+}

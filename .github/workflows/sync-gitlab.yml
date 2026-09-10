@@ -55,13 +55,15 @@ jobs:
           }
 
           askpass="$RUNNER_TEMP/git-askpass"
+          GITLAB_HOST="${GITLAB_REPOSITORY#https://}"
+          export GITLAB_HOST="${GITLAB_HOST%%/*}"
           cat > "$askpass" <<'EOF'
           #!/bin/sh
           case "$1" in
             *Username*github.com*|*github.com*Username*) printf '%s\n' 'x-access-token' ;;
             *github.com*) printf '%s\n' "$GITHUB_TOKEN" ;;
-            *Username*gitlab.swirlit.dev*|*gitlab.swirlit.dev*Username*) printf '%s\n' "$GITLAB_USERNAME" ;;
-            *gitlab.swirlit.dev*) printf '%s\n' "$GITLAB_TOKEN" ;;
+            *Username*"$GITLAB_HOST"*|*"$GITLAB_HOST"*Username*) printf '%s\n' "$GITLAB_USERNAME" ;;
+            *"$GITLAB_HOST"*) printf '%s\n' "$GITLAB_TOKEN" ;;
             *) exit 1 ;;
           esac
           EOF

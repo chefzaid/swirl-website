@@ -8,7 +8,8 @@ Requires Node 24.15+ and npm.
 
 Production on the bare-metal K3s cluster uses Node 24 and serves
 `https://swirlit.dev`. Its delivery and persistent contact database are described
-in [K3s deployment](docs/deployment.md).
+in [K3s deployment](docs/deployment.md). See [repository onboarding](docs/onboarding.md)
+to import and configure a new deployment.
 
 ```sh
 npm install
@@ -52,6 +53,9 @@ npx wrangler d1 execute swirl-it-contact --local --command "SELECT id, name, ema
 ```
 
 ## Validation
+
+The repository onboarding contract can be checked with
+`python3 infra/scripts/test-onboarding.py`.
 
 Tests use a real in-memory SQLite database with the generated migrations. They cover input validation, durable inserts, retries, rate limits, cross-origin requests, oversized bodies, storage failures, and the Resend and Exchange request contracts with mocked HTTP. Resend tests also check provider selection, invalid responses, preservation after sending failures, and duplicate submissions. No real email or third-party request is made by these tests.
 

@@ -13,7 +13,7 @@ import sys
 
 manifest = Path(sys.argv[1])
 updated, count = re.subn(
-    r'(  - name: registry\.swirlit\.dev/swirlit/website/site\n)    (?:newTag|digest): [^\n]+',
+    r'(  - name: [^\n]+/site\n)    (?:newTag|digest): [^\n]+',
     lambda match: match[1] + '    digest: ' + sys.argv[2],
     manifest.read_text(),
 )

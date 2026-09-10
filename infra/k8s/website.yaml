@@ -59,6 +59,8 @@ spec:
               value: /data
             - name: PUBLIC_ORIGIN
               value: https://swirlit.dev
+            - name: PUBLIC_ALIAS_HOST
+              value: www.swirlit.dev
             - name: CONTACT_SENDER
               value: noreply@swirlit.dev
             - name: RESEND_API_KEY

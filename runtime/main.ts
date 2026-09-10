@@ -48,6 +48,7 @@ const server = createNodeServer({
   worker,
   env,
   origin: process.env.PUBLIC_ORIGIN ?? 'https://swirlit.dev',
+  aliasHost: process.env.PUBLIC_ALIAS_HOST,
   trustedProxyCidrs: process.env.TRUSTED_PROXY_CIDRS,
   healthy: () => database.healthy(),
 });
