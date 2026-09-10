@@ -188,7 +188,7 @@ export async function insertWithinLimits(
       .prepare('DELETE FROM contact_rate_limits WHERE key = ?')
       .bind(reservation),
   );
-  // D1 batch is transactional. Eligibility is evaluated before any allowance
+  // Database batches are transactional. Eligibility is evaluated before any allowance
   // changes, and the temporary reservation never survives the transaction.
   // A failed quota therefore consumes no other new-submission allowance.
   const results = await db.batch(statements);

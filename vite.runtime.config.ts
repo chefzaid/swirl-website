@@ -1,6 +1,8 @@
 import { defineConfig } from 'vite';
+import { pageBundle } from './scripts/page-bundle.mjs';
 
 export default defineConfig({
+  plugins: [pageBundle()],
   ssr: { noExternal: ['postgres'] },
   build: {
     ssr: true,

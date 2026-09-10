@@ -41,7 +41,7 @@ class Page(HTMLParser):
         assert len(links) == 3
         return {a['hreflang']: a['href'] for a in links}
 
-raw = json.loads(Path('dist/server/page-manifest.json').read_text())
+raw = json.loads(Path('dist/runtime/page-manifest.json').read_text())
 pages = {path: Page(html) for path, html in raw.items()}
 assert len(pages) == 24
 origin = pages['/'].canonical().rstrip('/')

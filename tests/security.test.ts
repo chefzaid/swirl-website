@@ -1,13 +1,13 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import worker, { createWorker } from '../server/worker.ts';
+import handler, { createRequestHandler } from '../server/handler.ts';
 import { securityHeaders } from '../server/security.ts';
 import { sourceBucket } from '../server/contact-limits.ts';
 
 void test('security headers cover assets, API errors, unknown paths and asset failures', async () => {
   const env = {
     ASSETS: { fetch: async () => new Response('page') },
-  } as unknown as Parameters<typeof worker.fetch>[1];
+  } as unknown as Parameters<typeof handler.fetch>[1];
   const scenarios = [
     [new Request('https://portfolio.test/'), env, 200],
     [new Request('https://portfolio.test/asset.css'), env, 200],
@@ -34,7 +34,7 @@ void test('security headers cover assets, API errors, unknown paths and asset fa
     ],
   ] as const;
   for (const [request, bindings, status] of scenarios) {
-    const response = await worker.fetch(request, bindings as typeof env);
+    const response = await handler.fetch(request, bindings as typeof env);
     assert.equal(response.status, status);
     for (const [name, value] of Object.entries(securityHeaders))
       assert.equal(response.headers.get(name), value);
@@ -69,7 +69,7 @@ void test('IP normalization groups IPv6 prefixes, canonical aliases and IPv4-map
 });
 
 void test('bundled document routes always get headers, with safe aliases and HEAD handling', async () => {
-  const app = createWorker({
+  const app = createRequestHandler({
     '/': '<h1>Home</h1>',
     '/en/': '<h1>English</h1>',
     '/confidentialite/': '<h1>Privacy</h1>',

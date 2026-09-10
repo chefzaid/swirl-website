@@ -2,7 +2,6 @@ import { devContact } from './server/dev-contact.mjs';
 import { defineConfig } from 'astro/config';
 import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/postcss';
-import { sites } from '@openai/sites-vite-plugin';
 import { siteConfig } from './data/site.ts';
 export default defineConfig({
   site: siteConfig.origin,
@@ -28,6 +27,6 @@ export default defineConfig({
   },
   vite: {
     css: { postcss: { plugins: [tailwindcss()] } },
-    plugins: [sites(), devContact()],
+    plugins: [devContact()],
   },
 });

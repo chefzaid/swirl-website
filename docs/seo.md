@@ -6,12 +6,12 @@ All project cards and real links exist in the initial homepage HTML. The additio
 
 `/sitemap.xml` lists all canonical routes and language alternates. `/robots.txt` points to that sitemap and excludes the contact API. No guessed last-modified dates, ratings, locations, founding dates, client results or financial metrics are added. Team references have been removed from project titles and descriptions in both languages.
 
-JSON-LD describes the organization, website, page, visible services and CEO; project pages also include breadcrumbs. The personal LinkedIn profile belongs to the Person entity, not the company. JSON-LD escapes `<` and is parsed during validation. It is an inert data block, while executable inline scripts and styles remain covered by the existing CSP hashes. All 24 documents continue to receive the Worker security headers.
+JSON-LD describes the organization, website, page, visible services and CEO; project pages also include breadcrumbs. The personal LinkedIn profile belongs to the Person entity, not the company. JSON-LD escapes `<` and is parsed during validation. It is an inert data block, while executable inline scripts and styles remain covered by the existing CSP hashes. All 24 documents continue to receive the Node response security headers.
 
 Home social previews retain the existing image with its actual dimensions, localized description and alternative text. Project previews have their own title and description, and omit the generic home image. Only the two Latin variable font files used by French/English are emitted; the heading font is preloaded and both use `font-display: swap`. Images keep explicit dimensions, and the below-the-fold portrait remains lazy-loaded. No tracker or external font request was introduced.
 
 The homepage's hero introduction mentions custom software development at a
-fixed price. Its localized title targets custom software development; the meta
+fixed price and private-cloud hosting. Its localized title targets custom software development; the meta
 description and `Service` JSON-LD retain the fixed-price development target. 
 The introduction in `data/portfolio.ts` is shared with the structured description,
 and the service URL points to `#home`. No `meta keywords` tag is added; the
@@ -23,8 +23,8 @@ Run `npm run check`, `npm run build`, `python3 scripts/check-built-security.py`,
 
 ## Public launch
 
-The separate Sites publication remains owner-private. K3s production uses the
-public canonical domain `https://swirlit.dev`; see [deployment](deployment.md).
+K3s production uses the public canonical domain `https://swirlit.dev`; see
+[deployment](deployment.md).
 The repository stays private. A successful deployment permits crawling but does
 not guarantee indexing or ranking; Search Console ownership and submission are
 separate operator steps.

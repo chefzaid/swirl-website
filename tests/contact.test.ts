@@ -22,7 +22,7 @@ const valid = (): ContactData => ({
   website: '',
 });
 function database() {
-  const DB = new SqliteContactDatabase(':memory:', 'drizzle');
+  const DB = new SqliteContactDatabase(':memory:', 'db/migrations');
   return { sqlite: DB.sqlite, DB };
 }
 const request = (data: unknown, headers: Record<string, string> = {}) =>
@@ -67,7 +67,7 @@ void test('stores an enquiry, keeps notification unconfigured and avoids duplica
   const { sqlite, DB } = database();
   const data = valid();
   const response = await handleContact(request(data), {
-    DB: DB as unknown as D1Database,
+    DB: DB,
   });
   assert.equal(response.status, 201);
   assert.deepEqual(await response.json(), { ok: true, notified: false });
@@ -77,7 +77,7 @@ void test('stores an enquiry, keeps notification unconfigured and avoids duplica
     1,
   );
   const duplicate = await handleContact(request(data), {
-    DB: DB as unknown as D1Database,
+    DB: DB,
   });
   assert.equal(duplicate.status, 200);
   assert.equal(
@@ -90,7 +90,7 @@ void test('stores an enquiry, keeps notification unconfigured and avoids duplica
       ...data,
       message: 'A different message with the same request identifier.',
     }),
-    { DB: DB as unknown as D1Database },
+    { DB: DB },
   );
   assert.equal(conflict.status, 409);
   sqlite.close();
@@ -110,22 +110,10 @@ void test('rate limits submissions against persisted counters', async () => {
   let last = valid();
   for (let i = 0; i < 5; i++) {
     last = valid();
-    assert.equal(
-      (await handleContact(request(last), { DB: DB as unknown as D1Database }))
-        .status,
-      201,
-    );
+    assert.equal((await handleContact(request(last), { DB: DB })).status, 201);
   }
-  assert.equal(
-    (await handleContact(request(last), { DB: DB as unknown as D1Database }))
-      .status,
-    200,
-  );
-  assert.equal(
-    (await handleContact(request(valid()), { DB: DB as unknown as D1Database }))
-      .status,
-    429,
-  );
+  assert.equal((await handleContact(request(last), { DB: DB })).status, 200);
+  assert.equal((await handleContact(request(valid()), { DB: DB })).status, 429);
   assert.equal(
     sqlite.prepare('SELECT count(*) AS count FROM contact_messages').get()
       ?.count,
@@ -328,11 +316,7 @@ void test('accepts arbitrary subjects, stores their exact text and rejects confl
   const subject = "L’évolution d’O'Brien — audit, web & cloud";
   const data = { ...valid(), subject: `  ${subject}  ` };
   assert.equal(validateContact(data)?.subject, subject);
-  assert.equal(
-    (await handleContact(request(data), { DB: DB as unknown as D1Database }))
-      .status,
-    201,
-  );
+  assert.equal((await handleContact(request(data), { DB: DB })).status, 201);
   assert.equal(
     sqlite
       .prepare('SELECT service FROM contact_messages WHERE id = ?')
@@ -342,7 +326,7 @@ void test('accepts arbitrary subjects, stores their exact text and rejects confl
   assert.equal(
     (
       await handleContact(request({ ...data, subject }), {
-        DB: DB as unknown as D1Database,
+        DB: DB,
       })
     ).status,
     200,
@@ -350,7 +334,7 @@ void test('accepts arbitrary subjects, stores their exact text and rejects confl
   assert.equal(
     (
       await handleContact(request({ ...data, subject: 'Un autre sujet' }), {
-        DB: DB as unknown as D1Database,
+        DB: DB,
       })
     ).status,
     409,
@@ -377,7 +361,7 @@ void test('IPv6 aliases and addresses in one /64 share the submission limit', as
     const data = { ...valid(), email: `person${index}@example.test` };
     const response = await handleContact(
       request(data, { 'cf-connecting-ip': `2001:db8:1234:5678::${index}` }),
-      { DB: DB as unknown as D1Database },
+      { DB: DB },
     );
     assert.equal(response.status, index <= 5 ? 201 : 429);
     if (response.status === 429)
@@ -394,9 +378,7 @@ void test('concurrent identical retries store and charge one enquiry', async () 
   const { sqlite, DB } = database();
   const data = valid();
   const responses = await Promise.all(
-    Array.from({ length: 20 }, () =>
-      handleContact(request(data), { DB: DB as unknown as D1Database }),
-    ),
+    Array.from({ length: 20 }, () => handleContact(request(data), { DB: DB })),
   );
   assert.equal(
     responses.filter((response) => response.status === 201).length,
@@ -421,7 +403,7 @@ void test('request ceiling bounds replay attempts without duplicating messages',
   const data = valid();
   for (let index = 0; index < 35; index++) {
     const response = await handleContact(request(data), {
-      DB: DB as unknown as D1Database,
+      DB: DB,
     });
     assert.equal(response.status, index === 0 ? 201 : index < 30 ? 200 : 429);
   }
@@ -441,7 +423,7 @@ void test('global quota caps concurrent distributed submissions with changing IP
           { ...valid(), email: `person${index}@example.test` },
           { 'cf-connecting-ip': `192.0.2.${index + 1}` },
         ),
-        { DB: DB as unknown as D1Database },
+        { DB: DB },
       ),
     ),
   );
@@ -470,7 +452,7 @@ void test('quota windows do not reset at the clock-hour boundary or extend on re
       assert.equal(
         (
           await handleContact(request(valid()), {
-            DB: DB as unknown as D1Database,
+            DB: DB,
           })
         ).status,
         201,
@@ -484,7 +466,7 @@ void test('quota windows do not reset at the clock-hour boundary or extend on re
     assert.equal(
       (
         await handleContact(request(valid()), {
-          DB: DB as unknown as D1Database,
+          DB: DB,
         })
       ).status,
       429,
@@ -501,7 +483,7 @@ void test('quota windows do not reset at the clock-hour boundary or extend on re
     assert.equal(
       (
         await handleContact(request(valid()), {
-          DB: DB as unknown as D1Database,
+          DB: DB,
         })
       ).status,
       201,
@@ -519,7 +501,7 @@ void test('SQL and HTML payloads remain literal data and are never reflected in 
     subject: "<img src=x onerror=alert(1)>'); DROP TABLE contact_messages;--",
   };
   const response = await handleContact(request(data), {
-    DB: DB as unknown as D1Database,
+    DB: DB,
   });
   assert.equal(response.status, 201);
   assert.deepEqual(await response.json(), { ok: true, notified: false });
@@ -587,7 +569,7 @@ void test('a full daily quota cannot consume hourly or personal allowances', asy
         { ...valid(), email: `person${index}@example.test` },
         { 'cf-connecting-ip': `198.51.100.${index + 1}` },
       ),
-      { DB: DB as unknown as D1Database },
+      { DB: DB },
     );
     assert.equal(response.status, 429);
     assert.ok(Number(response.headers.get('Retry-After')) >= 86_399);
@@ -617,7 +599,7 @@ void test('a full daily quota cannot consume hourly or personal allowances', asy
     (
       await handleContact(
         request(valid(), { 'cf-connecting-ip': '203.0.113.1' }),
-        { DB: DB as unknown as D1Database },
+        { DB: DB },
       )
     ).status,
     201,
@@ -625,16 +607,12 @@ void test('a full daily quota cannot consume hourly or personal allowances', asy
   sqlite.close();
 });
 
-void test('a failed D1 transaction rolls back quota changes and temporary reservations', async () => {
+void test('a failed database transaction rolls back quota changes and temporary reservations', async () => {
   const { sqlite, DB } = database();
   sqlite.exec(
     "CREATE TRIGGER reject_test_insert BEFORE INSERT ON contact_messages BEGIN SELECT RAISE(ABORT, 'simulated failure'); END",
   );
-  assert.equal(
-    (await handleContact(request(valid()), { DB: DB as unknown as D1Database }))
-      .status,
-    503,
-  );
+  assert.equal((await handleContact(request(valid()), { DB: DB })).status, 503);
   assert.equal(
     sqlite
       .prepare(
@@ -650,18 +628,14 @@ void test('a failed D1 transaction rolls back quota changes and temporary reserv
   sqlite.close();
 });
 
-void test('a warm blocked-source cache avoids repeated D1 work', async () => {
+void test('a warm blocked-source cache avoids repeated database work', async () => {
   const { sqlite, DB } = database();
   const data = valid();
   for (let index = 0; index <= 30; index++)
-    await handleContact(request(data), { DB: DB as unknown as D1Database });
+    await handleContact(request(data), { DB: DB });
   const changes = sqlite.prepare('SELECT total_changes() AS n').get()?.n;
   for (let index = 0; index < 10; index++)
-    assert.equal(
-      (await handleContact(request(data), { DB: DB as unknown as D1Database }))
-        .status,
-      429,
-    );
+    assert.equal((await handleContact(request(data), { DB: DB })).status, 429);
   assert.equal(sqlite.prepare('SELECT total_changes() AS n').get()?.n, changes);
   sqlite.close();
 });

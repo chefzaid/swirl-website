@@ -2,9 +2,14 @@
 node_modules
 .astro
 .wrangler
+.data
+.openai
 coverage
 outputs
 work
+.cache
+.scannerwork
+quality-reports
 .env*
 .dev.vars
 *.pem

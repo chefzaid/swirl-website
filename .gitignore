@@ -3,6 +3,7 @@
 /dist/
 /.astro/
 /.wrangler/
+/.data/
 /coverage/
 /outputs/
 /work/
@@ -15,6 +16,8 @@
 !.env.example
 .dev.vars
 *.pem
+*.sqlite*
+*.db*
 
 # local files and logs
 .DS_Store

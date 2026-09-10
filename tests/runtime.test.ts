@@ -20,18 +20,18 @@ import {
   createNodeServer,
   trustedProxy,
 } from '../runtime/server.ts';
-import { createWorker } from '../server/worker.ts';
+import { createRequestHandler } from '../server/handler.ts';
 
 void test('a configured alias redirects to a custom primary host without trusting forwarding headers', async (t) => {
   const directory = await mkdtemp(join(tmpdir(), 'website-alias-'));
   t.after(() => rm(directory, { recursive: true, force: true }));
   const db = new SqliteContactDatabase(
     join(directory, 'contact.sqlite'),
-    'drizzle',
+    'db/migrations',
   );
   t.after(() => db.close());
   const options = {
-    worker: createWorker({ '/': '<h1>Home</h1>' }),
+    handler: createRequestHandler({ '/': '<h1>Home</h1>' }),
     env: { DB: db, ASSETS: assetFetcher(directory) },
     origin: 'https://portal.example.test',
     healthy: () => true,
@@ -102,11 +102,18 @@ void test('a configured alias redirects to a custom primary host without trustin
   }
 });
 
-void test('SQLite survives reopening, migrates once, and rolls a failed batch back', async (t) => {
+void test('SQLite survives a migration-directory move, migrates once, and rolls a failed batch back', async (t) => {
   const directory = await mkdtemp(join(tmpdir(), 'website-db-'));
   t.after(() => rm(directory, { recursive: true, force: true }));
   const file = join(directory, 'contact.sqlite');
-  let db = new SqliteContactDatabase(file, 'drizzle');
+  const oldMigrations = join(directory, 'old-migrations');
+  await mkdir(oldMigrations);
+  const migrationName = '0000_abnormal_king_bedlam.sql';
+  await writeFile(
+    join(oldMigrations, migrationName),
+    await readFile(join('db/migrations', migrationName)),
+  );
+  let db = new SqliteContactDatabase(file, oldMigrations);
   await db
     .prepare('INSERT INTO contact_rate_limits VALUES (?, ?, ?)')
     .bind('durable', 2, 99)
@@ -118,7 +125,7 @@ void test('SQLite survives reopening, migrates once, and rolls a failed batch ba
     ]),
   );
   db.close();
-  db = new SqliteContactDatabase(file, 'drizzle');
+  db = new SqliteContactDatabase(file, 'db/migrations');
   t.after(() => db.close());
   assert.equal(
     (
@@ -129,6 +136,14 @@ void test('SQLite survives reopening, migrates once, and rolls a failed batch ba
     2,
   );
   assert.equal(db.healthy(), true);
+  assert.equal(
+    (
+      await db
+        .prepare('SELECT count(*) AS n FROM _website_migrations')
+        .first<{ n: number }>()
+    )?.n,
+    1,
+  );
   assert.equal(
     (await db.prepare('PRAGMA journal_mode').first<{ journal_mode: string }>())
       ?.journal_mode,
@@ -190,11 +205,14 @@ void test('Node serves bundled pages, headers, safe assets, durable contact, ali
   );
   const db = new SqliteContactDatabase(
     join(directory, 'contact.sqlite'),
-    'drizzle',
+    'db/migrations',
   );
   t.after(() => db.close());
   const server = createNodeServer({
-    worker: createWorker({ '/': '<h1>Home</h1>', '/en/': '<h1>English</h1>' }),
+    handler: createRequestHandler({
+      '/': '<h1>Home</h1>',
+      '/en/': '<h1>English</h1>',
+    }),
     env: { DB: db, ASSETS: assetFetcher(join(directory, 'assets')) },
     origin: 'https://swirlit.dev',
     healthy: () => db.healthy(),
@@ -296,7 +314,11 @@ void test('Node serves bundled pages, headers, safe assets, durable contact, ali
     assert.equal(redirect.location, 'https://swirlit.dev' + path);
     assert.equal(redirect.frame, 'DENY');
   }
-  for (const path of ['//other.test/', '/\\other.test/', 'https://other.test/']) {
+  for (const path of [
+    '//other.test/',
+    '/\\other.test/',
+    'https://other.test/',
+  ]) {
     const rejected = await requestHost(path);
     assert.equal(rejected.status, 400);
     assert.equal(rejected.location, undefined);
@@ -366,7 +388,7 @@ void test('Node serves bundled pages, headers, safe assets, durable contact, ali
 
 void test('a stalled Node request gets the contact body timeout response without a socket reset', async (t) => {
   const server = createNodeServer({
-    worker: createWorker(),
+    handler: createRequestHandler(),
     env: { ASSETS: assetFetcher('.') },
     origin: 'https://swirlit.dev',
     healthy: () => true,

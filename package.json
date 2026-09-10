@@ -7,12 +7,10 @@
   },
   "scripts": {
     "dev": "astro dev --host 127.0.0.1",
-    "build": "astro build && node --experimental-strip-types scripts/security-headers.ts && vite build --config vite.worker.config.ts && vite build --config vite.runtime.config.ts",
-    "start": "wrangler dev --config wrangler.jsonc",
-    "start:node": "node runtime/main.ts",
+    "build": "astro build && vite build --config vite.runtime.config.ts",
+    "start": "node --env-file-if-exists=.env dist/runtime/main.js",
     "lint": "oxlint",
     "format": "oxfmt",
-    "db:generate": "drizzle-kit generate",
     "check": "astro check",
     "test": "node --experimental-strip-types --test tests/*.test.ts",
     "test:coverage": "mkdir -p coverage && node --experimental-strip-types --experimental-test-coverage --test-coverage-exclude=\"tests/**\" --test-coverage-exclude=\"node_modules/**\" --test-reporter=spec --test-reporter-destination=stdout --test-reporter=lcov --test-reporter-destination=coverage/lcov.info --test tests/*.test.ts"
@@ -24,7 +22,6 @@
     "@fontsource-variable/manrope": "^5.2.0",
     "astro": "7.3.1",
     "clsx": "2.1.1",
-    "drizzle-orm": "0.45.2",
     "lucide-react": "1.31.0",
     "postgres": "3.4.9",
     "react": "19.2.6",
@@ -34,25 +31,16 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.0",
-    "@cloudflare/workers-types": "^5.20260903.1",
-    "@openai/sites-vite-plugin": "0.2.0",
     "@tailwindcss/postcss": "4.2.1",
     "@types/node": "22.19.19",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
-    "drizzle-kit": "0.31.10",
     "oxfmt": "0.61.0",
     "oxlint": "1.76.0",
     "oxlint-tsgolint": "7.0.2001",
     "tailwindcss": "4.2.1",
     "typescript": "5.9.3",
-    "vite": "^8.2.2",
-    "wrangler": "^4.129.0"
+    "vite": "^8.2.2"
   },
-  "type": "module",
-  "overrides": {
-    "@esbuild-kit/core-utils": {
-      "esbuild": "0.25.12"
-    }
-  }
+  "type": "module"
 }

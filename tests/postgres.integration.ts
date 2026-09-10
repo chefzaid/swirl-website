@@ -240,7 +240,7 @@ void test('PostgreSQL shared storage, delivery ownership and snapshot migration'
       const directory = await mkdtemp(join(tmpdir(), 'website-pg-import-'));
       try {
         const path = join(directory, 'contact.sqlite');
-        const sqlite = new SqliteContactDatabase(path, 'drizzle');
+        const sqlite = new SqliteContactDatabase(path, 'db/migrations');
         const row = fixture();
         await insertWithinLimits(
           sqlite,
@@ -290,7 +290,7 @@ void test('PostgreSQL shared storage, delivery ownership and snapshot migration'
     'database failure withdraws readiness without failing process liveness',
     async () => {
       const server = createNodeServer({
-        worker: { fetch: async () => new Response('page') },
+        handler: { fetch: async () => new Response('page') },
         env: {
           ASSETS: { fetch: async () => new Response(null, { status: 404 }) },
         },

@@ -1,5 +1,5 @@
-// The shared application only needs this subset of D1. The Node runtime
-// implements the same contract with SQLite and transactional batches.
+// Shared SQL contract implemented by the SQLite and PostgreSQL adapters.
+// Batches commit atomically so contact storage and quota updates stay together.
 export interface DatabaseResult {
   results: unknown[];
   meta: { changes: number };

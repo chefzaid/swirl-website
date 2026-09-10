@@ -3,7 +3,7 @@ import { secureResponse } from './security.ts';
 export interface Env extends ContactEnv {
   ASSETS: { fetch(request: Request): Promise<Response> };
 }
-export function createWorker(pages: Record<string, string> = {}) {
+export function createRequestHandler(pages: Record<string, string> = {}) {
   return {
     async fetch(request: Request, env: Env): Promise<Response> {
       const url = new URL(request.url);
@@ -56,4 +56,4 @@ export function createWorker(pages: Record<string, string> = {}) {
     },
   };
 }
-export default createWorker();
+export default createRequestHandler();

@@ -2,16 +2,16 @@ import { readFileSync, readdirSync, existsSync, rmSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { documentRoutes } from '../data/site.ts';
 
-// Sites currently serves existing HTML assets before invoking the Worker and
-// does not apply _headers. Bundle documents so response headers are enforceable.
-export function workerPages() {
+// Bundle documents into the Node runtime so every HTML response receives the
+// security headers and aliases enforced by the request handler.
+export function pageBundle() {
   const root = resolve('dist/client');
   const sources = Object.fromEntries(
     documentRoutes.map(({ path }) => [path, path.slice(1) + 'index.html']),
   );
   let pages;
   return {
-    name: 'swirl-worker-pages',
+    name: 'swirl-page-bundle',
     resolveId(id) {
       if (id === 'virtual:swirl-pages') return '\0virtual:swirl-pages';
     },
@@ -26,9 +26,7 @@ export function workerPages() {
           Object.values(sources).sort((a, b) => a.localeCompare(b)),
         )
       ) {
-        throw new Error(
-          'Update the Worker page map before publishing changed routes',
-        );
+        throw new Error('Update the page map before publishing changed routes');
       }
       pages = Object.fromEntries(
         Object.entries(sources).map(([route, file]) => [
@@ -39,7 +37,7 @@ export function workerPages() {
       return `export default ${JSON.stringify(pages)};`;
     },
     generateBundle() {
-      if (!pages) throw new Error('Missing Worker pages');
+      if (!pages) throw new Error('Missing bundled pages');
       // Private build evidence used by the CSP regression checker.
       this.emitFile({
         type: 'asset',
@@ -48,9 +46,9 @@ export function workerPages() {
       });
     },
     writeBundle() {
-      if (!existsSync(resolve('dist/server/index.js')))
-        throw new Error('Worker build missing');
-      // Remove only after the Worker bundle was successfully written.
+      if (!existsSync(resolve('dist/runtime/main.js')))
+        throw new Error('Node runtime build missing');
+      // Remove only after the Node runtime was successfully written.
       for (const file of Object.values(sources)) rmSync(resolve(root, file));
     },
   };

@@ -1,63 +1,71 @@
-import { readFile, readdir } from 'node:fs/promises';
+import { resolve } from 'node:path';
+import { loadEnv } from 'vite';
+
 export function devContact() {
-  let platform;
   let ready;
   return {
     name: 'swirl-contact-development',
     configureServer(server) {
-      server.middlewares.use('/api/contact', async (req, res) => {
+      const variables = {
+        ...loadEnv(server.config.mode, server.config.envDir, ''),
+        ...process.env,
+      };
+      server.middlewares.use(async (req, res, next) => {
+        if (req.url?.split('?')[0] !== '/api/contact') return next();
         try {
           ready ||= (async () => {
-            const { getPlatformProxy } = await import('wrangler');
-            platform = await getPlatformProxy({
-              configPath: 'wrangler.jsonc',
-              persist: { path: '.wrangler/state/v3' },
+            const { createContactRuntime } = await server.ssrLoadModule(
+              '/runtime/contact.ts',
+            );
+            return createContactRuntime({
+              root: server.config.root,
+              dataDir: resolve(
+                server.config.root,
+                variables.DATA_DIR ?? '.data',
+              ),
+              variables,
             });
-            for (const file of (await readdir('drizzle'))
-              .filter((name) => name.endsWith('.sql'))
-              .sort((left, right) => left.localeCompare(right))) {
-              const sql = await readFile(`drizzle/${file}`, 'utf8');
-              for (const statement of sql
-                .split('--> statement-breakpoint')
-                .map((s) => s.trim())
-                .filter(Boolean)) {
-                // Local setup is idempotent; production uses the generated migrations.
-                await platform.env.DB.prepare(
-                  statement
-                    .replace('CREATE TABLE ', 'CREATE TABLE IF NOT EXISTS ')
-                    .replace('CREATE INDEX ', 'CREATE INDEX IF NOT EXISTS '),
-                ).run();
-              }
-            }
-          })();
-          await ready;
-          const origin = `http://${req.headers.host}`;
-          const headers = new Headers();
-          for (const [key, value] of Object.entries(req.headers))
-            if (value)
-              headers.set(key, Array.isArray(value) ? value.join(',') : value);
-          const { Readable } = await import('node:stream');
-          const request = new Request(`${origin}/api/contact`, {
-            method: req.method,
-            headers,
-            ...(!['GET', 'HEAD'].includes(req.method || 'GET')
-              ? { body: Readable.toWeb(req), duplex: 'half' }
-              : {}),
+          })().catch((error) => {
+            ready = undefined;
+            throw error;
           });
+          const contact = await ready;
+          const { incomingRequest } =
+            await server.ssrLoadModule('/runtime/server.ts');
           const { handleContact } =
             await server.ssrLoadModule('/server/contact.ts');
-          const response = await handleContact(request, platform.env);
+          const scheme = server.config.server.https ? 'https' : 'http';
+          const request = incomingRequest(
+            req,
+            req.url,
+            new URL(`${scheme}://${req.headers.host}`),
+            () => false,
+          );
+          const response = await handleContact(request, contact.env);
+          if (
+            !req.complete ||
+            (!['GET', 'HEAD'].includes(request.method) && !request.bodyUsed)
+          )
+            res.shouldKeepAlive = false;
           res.statusCode = response.status;
           for (const [key, value] of response.headers)
             res.setHeader(key, value);
-          res.end(Buffer.from(await response.arrayBuffer()));
+          res.end(
+            req.method === 'HEAD'
+              ? undefined
+              : Buffer.from(await response.arrayBuffer()),
+          );
         } catch {
+          res.shouldKeepAlive = false;
           res.statusCode = 503;
           res.setHeader('Content-Type', 'application/json');
+          res.setHeader('Cache-Control', 'no-store');
           res.end(JSON.stringify({ error: 'unavailable' }));
         }
       });
-      server.httpServer?.once('close', () => platform?.dispose());
+      server.httpServer?.once('close', () => {
+        void ready?.then((contact) => contact.close()).catch(() => {});
+      });
     },
   };
 }

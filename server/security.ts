@@ -1,4 +1,4 @@
-// Shared by Worker responses and the generated static-asset _headers file.
+// Applied by the Node server to documents, static assets and API responses.
 // Astro supplies the per-page script/style hash policy in HTML.
 export const securityHeaders: Record<string, string> = {
   'Content-Security-Policy':

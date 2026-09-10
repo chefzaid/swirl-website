@@ -8,9 +8,9 @@ import { readFile, realpath, stat } from 'node:fs/promises';
 import { extname, resolve, sep } from 'node:path';
 import { createHash } from 'node:crypto';
 import { secureResponse } from '../server/security.ts';
-import type { Env } from '../server/worker.ts';
+import type { Env } from '../server/handler.ts';
 
-export interface Worker {
+export interface RequestHandler {
   fetch(request: Request, env: Env): Promise<Response>;
 }
 
@@ -56,7 +56,7 @@ export function clientIp(
 ): string {
   const direct = normalizedIp(remoteAddress);
   // ingress-nginx overwrites X-Real-IP after trusting Cloudflare's network.
-  // Client-supplied CF-Connecting-IP and X-Forwarded-For never reach the Worker.
+  // Client-supplied CF-Connecting-IP and X-Forwarded-For never reach the contact handler.
   const forwarded = headers.get('x-real-ip') ?? '';
   return trust(direct) && isIP(forwarded) ? normalizedIp(forwarded) : direct;
 }
@@ -178,7 +178,7 @@ function requestBody(incoming: IncomingMessage): ReadableStream<Uint8Array> {
   );
 }
 
-function incomingRequest(
+export function incomingRequest(
   incoming: IncomingMessage,
   path: string,
   origin: URL,
@@ -229,7 +229,7 @@ function healthResponse(method: string, healthy: boolean): Response {
 }
 
 export function createNodeServer(options: {
-  worker: Worker;
+  handler: RequestHandler;
   env: Env;
   origin: string;
   aliasHost?: string;
@@ -293,7 +293,7 @@ export function createNodeServer(options: {
         response = healthResponse(method, await options.healthy());
       } else if (new URL(request.url).pathname === '/livez') {
         response = healthResponse(method, true);
-      } else response = await options.worker.fetch(request, options.env);
+      } else response = await options.handler.fetch(request, options.env);
       if (
         !incoming.complete ||
         (!['GET', 'HEAD'].includes(method) && !request.bodyUsed)

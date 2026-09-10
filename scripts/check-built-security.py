@@ -27,10 +27,10 @@ class Page(HTMLParser):
             self.inline.append(self.active)
             self.active = None
 
-pages = json.loads(Path('dist/server/page-manifest.json').read_text())
+pages = json.loads(Path('dist/runtime/page-manifest.json').read_text())
 assert {'/', '/en/', '/confidentialite/', '/en/privacy/'} <= set(pages)
 assert len(pages) == 24, 'Expected bilingual home, privacy and 10 project pages'
-assert not list(Path('dist/client').rglob('*.html')), 'HTML must be served by Worker'
+assert not list(Path('dist/client').rglob('*.html')), 'HTML must be served by the Node request handler'
 for path, html in pages.items():
     page = Page()
     page.feed(html)
@@ -45,11 +45,8 @@ for path, html in pages.items():
     assert directives['base-uri'] == ["'none'"]
     assert directives['connect-src'] == ["'self'"]
     print(str(path) + ': CSP hashes match every inline script/style')
-headers = Path('dist/client/_headers').read_text()
-for name in ['Content-Security-Policy:', 'X-Frame-Options: DENY', 'X-Content-Type-Options: nosniff', 'Strict-Transport-Security:']:
-    assert name in headers
 for path in Path('dist/client').rglob('*'):
     if path.is_file():
         assert path.suffix not in ['.map', '.sqlite', '.db', '.sql', '.ts', '.pem']
         assert not path.name.startswith('.env')
-print('Static security headers and public artifact boundaries verified')
+print('Document CSP and public artifact boundaries verified')

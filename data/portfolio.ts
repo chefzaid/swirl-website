@@ -36,8 +36,8 @@ export const fixedPriceService = {
     en: 'Custom software development at a fixed price',
   },
   description: {
-    fr: 'De l’idée à la mise en production, Swirl IT développe vos applications sur mesure au forfait et les héberge dans un cloud privé.',
-    en: 'From idea to launch, Swirl IT builds your custom applications at a fixed price and hosts them in a private cloud.',
+    fr: 'De l’idée à la mise en production, Swirl IT développe vos applications sur mesure au forfait et les héberge dans un cloud privé. Des solutions fiables, performantes et pensées pour durer.',
+    en: 'From idea to launch, Swirl IT builds your custom applications at a fixed price and hosts them in a private cloud. Reliable, high-performing solutions built to last.',
   },
 };
 export const projects = [

@@ -4,7 +4,7 @@ The production website is `https://swirlit.dev`, with French at `/` and English
 at `/en/`. `https://www.swirlit.dev` redirects to the same apex URL, preserving
 the path and query string. GitHub `chefzaid/website` and GitLab `swirlit/website`
 are private source repositories. Publishing the website does not change repository
-visibility or the separate Sites preview's access settings.
+visibility.
 
 This repository owns its runtime image, resources in the `apps` namespace,
 Argo CD Application, and operator playbook. `bm-cluster` supplies K3s, the
@@ -133,14 +133,16 @@ The Node container listens on port 8080 as UID/GID 10001 with a read-only root
 filesystem. `PUBLIC_ORIGIN=https://swirlit.dev` fixes the origin used by the
 application. `/healthz` checks the SQLite connection. The single replica uses
 the `website-data` Longhorn PVC at `/data`; the Node adapter stores
-`contact.sqlite` and applies the existing migrations. `Recreate` ensures two
-application replicas never write the same database during an update, with a
-short interruption while the replacement starts.
+`contact.sqlite` and applies the plain SQL migrations in `db/migrations`.
+`Recreate` ensures two application replicas never write the same database during
+an update, with a short interruption while the replacement starts.
 
 The opt-in [multi-node profile and PostgreSQL cutover](high-availability.md)
 remove that single-writer constraint after its prerequisites are met. The
 default Application path and SQLite volume remain unchanged until an operator
-selects the profile.
+selects the profile. `DATABASE_URL` is absent in the base deployment and
+required by the PostgreSQL overlay. The application does not switch databases
+merely because PostgreSQL is available on the platform.
 
 The PVC uses `Prune=false` so an Argo CD manifest removal does not delete saved
 enquiries. Longhorn replication is not an independent backup; include this
@@ -165,7 +167,7 @@ WAF settings. Static assets retain their separate cache policy.
 The contact form persists enquiries without an email provider. Resend and
 Microsoft Graph notifications require the server-side credentials described
 in the main README. Deploying this website does not send a test email or import
-data from the separate Sites database.
+contact data from another database.
 
 ## Contact email credentials
 
@@ -173,7 +175,7 @@ Production uses Resend to notify `contact@swirlit.dev` from
 `noreply@swirlit.dev`; the visitor's email is Reply-To. Incoming mail continues
 through Cloudflare Email Routing. Verify `swirlit.dev` in Resend for sending
 only, leaving its Receiving option off and retaining Cloudflare's apex MX
-records. The main README describes the separate sending DNS records.
+records. Add the sending DNS records supplied by Resend for this domain.
 
 Store the domain-restricted Sending access key as the `RESEND_API_KEY` field
 at Vault KV v2 path `secret/apps/website/contact` before deploying the email
