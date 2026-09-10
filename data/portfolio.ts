@@ -23,8 +23,8 @@ export const services = [
     id: 'cloud-ai',
     title: { fr: 'Cloud & IA', en: 'Cloud & AI' },
     text: {
-      fr: 'Déployer des systèmes distribués dans le cloud, intégrer les résultats de modèles d’IA et automatiser leur mise en production.',
-      en: 'Deploy distributed systems in the cloud, integrate AI model outputs and automate delivery.',
+      fr: 'Votre cloud privé d’entreprise souverain, hébergé dans l’UE 🇪🇺, opérationnel en quelques heures. Vos applications déployées instantanément. Nous intégrons également vos solutions d’IA et automatisons leur mise en production.',
+      en: 'Your sovereign private enterprise cloud, hosted in the EU 🇪🇺, ready within hours. Your applications deployed instantly. We also integrate your AI solutions and automate delivery.',
     },
     tags: ['AWS · GCP', 'CI/CD · DevOps', 'Machine Learning · GPU'],
   },
@@ -36,8 +36,8 @@ export const fixedPriceService = {
     en: 'Custom software development at a fixed price',
   },
   description: {
-    fr: 'De l’idée à la mise en production, Swirl IT développe vos logiciels sur mesure au forfait : des solutions fiables, performantes et pensées pour durer.',
-    en: 'From idea to launch, Swirl IT develops tailored software at a fixed price: reliable, high-performing solutions built to last.',
+    fr: 'De l’idée à la mise en production, Swirl IT développe vos applications sur mesure au forfait et les héberge dans un cloud privé.',
+    en: 'From idea to launch, Swirl IT builds your custom applications at a fixed price and hosts them in a private cloud.',
   },
 };
 export const projects = [
