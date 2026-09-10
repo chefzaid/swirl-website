@@ -5,8 +5,8 @@ export const services = [
     id: 'web',
     title: { fr: 'Applications Web & Mobile', en: 'Web & Mobile Apps' },
     text: {
-      fr: 'Des interfaces aux systèmes distribués, construire des applications métier performantes, maintenables et utiles.',
-      en: 'From user interfaces to distributed systems, build business applications that are fast, maintainable and useful.',
+      fr: 'Vos applications web et mobiles sur mesure, conçues pour vos usages métier. Des interfaces intuitives, rapides et accessibles. Des API robustes pour connecter vos outils et vos données. Nous vous accompagnons de la conception à la mise en production.',
+      en: 'Your custom web and mobile applications, built around your business needs. Intuitive, fast and accessible interfaces. Robust APIs connecting your tools and data. We support you from design through to production.',
     },
     tags: ['UI/UX', 'Android · iOS', 'API · System Design'],
   },
@@ -14,8 +14,8 @@ export const services = [
     id: 'embedded',
     title: { fr: 'Systèmes Embarqués & IoT', en: 'Embedded Systems & IoT' },
     text: {
-      fr: 'Concevoir des logiciels embarqués, connecter les équipements et superviser leurs échanges avec le système d’information, du prototype à la production.',
-      en: 'Build embedded software, connect devices and monitor their exchanges with business systems, from prototype to production.',
+      fr: 'Vos logiciels embarqués et objets connectés, du prototype à la production. Des équipements reliés à votre système d’information. Des données collectées et supervisées en temps réel. Nous développons des solutions fiables, adaptées aux contraintes de votre matériel.',
+      en: 'Your embedded software and connected devices, from prototype to production. Equipment linked to your business systems. Data collected and monitored in real time. We build reliable solutions tailored to your hardware constraints.',
     },
     tags: ['Rust · Kotlin', 'ARM · ESP32', 'Linux · Yocto'],
   },
@@ -23,8 +23,8 @@ export const services = [
     id: 'cloud-ai',
     title: { fr: 'Cloud & IA', en: 'Cloud & AI' },
     text: {
-      fr: 'Votre cloud privé d’entreprise souverain, hébergé dans l’UE 🇪🇺, opérationnel en quelques heures. Vos applications déployées instantanément. Nous intégrons également vos solutions d’IA et automatisons leur mise en production.',
-      en: 'Your sovereign private enterprise cloud, hosted in the EU 🇪🇺, ready within hours. Your applications deployed instantly. We also integrate your AI solutions and automate delivery.',
+      fr: 'Votre cloud privé d’entreprise souverain, hébergé dans l’UE, opérationnel en quelques heures. Vos applications déployées instantanément. Nous intégrons également vos solutions d’IA et automatisons leur mise en production.',
+      en: 'Your sovereign private enterprise cloud, hosted in the EU, ready within hours. Your applications deployed instantly. We also integrate your AI solutions and automate delivery.',
     },
     tags: ['AWS · GCP', 'CI/CD · DevOps', 'Machine Learning · GPU'],
   },
