@@ -269,7 +269,15 @@ export function createNodeServer(options: {
       const request = incomingRequest(incoming, path, origin, trust);
       const method = request.method;
       let response: Response;
-      if (new URL(request.url).pathname === '/healthz') {
+      const host = incoming.headers.host?.toLowerCase().replace(/:\d+$/, '');
+      if (host === `www.${origin.hostname}`) {
+        response = secureResponse(
+          new Response(null, {
+            status: 308,
+            headers: { Location: origin.origin + path },
+          }),
+        );
+      } else if (new URL(request.url).pathname === '/healthz') {
         response = healthResponse(method, options.healthy());
       } else response = await options.worker.fetch(request, options.env);
       if (

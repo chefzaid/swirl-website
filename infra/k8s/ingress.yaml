@@ -15,14 +15,26 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-read-timeout: "30"
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/preserve-trailing-slash: "true"
 spec:
   ingressClassName: nginx
   tls:
     - hosts:
         - swirlit.dev
+        - www.swirlit.dev
       secretName: swirlit-dev-tls
   rules:
     - host: swirlit.dev
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: website
+                port:
+                  number: 80
+    - host: www.swirlit.dev
       http:
         paths:
           - path: /

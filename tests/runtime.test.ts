@@ -169,6 +169,65 @@ void test('Node serves bundled pages, headers, safe assets, durable contact, ali
   });
   assert.equal(malformed.status, 400);
   assert.equal(malformed.frame, 'DENY');
+  function requestHost(
+    path: string,
+    host = 'www.swirlit.dev',
+    method = 'GET',
+    headers: Record<string, string> = {},
+  ) {
+    return new Promise<{
+      status: number;
+      location: string | undefined;
+      frame: string | string[] | undefined;
+    }>((resolve, reject) => {
+      const req = httpRequest(
+        {
+          host: '127.0.0.1',
+          port: (server.address() as AddressInfo).port,
+          path,
+          method,
+          headers: { ...headers, host },
+        },
+        (res) => {
+          res.resume();
+          resolve({
+            status: res.statusCode ?? 0,
+            location: res.headers.location,
+            frame: res.headers['x-frame-options'],
+          });
+        },
+      );
+      req.on('error', reject);
+      req.end(method === 'POST' ? 'unprocessed redirect body' : undefined);
+    });
+  }
+  for (const [path, method] of [
+    ['/', 'GET'],
+    ['/en/', 'GET'],
+    ['/en/project%2Fname/?next=%2Fen%2F&value=/', 'GET'],
+    ['/en/?next=//other.test/', 'HEAD'],
+    ['/api/contact?next=/', 'POST'],
+  ]) {
+    const redirect = await requestHost(path, 'WWW.SWIRLIT.DEV:443', method, {
+      'x-forwarded-host': 'other.test',
+      'x-forwarded-proto': 'http',
+    });
+    assert.equal(redirect.status, 308);
+    assert.equal(redirect.location, 'https://swirlit.dev' + path);
+    assert.equal(redirect.frame, 'DENY');
+  }
+  for (const path of ['//other.test/', '/\\other.test/', 'https://other.test/']) {
+    const rejected = await requestHost(path);
+    assert.equal(rejected.status, 400);
+    assert.equal(rejected.location, undefined);
+  }
+  for (const host of ['swirlit.dev', 'www.swirlit.dev.other.test']) {
+    const canonical = await requestHost('/', host, 'GET', {
+      'x-forwarded-host': 'www.swirlit.dev',
+    });
+    assert.equal(canonical.status, 200);
+    assert.equal(canonical.location, undefined);
+  }
   const asset = await fetch(base + '/style.css');
   assert.equal(asset.headers.get('content-type'), 'text/css; charset=utf-8');
   assert.equal(await asset.text(), 'body{color:blue}');

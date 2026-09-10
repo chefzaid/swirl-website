@@ -1,8 +1,9 @@
 # K3s deployment
 
 The production website is `https://swirlit.dev`, with French at `/` and English
-at `/en/`. GitHub `chefzaid/website` and GitLab `swirlit/website` are private
-source repositories. Publishing the website does not change repository
+at `/en/`. `https://www.swirlit.dev` redirects to the same apex URL, preserving
+the path and query string. GitHub `chefzaid/website` and GitLab `swirlit/website`
+are private source repositories. Publishing the website does not change repository
 visibility or the separate Sites preview's access settings.
 
 This repository owns its runtime image, resources in the `apps` namespace,
@@ -11,6 +12,15 @@ private GitLab Registry, Vault/External Secrets, Longhorn, ingress, Cloudflare,
 and the existing `apps/swirlit-dev-tls` certificate. The platform's former apex
 dashboard redirect must be removed before the website Ingress owns `swirlit.dev`.
 The dashboard remains available at `dashboard.swirlit.dev`.
+
+The website Ingress routes both names to the application. The Node runtime
+redirects the `www` host with HTTP 308 to the fixed `PUBLIC_ORIGIN`, retaining
+the validated original path and query, including trailing slashes. Forwarded
+host and protocol headers cannot change this destination. Ingress also preserves
+trailing slashes during its HTTP-to-HTTPS redirect. Keep the shared TLS certificate
+valid for both names; the platform owns both Cloudflare DNS records.
+Canonical metadata and `PUBLIC_ORIGIN` remain `https://swirlit.dev`, so visitors
+reach the apex before using the same-origin contact form.
 
 ## Automatic delivery
 
@@ -188,9 +198,9 @@ ansible-playbook --syntax-check infra/ansible/site.yaml
 ```
 
 The delivery tests use temporary local Git repositories and mock registry and
-Kubernetes commands. They verify immutable release updates, credential/resource
-contracts, and source changes before and during image construction without
-touching a live cluster.
+Kubernetes commands. They verify the canonical redirect/TLS contract, immutable
+release updates, credential/resource contracts, and source changes before and
+during image construction without touching a live cluster.
 
 The website container runs with UID/GID 10001 and a read-only root filesystem.
 The contact database volume receives group access through `fsGroup`; temporary

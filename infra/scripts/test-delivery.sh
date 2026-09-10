@@ -31,8 +31,15 @@ assert mail_ref['key'] == mail_secret['spec']['data'][0]['secretKey']
 assert mail_secret['spec']['data'][0]['remoteRef'] == {'key': 'apps/website/contact', 'property': 'RESEND_API_KEY'}
 assert 'contact-notifications.yaml' in yaml.safe_load((source / 'infra/k8s/kustomization.yaml').read_text())['resources']
 ingress = yaml.safe_load((source / 'infra/k8s/ingress.yaml').read_text())
-assert ingress['spec']['rules'][0]['host'] == 'swirlit.dev'
+assert [rule['host'] for rule in ingress['spec']['rules']] == ['swirlit.dev', 'www.swirlit.dev']
+assert ingress['spec']['ingressClassName'] == 'nginx'
+assert ingress['metadata']['annotations']['nginx.ingress.kubernetes.io/force-ssl-redirect'] == 'true'
+assert ingress['metadata']['annotations']['nginx.ingress.kubernetes.io/preserve-trailing-slash'] == 'true'
+assert set(ingress['spec']['tls'][0]['hosts']) == {'swirlit.dev', 'www.swirlit.dev'}
 assert ingress['spec']['tls'][0]['secretName'] == 'swirlit-dev-tls'
+assert mail_env['PUBLIC_ORIGIN']['value'] == 'https://' + ingress['spec']['rules'][0]['host']
+assert ingress['spec']['rules'][1]['http']['paths'] == ingress['spec']['rules'][0]['http']['paths']
+assert 'nginx.ingress.kubernetes.io/permanent-redirect' not in ingress['metadata']['annotations']
 credentials = yaml.safe_load((source / 'infra/argocd/repository-credentials.yaml').read_text())
 assert credentials['metadata']['namespace'] == 'infra'
 assert credentials['spec']['target']['template']['metadata']['labels']['argocd.argoproj.io/secret-type'] == 'repository'
@@ -160,5 +167,5 @@ with tempfile.TemporaryDirectory(prefix='website-delivery-test.') as directory:
     assert not calls
     assert git(remote, 'rev-parse', 'refs/heads/main') == git(racing, 'rev-parse', 'HEAD')
 
-print('PASS: persistent single-writer deployment, private repository credentials, immutable delivery, and stale-pipeline guards')
+print('PASS: canonical www redirect, persistent single-writer deployment, private repository credentials, immutable delivery, and stale-pipeline guards')
 PY
