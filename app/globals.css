@@ -103,9 +103,6 @@ h3 {
   width: 40px;
   margin-right: 6px;
 }
-.brand span {
-  font-weight: 400;
-}
 .brand i {
   font-style: normal;
   color: var(--primary);

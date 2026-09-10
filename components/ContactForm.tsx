@@ -105,8 +105,8 @@ export default function ContactForm({ lang }: Readonly<{ lang: Lang }>) {
             )}{' '}
             {notification
               ? t(
-                  'Une notification a été envoyée à Swirl IT.',
-                  'An email notification has been sent to Swirl IT.',
+                  'Une notification a été envoyée à Swirl.',
+                  'An email notification has been sent to Swirl.',
                 )
               : t(
                   'Vous pouvez aussi nous contacter directement par e-mail.',

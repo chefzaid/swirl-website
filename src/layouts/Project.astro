@@ -14,7 +14,7 @@ const title = `${project.client} : ${project.tags[lang][0]} | Swirl IT`;
 const breadcrumbs = {
   '@type': 'BreadcrumbList', '@id': absoluteUrl(path) + '#breadcrumb',
   itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Swirl IT', item: absoluteUrl(home) },
+    { '@type': 'ListItem', position: 1, name: 'Swirl', item: absoluteUrl(home) },
     { '@type': 'ListItem', position: 2, name: project.client, item: absoluteUrl(path) },
   ],
 };
@@ -22,7 +22,7 @@ const breadcrumbs = {
 <Layout lang={lang} path={path} title={title} description={project.text[lang]} structuredData={[breadcrumbs]} shareImage={false}>
   <a class="skip-link" href="#main">{en ? 'Skip to content' : 'Aller au contenu'}</a>
   <header class="header wrap case-header">
-    <a class="brand" href={home} aria-label="Swirl IT"><img src="/assets/mark.svg" alt="" width="40" height="38" />Swirl <span>IT</span><i>.</i></a>
+    <a class="brand" href={home} aria-label="Swirl"><img src="/assets/mark.svg" alt="" width="40" height="38" />Swirl<i>.</i></a>
     <div class="header-actions">
       <div class="language" aria-label={en ? 'Language' : 'Langue'}>
         <a href={projectPath(project.id, 'fr')} lang="fr" aria-label="Français" aria-current={!en ? 'page' : undefined}>FR</a>
@@ -33,7 +33,7 @@ const breadcrumbs = {
     </div>
   </header>
   <main id="main" class="case-page wrap">
-    <nav class="breadcrumbs" aria-label={en ? 'Breadcrumb' : 'Fil d’Ariane'}><a href={home}>Swirl IT</a><span aria-hidden="true">/</span><span aria-current="page">{project.client}</span></nav>
+    <nav class="breadcrumbs" aria-label={en ? 'Breadcrumb' : 'Fil d’Ariane'}><a href={home}>Swirl</a><span aria-hidden="true">/</span><span aria-current="page">{project.client}</span></nav>
     <article>
       <header class="case-intro">
         <ClientLogo id={project.id} />
@@ -49,7 +49,7 @@ const breadcrumbs = {
       </section>
       <aside class="case-contact">
         <h2>{en ? 'Planning a similar project?' : 'Un projet similaire ?'}</h2>
-        <p>{en ? 'Tell us what you want to achieve. Swirl IT supports your project from the first idea to the final result.' : 'Parlez-nous de ce que vous souhaitez accomplir. Swirl IT accompagne votre projet de l’idée au résultat final.'}</p>
+        <p>{en ? 'Tell us what you want to achieve. Swirl supports your project from the first idea to the final result.' : 'Parlez-nous de ce que vous souhaitez accomplir. Swirl accompagne votre projet de l’idée au résultat final.'}</p>
         <a class="button" href={`${home}#contact`}>{en ? 'Let’s talk about your project' : 'Parlons de votre projet'} <span aria-hidden="true">↗</span></a>
       </aside>
     </article>

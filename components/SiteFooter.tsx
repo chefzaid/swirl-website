@@ -14,9 +14,8 @@ export default function SiteFooter({
   return (
     <footer className="footer wrap">
       <div className="footer-branding">
-        <a className="brand" href={homeHref} aria-label="Swirl IT">
-          <img src="/assets/mark.svg" alt="" width="32" height="32" /> Swirl{' '}
-          <span>IT</span>
+        <a className="brand" href={homeHref} aria-label="Swirl">
+          <img src="/assets/mark.svg" alt="" width="32" height="32" /> Swirl
           <i>.</i>
         </a>
         <a

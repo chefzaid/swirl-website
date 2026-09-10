@@ -87,7 +87,7 @@ export default function Portfolio({
                 <ArrowUpRight size={18} />
               </a>
               <a className="text-link" href="#about">
-                {t('Découvrir Swirl IT', 'About Swirl IT')}
+                {t('Découvrir Swirl', 'About Swirl')}
                 <ArrowDown size={16} />
               </a>
             </div>
@@ -199,8 +199,8 @@ export default function Portfolio({
               <img
                 src="/assets/portrait.webp"
                 alt={t(
-                  'Zaïd Chefchaouni, CEO de Swirl IT',
-                  'Zaïd Chefchaouni, CEO of Swirl IT',
+                  'Zaïd Chefchaouni, CEO de Swirl',
+                  'Zaïd Chefchaouni, CEO of Swirl',
                 )}
                 width="864"
                 height="1184"
@@ -244,8 +244,8 @@ export default function Portfolio({
             </p>
             <p>
               {t(
-                'Swirl IT s’appuie sur une expérience technique acquise depuis 2013 dans la banque, l’assurance, l’énergie, l’industrie et les services. Nous accompagnons les entreprises du développement web aux systèmes embarqués, jusqu’au cloud et à l’IA, avec une même exigence de qualité et de fiabilité.',
-                'Swirl IT draws on technical experience built since 2013 across banking, insurance, energy, industry and services. We support businesses in web development, embedded systems, cloud and AI, with the same commitment to quality and reliability.',
+                'Swirl s’appuie sur une expérience technique acquise depuis 2013 dans la banque, l’assurance, l’énergie, l’industrie et les services. Nous accompagnons les entreprises du développement web aux systèmes embarqués, jusqu’au cloud et à l’IA, avec une même exigence de qualité et de fiabilité.',
+                'Swirl draws on technical experience built since 2013 across banking, insurance, energy, industry and services. We support businesses in web development, embedded systems, cloud and AI, with the same commitment to quality and reliability.',
               )}
             </p>
             <ul className="values">

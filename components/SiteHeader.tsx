@@ -15,9 +15,8 @@ export default function SiteHeader({ lang }: Readonly<{ lang: Lang }>) {
   return (
     <>
       <header className="header wrap">
-        <a className="brand" href="#home" aria-label="Swirl IT">
-          <img src="/assets/mark.svg" alt="" width="40" height="38" /> Swirl{' '}
-          <span>IT</span>
+        <a className="brand" href="#home" aria-label="Swirl">
+          <img src="/assets/mark.svg" alt="" width="40" height="38" /> Swirl
           <i>.</i>
         </a>
         <nav aria-label={t('Navigation principale', 'Main navigation')}>
