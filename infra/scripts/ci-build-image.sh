@@ -16,7 +16,7 @@ printf '%s\n' "$CI_COMMIT_SHA" | grep -Eq '^[a-f0-9]{40}$' || { echo 'Invalid so
 case "$REGISTRY_PUSH_HOST" in
   ''|*[!A-Za-z0-9.:-]*) echo 'Invalid private registry address' >&2; exit 1 ;;
 esac
-[ -s dist/server/index.js ] && [ -d dist/client ] || { echo 'Verified build artifacts are missing'; exit 1; }
+[ -s dist/server/index.js ] && [ -s dist/runtime/main.js ] && [ -s dist/runtime/migrate-postgres.js ] && [ -d dist/client ] || { echo 'Verified build artifacts are missing'; exit 1; }
 
 DOCKER_CONFIG="${DOCKER_CONFIG:-/kaniko/.docker}"
 export DOCKER_CONFIG

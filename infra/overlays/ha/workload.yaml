@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: website
+  namespace: apps
+spec:
+  replicas: 2
+  minReadySeconds: 5
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  template:
+    spec:
+      terminationGracePeriodSeconds: 40
+      topologySpreadConstraints:
+        - maxSkew: 1
+          minDomains: 2
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+          nodeTaintsPolicy: Honor
+          labelSelector:
+            matchLabels:
+              app: website
+      containers:
+        - name: website
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: website-database
+                  key: DATABASE_URL
+          livenessProbe:
+            httpGet:
+              path: /livez
+          readinessProbe:
+            timeoutSeconds: 10
+            periodSeconds: 15
+          volumeMounts:
+            - name: data
+              $patch: delete
+      volumes:
+        - name: data
+          $patch: delete

@@ -50,6 +50,25 @@ assert role['rules'] == [{'apiGroups':['apps'], 'resources':['deployments'],
 assert binding['subjects'] == [{'kind':'ServiceAccount', 'name':'gitlab-ci-job', 'namespace':'gitlab-runners'}]
 pipeline = yaml.safe_load((source / '.gitlab-ci.yml').read_text())
 assert not pipeline['verify'].get('allow_failure', False)
+if shutil.which('kubectl'):
+    rendered = list(yaml.safe_load_all(subprocess.check_output(['kubectl', 'kustomize', str(source/'infra/overlays/ha')], text=True)))
+    ha = next(doc for doc in rendered if doc['kind'] == 'Deployment')
+    assert ha['spec']['replicas'] == 2 and ha['spec']['strategy']['type'] == 'RollingUpdate'
+    ha_pod = ha['spec']['template']['spec']
+    spread = ha_pod['topologySpreadConstraints'][0]
+    assert spread['minDomains'] == 2 and spread['whenUnsatisfiable'] == 'DoNotSchedule'
+    assert spread['topologyKey'] == 'kubernetes.io/hostname'
+    assert spread['labelSelector'] == ha['spec']['selector']
+    assert all(volume['name'] != 'data' for volume in ha_pod['volumes'])
+    app_container = ha_pod['containers'][0]
+    assert app_container['livenessProbe']['httpGet']['path'] == '/livez'
+    assert any(env['name'] == 'DATABASE_URL' and not env['valueFrom']['secretKeyRef'].get('optional') for env in app_container['env'])
+    budget = next(doc for doc in rendered if doc['kind'] == 'PodDisruptionBudget')
+    assert budget['spec']['minAvailable'] == 1 and budget['spec']['selector'] == ha['spec']['selector']
+    for hook_name in ('website-db-setup', 'website-schema-migration'):
+        hook = next(doc for doc in rendered if doc['kind'] == 'Job' and doc['metadata']['name'] == hook_name)
+        assert hook['metadata']['annotations']['argocd.argoproj.io/hook'] == 'PreSync'
+        assert hook['spec']['template']['spec']['containers'][0]['image'] == app_container['image']
 assert pipeline['release']['resource_group'] == 'website-production'
 assert pipeline['image-build']['needs'] == [{'job': 'verify', 'artifacts': True}]
 assert pipeline['release']['needs'] == [{'job': 'image-build', 'artifacts': True}]
@@ -101,6 +120,9 @@ with tempfile.TemporaryDirectory(prefix='website-delivery-test.') as directory:
     shutil.copytree(source / 'infra', workspace / 'infra')
     (workspace / 'dist/server').mkdir(parents=True)
     (workspace / 'dist/client').mkdir(parents=True)
+    (workspace / 'dist/runtime').mkdir(parents=True)
+    (workspace / 'dist/runtime/main.js').write_text('// verified runtime artifact\n')
+    (workspace / 'dist/runtime/migrate-postgres.js').write_text('// verified migration artifact\n')
     (workspace / 'dist/server/index.js').write_text('// verified worker artifact\n')
     (workspace / 'dist/client/site.css').write_text('body{}\n')
     (workspace / 'Dockerfile').write_text('FROM scratch\n')

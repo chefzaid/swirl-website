@@ -74,8 +74,8 @@ export async function limitAttempts(
       .prepare(`
       INSERT INTO contact_rate_limits (key,count,expires_at) VALUES (?,1,?)
       ON CONFLICT(key) DO UPDATE SET
-        count = CASE WHEN expires_at <= ? THEN 1 ELSE MIN(count+1,?) END,
-        expires_at = CASE WHEN expires_at <= ? THEN excluded.expires_at ELSE expires_at END
+        count = CASE WHEN contact_rate_limits.expires_at <= ? THEN 1 WHEN contact_rate_limits.count < ? THEN contact_rate_limits.count+1 ELSE contact_rate_limits.count END,
+        expires_at = CASE WHEN contact_rate_limits.expires_at <= ? THEN excluded.expires_at ELSE contact_rate_limits.expires_at END
       RETURNING count,expires_at
     `)
       .bind(key, now + 60_000, now, maximum + 1, now)
@@ -102,6 +102,7 @@ export async function insertWithinLimits(
   },
   keys: { ip: string; email: string },
   now: number,
+  notification?: { provider: 'resend' | 'graph'; sender: string },
 ): Promise<boolean> {
   const limits = [
     { key: `v2:submission:ip:${keys.ip}`, max: 5, window: HOUR },
@@ -113,7 +114,7 @@ export async function insertWithinLimits(
   const eligible = limits
     .map(
       () =>
-        'COALESCE((SELECT count < ? OR expires_at <= ? FROM contact_rate_limits WHERE key = ?),1)',
+        'COALESCE((SELECT CASE WHEN count < ? OR expires_at <= ? THEN 1 ELSE 0 END FROM contact_rate_limits WHERE key = ?),1) = 1',
     )
     .join(' AND ');
   const statements: DatabaseStatement[] = [
@@ -138,12 +139,13 @@ export async function insertWithinLimits(
       INSERT INTO contact_rate_limits (key,count,expires_at)
       SELECT ?,1,? WHERE EXISTS (SELECT 1 FROM contact_rate_limits WHERE key = ?)
       ON CONFLICT(key) DO UPDATE SET
-        count = CASE WHEN expires_at <= ? THEN 1 ELSE count+1 END,
-        expires_at = CASE WHEN expires_at <= ? THEN excluded.expires_at ELSE expires_at END
+        count = CASE WHEN contact_rate_limits.expires_at <= ? THEN 1 ELSE contact_rate_limits.count+1 END,
+        expires_at = CASE WHEN contact_rate_limits.expires_at <= ? THEN excluded.expires_at ELSE contact_rate_limits.expires_at END
     `)
         .bind(limit.key, now + limit.window, reservation, now, now),
     );
   }
+  const contactIndex = statements.length;
   statements.push(
     db
       .prepare(`
@@ -159,9 +161,29 @@ export async function insertWithinLimits(
         row.message,
         row.lang,
         now,
-        'unconfigured',
+        notification ? 'queued' : 'unconfigured',
         reservation,
       ),
+  );
+  if (notification) {
+    statements.push(
+      db
+        .prepare(`
+      INSERT INTO contact_notification_queue (contact_id,provider,sender,created_at,run_at)
+      SELECT ?,?,?,?,? WHERE EXISTS (SELECT 1 FROM contact_rate_limits WHERE key = ?)
+      ON CONFLICT(contact_id) DO NOTHING
+    `)
+        .bind(
+          row.id,
+          notification.provider,
+          notification.sender,
+          now,
+          now,
+          reservation,
+        ),
+    );
+  }
+  statements.push(
     db
       .prepare('DELETE FROM contact_rate_limits WHERE key = ?')
       .bind(reservation),
@@ -170,7 +192,7 @@ export async function insertWithinLimits(
   // changes, and the temporary reservation never survives the transaction.
   // A failed quota therefore consumes no other new-submission allowance.
   const results = await db.batch(statements);
-  return results.at(-2)?.meta.changes === 1;
+  return results[contactIndex]?.meta.changes === 1;
 }
 
 export async function quotaRetryAfter(

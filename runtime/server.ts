@@ -233,7 +233,7 @@ export function createNodeServer(options: {
   env: Env;
   origin: string;
   trustedProxyCidrs?: string;
-  healthy: () => boolean;
+  healthy: () => boolean | Promise<boolean>;
 }) {
   const origin = new URL(options.origin);
   if (
@@ -278,7 +278,9 @@ export function createNodeServer(options: {
           }),
         );
       } else if (new URL(request.url).pathname === '/healthz') {
-        response = healthResponse(method, options.healthy());
+        response = healthResponse(method, await options.healthy());
+      } else if (new URL(request.url).pathname === '/livez') {
+        response = healthResponse(method, true);
       } else response = await options.worker.fetch(request, options.env);
       if (
         !incoming.complete ||

@@ -1,0 +1,26 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: apps
+resources:
+  - ../../k8s
+  - database-secrets.yaml
+  - database-setup.yaml
+  - disruption-budget.yaml
+patches:
+  - path: workload.yaml
+replacements:
+  - source:
+      kind: Deployment
+      name: website
+      fieldPath: spec.template.spec.containers.[name=website].image
+    targets:
+      - select:
+          kind: Job
+          name: website-db-setup
+        fieldPaths:
+          - spec.template.spec.containers.[name=db-setup].image
+      - select:
+          kind: Job
+          name: website-schema-migration
+        fieldPaths:
+          - spec.template.spec.containers.[name=schema-migration].image

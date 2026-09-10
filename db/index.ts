@@ -10,6 +10,8 @@ export interface DatabaseStatement {
   run(): Promise<DatabaseResult>;
 }
 export interface ContactDatabase {
+  readonly durableNotifications?: boolean;
+  deliverNotification?: (id: string) => Promise<boolean>;
   prepare(sql: string): DatabaseStatement;
   batch(statements: DatabaseStatement[]): Promise<DatabaseResult[]>;
 }

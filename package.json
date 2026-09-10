@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "astro dev --host 127.0.0.1",
-    "build": "astro build && node --experimental-strip-types scripts/security-headers.ts && vite build --config vite.worker.config.ts",
+    "build": "astro build && node --experimental-strip-types scripts/security-headers.ts && vite build --config vite.worker.config.ts && vite build --config vite.runtime.config.ts",
     "start": "wrangler dev --config wrangler.jsonc",
     "start:node": "node runtime/main.ts",
     "lint": "oxlint",
@@ -26,6 +26,7 @@
     "clsx": "2.1.1",
     "drizzle-orm": "0.45.2",
     "lucide-react": "1.31.0",
+    "postgres": "3.4.9",
     "react": "19.2.6",
     "react-dom": "19.2.6",
     "tailwind-merge": "3.6.0",

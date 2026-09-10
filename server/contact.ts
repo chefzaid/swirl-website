@@ -347,7 +347,16 @@ async function storeContact(
     .prepare('DELETE FROM contact_rate_limits WHERE expires_at <= ?')
     .bind(now)
     .run();
-  const inserted = await insertWithinLimits(db, data, keys, now);
+  const provider = env.RESEND_API_KEY
+    ? 'resend'
+    : env.MS_TENANT_ID && env.MS_CLIENT_ID && env.MS_CLIENT_SECRET
+      ? 'graph'
+      : undefined;
+  const notification =
+    db.durableNotifications && provider && env.CONTACT_SENDER
+      ? ({ provider, sender: env.CONTACT_SENDER } as const)
+      : undefined;
+  const inserted = await insertWithinLimits(db, data, keys, now, notification);
   if (!inserted) {
     const raced = await findContact(db, data.id);
     if (!raced)
@@ -355,6 +364,17 @@ async function storeContact(
         'Retry-After': String(await quotaRetryAfter(db, keys, now)),
       });
     return duplicateResponse(raced, data);
+  }
+  if (db.durableNotifications) {
+    let notified = false;
+    try {
+      notified = notification
+        ? ((await db.deliverNotification?.(data.id)) ?? false)
+        : false;
+    } catch {
+      console.error('Contact notification remains queued');
+    }
+    return json({ ok: true, notified }, 201);
   }
   const status = await notifyContact(env, data);
   // Persist before notifying so an email-service failure never loses the enquiry.

@@ -18,7 +18,8 @@ redirects the `www` host with HTTP 308 to the fixed `PUBLIC_ORIGIN`, retaining
 the validated original path and query, including trailing slashes. Forwarded
 host and protocol headers cannot change this destination. Ingress also preserves
 trailing slashes during its HTTP-to-HTTPS redirect. Keep the shared TLS certificate
-valid for both names; the platform owns both Cloudflare DNS records.
+valid for both names. This repository owns both Cloudflare DNS records; see
+[public DNS](dns.md) for direct and HA routing.
 Canonical metadata and `PUBLIC_ORIGIN` remain `https://swirlit.dev`, so visitors
 reach the apex before using the same-origin contact form.
 
@@ -125,13 +126,18 @@ workflow is present on GitHub's default branch to send a dispatch test.
 
 ## Runtime and stored enquiries
 
-The Node 24.19 container listens on port 8080 as UID/GID 1000 with a read-only root
+The Node container listens on port 8080 as UID/GID 10001 with a read-only root
 filesystem. `PUBLIC_ORIGIN=https://swirlit.dev` fixes the origin used by the
 application. `/healthz` checks the SQLite connection. The single replica uses
 the `website-data` Longhorn PVC at `/data`; the Node adapter stores
 `contact.sqlite` and applies the existing migrations. `Recreate` ensures two
 application replicas never write the same database during an update, with a
 short interruption while the replacement starts.
+
+The opt-in [multi-node profile and PostgreSQL cutover](high-availability.md)
+remove that single-writer constraint after its prerequisites are met. The
+default Application path and SQLite volume remain unchanged until an operator
+selects the profile.
 
 The PVC uses `Prune=false` so an Argo CD manifest removal does not delete saved
 enquiries. Longhorn replication is not an independent backup; include this
@@ -186,7 +192,9 @@ rotating rather than assuming a restart refreshes Vault data.
 The provider's successful response records `notification_status = sent`,
 meaning accepted for sending, not guaranteed inbox delivery. Check Resend logs
 for delivery or bounce events. Stored enquiries and failed notifications are
-not automatically replayed. Unit tests mock the provider; live delivery needs
+not automatically replayed by the default SQLite adapter. The PostgreSQL
+profile's new submissions use the [bounded notification queue](high-availability.md#contact-delivery-across-replicas).
+Unit tests mock the provider; live delivery needs
 a separate contact submission after the domain and credentials are ready.
 
 ## Local delivery verification
