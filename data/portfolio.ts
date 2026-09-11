@@ -3,16 +3,16 @@ export type Bilingual = { fr: string; en: string };
 export const services = [
   {
     id: 'web',
-    title: { fr: 'Applications Web & Mobile', en: 'Web & Mobile Apps' },
+    title: { fr: 'Applications web et mobiles', en: 'Web & Mobile Apps' },
     text: {
       fr: 'Vos applications web et mobiles sur mesure, conçues pour vos usages métier. Des interfaces intuitives, rapides et accessibles. Des API robustes pour connecter vos outils et vos données. Nous vous accompagnons de la conception à la mise en production.',
-      en: 'Your custom web and mobile applications, built around your business needs. Intuitive, fast and accessible interfaces. Robust APIs connecting your tools and data. We support you from design through to production.',
+      en: 'Tailored web and mobile applications built around your business needs. Intuitive, fast, and accessible interfaces. Robust APIs connecting your tools and data. We support you from design to production.',
     },
     tags: ['UI/UX', 'Android · iOS', 'API · System Design'],
   },
   {
     id: 'embedded',
-    title: { fr: 'Systèmes Embarqués & IoT', en: 'Embedded Systems & IoT' },
+    title: { fr: 'Systèmes embarqués & IoT', en: 'Embedded Systems & IoT' },
     text: {
       fr: 'Vos logiciels embarqués et objets connectés, du prototype à la production. Des équipements reliés à votre système d’information. Des données collectées et supervisées en temps réel. Nous développons des solutions fiables, adaptées aux contraintes de votre matériel.',
       en: 'Your embedded software and connected devices, from prototype to production. Equipment linked to your business systems. Data collected and monitored in real time. We build reliable solutions tailored to your hardware constraints.',
@@ -26,18 +26,18 @@ export const services = [
       fr: 'Votre cloud privé d’entreprise souverain, hébergé dans l’UE, opérationnel en quelques heures. Vos applications déployées instantanément. Nous intégrons également vos solutions d’IA et automatisons leur mise en production.',
       en: 'Your sovereign private enterprise cloud, hosted in the EU, ready within hours. Your applications deployed instantly. We also integrate your AI solutions and automate delivery.',
     },
-    tags: ['AWS · GCP', 'CI/CD · DevOps', 'Machine Learning · GPU'],
+    tags: ['Dedicated Servers', 'CI/CD · DevOps', 'Machine Learning · GPU'],
   },
 ];
-export const fixedPriceService = {
-  id: 'developpement-au-forfait',
+export const applicationService = {
+  id: 'applications-sur-mesure',
   name: {
-    fr: 'Développement logiciel sur mesure, au forfait',
-    en: 'Custom software development at a fixed price',
+    fr: 'Applications sur mesure',
+    en: 'Tailored applications',
   },
   description: {
-    fr: 'De l’idée à la mise en production, Swirl développe vos applications sur mesure au forfait et les héberge dans un cloud privé. Des solutions fiables, performantes et pensées pour durer.',
-    en: 'From idea to launch, Swirl builds your custom applications at a fixed price and hosts them in a private cloud. Reliable, high-performing solutions built to last.',
+    fr: 'De l’idée à la mise en production, Swirl développe vos applications sur mesure et les héberge dans un cloud privé. Des solutions fiables, performantes et pensées pour durer.',
+    en: 'From idea to launch, Swirl builds tailored applications and hosts them in a private cloud. Reliable, high-performing solutions built to last.',
   },
 };
 export const projects = [
@@ -52,11 +52,21 @@ export const projects = [
     },
     text: {
       fr: 'Rendre les résultats de calcul financier exploitables et offrir une vue claire de leur traitement.',
-      en: 'Make financial calculations usable and provide a clear view of how they are processed.',
+      en: 'Make financial calculation results usable and provide a clear view of how they are processed.',
     },
-    detail: {
-      fr: 'Une plateforme qui transforme les résultats de modèles d’intelligence artificielle en informations utiles aux décisions financières. Le projet couvre le suivi des calculs, l’optimisation de leur exécution et l’automatisation des mises à jour.',
-      en: 'A platform that turns AI model outputs into data that supports financial decisions. The project covers calculation monitoring, processing improvements and automated software releases.',
+    caseStudy: {
+      need: {
+        fr: 'Rendre les résultats de modèles d’IA exploitables pour les décisions financières, tout en gardant une vue claire sur l’exécution des calculs.',
+        en: 'Make AI model outputs useful for financial decisions while keeping calculation processing visible and manageable.',
+      },
+      contribution: {
+        fr: 'Intégration des résultats de modèles, supervision des traitements et optimisation de l’exécution des calculs. Automatisation des mises à jour pour accompagner l’évolution de la plateforme.',
+        en: 'Integrated model outputs, monitored processing, and worked on calculation performance. Automated software releases to support ongoing platform development.',
+      },
+      solution: {
+        fr: 'Une plateforme qui relie les résultats de calcul à leur suivi opérationnel. Les travaux portent sur la performance des traitements, la visibilité de leur exécution et la régularité des livraisons.',
+        en: 'A platform connecting financial calculation results with operational monitoring. The work focuses on processing performance, execution visibility, and repeatable software delivery.',
+      },
     },
     tags: {
       fr: ['Intelligence artificielle', 'Calcul financier', 'Supervision'],
@@ -75,11 +85,21 @@ export const projects = [
     },
     text: {
       fr: 'Connecter et superviser une nouvelle génération de compteurs pour accompagner les usages électriques professionnels.',
-      en: 'Connect and monitor a new generation of electricity meters for professional use.',
+      en: 'Connect and monitor a new generation of electricity meters for business use.',
     },
-    detail: {
-      fr: 'Des fonctions embarquées pour faire communiquer les compteurs et suivre leur fonctionnement. Des simulations des composants constructeur à la mise en service, le projet accompagne le passage de la conception à l’exploitation.',
-      en: 'Built-in functions that let meters communicate and make their operation visible. From simulating manufacturer components to production support, the project helps move the equipment from design into use.',
+    caseStudy: {
+      need: {
+        fr: 'Faire communiquer et superviser une nouvelle génération de compteurs électriques destinés aux usages professionnels, dans les contraintes du matériel embarqué.',
+        en: 'Connect and monitor a new generation of electricity meters for business use within the constraints of embedded hardware.',
+      },
+      contribution: {
+        fr: 'Développement de logiciels embarqués pour la communication et la supervision des compteurs. Simulation des composants constructeur et accompagnement de la conception à la mise en service.',
+        en: 'Developed embedded software for meter communication and monitoring. Simulated manufacturer components and supported the transition from design to deployment.',
+      },
+      solution: {
+        fr: 'Des fonctions de communication et de supervision intégrées aux compteurs, avec un travail de simulation pour préparer leur fonctionnement sur le matériel cible.',
+        en: 'Communication and monitoring capabilities integrated into the meters, supported by component simulations that prepare the software for its target hardware.',
+      },
     },
     tags: {
       fr: ['Objets connectés', 'Systèmes embarqués', 'Supervision'],
@@ -98,11 +118,21 @@ export const projects = [
     },
     text: {
       fr: 'Des parcours de souscription conçus pour faciliter l’accès à 3 familles de produits : assurance-vie, prévoyance et épargne retraite.',
-      en: 'Subscription journeys designed around 3 product families: life insurance, protection and retirement savings.',
+      en: 'Insurance application journeys covering 3 product families: life insurance, protection, and retirement savings.',
     },
-    detail: {
-      fr: 'Un accompagnement des premiers prototypes aux parcours de souscription, avec une attention portée à la fluidité et à la sécurité des accès. Les problèmes de performance et de connexion sont traités pour simplifier l’expérience des utilisateurs.',
-      en: 'Support from early prototypes through to subscription journeys, with a focus on smooth use and secure access. Performance and sign-in issues are addressed to make the experience easier for users.',
+    caseStudy: {
+      need: {
+        fr: 'Faciliter la souscription à trois familles de produits — assurance-vie, prévoyance et épargne retraite — avec des parcours fluides et des accès sécurisés.',
+        en: 'Simplify insurance application journeys across three product families: life insurance, protection, and retirement savings, with smooth navigation and secure access.',
+      },
+      contribution: {
+        fr: 'Accompagnement des premiers prototypes aux parcours de souscription. Traitement des problèmes de performance et de connexion, avec une attention portée à la fluidité des interactions et à la sécurité des accès.',
+        en: 'Supported the project from early prototypes to insurance application journeys. Addressed performance and sign-in issues, with a focus on responsive interactions and secure access.',
+      },
+      solution: {
+        fr: 'Des parcours couvrant trois familles de produits, avec des améliorations ciblées sur les performances et la connexion des utilisateurs. Une même démarche de qualité appliquée aux différentes étapes de souscription.',
+        en: 'Application journeys covering three product families, with targeted work on performance and sign-in reliability. The same focus on usability and access security extends across the application process.',
+      },
     },
     tags: {
       fr: ['Parcours client', 'Sécurité des accès', 'Applications web'],
@@ -123,9 +153,19 @@ export const projects = [
       fr: 'Associer les données financières et les outils d’évaluation pour éclairer les décisions de financement de factures.',
       en: 'Bring financial data and assessment tools together to support invoice-financing decisions.',
     },
-    detail: {
-      fr: 'Deux outils complémentaires : un référentiel pour organiser l’information financière et un outil d’évaluation pour l’exploiter. Des interfaces dédiées et des accès adaptés aux rôles rendent ces informations accessibles pour éclairer les décisions de financement.',
-      en: 'Two complementary tools: a reference system that organises financial information and a scoring tool that helps put it to use. Dedicated interfaces and role-based access make this information available to support financing decisions.',
+    caseStudy: {
+      need: {
+        fr: 'Rapprocher les données financières et les outils d’évaluation pour accompagner les décisions de financement de factures.',
+        en: 'Bring financial data and assessment tools together to support invoice financing decisions.',
+      },
+      contribution: {
+        fr: 'Intervention sur deux outils complémentaires : un référentiel de données financières et un outil de scoring. Développement d’interfaces dédiées et gestion des accès selon les rôles des utilisateurs.',
+        en: 'Worked on two complementary tools: a financial data repository and a scoring application. Developed dedicated interfaces and access controls based on user roles.',
+      },
+      solution: {
+        fr: 'Deux outils qui organisent l’information et la rendent exploitable pour l’évaluation financière, avec des accès adaptés aux responsabilités de chaque utilisateur.',
+        en: 'Two tools that organize financial information and make it usable for assessment, with access tailored to each user’s responsibilities.',
+      },
     },
     tags: {
       fr: ['Données financières', 'Aide à la décision', 'Gestion des accès'],
@@ -144,11 +184,21 @@ export const projects = [
     },
     text: {
       fr: 'Moderniser les outils qui accompagnent les offres commerciales, les contrats et les flux financiers de l’assurance-crédit.',
-      en: 'Modernize the tools behind credit insurance offers, contracts and financial flows.',
+      en: 'Modernize the tools behind credit insurance offers, contracts, and financial flows.',
     },
-    detail: {
-      fr: 'Des offres commerciales au suivi des contrats et des flux financiers, les outils de l’assurance-crédit évoluent dans un contexte international. La modernisation des fonctions existantes et l’automatisation des mises à jour facilitent leur évolution au fil des besoins métier.',
-      en: 'From commercial offers to contracts and financial flows, credit insurance tools evolve in an international setting. Modernized features and automated software releases help the platform keep pace with changing business needs.',
+    caseStudy: {
+      need: {
+        fr: 'Faire évoluer les outils de l’assurance-crédit qui accompagnent les offres commerciales, les contrats et les flux financiers dans un contexte international.',
+        en: 'Evolve credit insurance tools supporting commercial offers, contracts, and financial flows across an international business.',
+      },
+      contribution: {
+        fr: 'Modernisation des fonctionnalités existantes et automatisation des mises à jour. Accompagnement des évolutions métier sur les différentes étapes de gestion de l’assurance-crédit.',
+        en: 'Modernized existing features and automated software releases. Supported changing business requirements across credit insurance management workflows.',
+      },
+      solution: {
+        fr: 'Des outils modernisés et un processus de livraison automatisé pour accompagner les évolutions des offres, des contrats et des opérations financières.',
+        en: 'Modernized tools and an automated release process supporting changes to offers, contracts, and financial operations.',
+      },
     },
     tags: {
       fr: ['Applications métier', 'Modernisation', 'Automatisation'],
@@ -167,11 +217,21 @@ export const projects = [
     },
     text: {
       fr: 'Réunir 3 services essentiels dans un portail : virements, prêts en ligne et messagerie sécurisée.',
-      en: 'Bring 3 essential services into one portal: transfers, online loans and secure messaging.',
+      en: 'Bring 3 essential services into one portal: transfers, online loans, and secure messaging.',
     },
-    detail: {
-      fr: 'L’évolution du portail de la Banque des Territoires permet d’accompagner les démarches bancaires en ligne. Le projet relie les services entre eux et automatise les livraisons pour faire évoluer les parcours de virement, de prêt et d’échange avec la banque.',
-      en: 'Development of the Banque des Territoires portal supports everyday banking online. The project connects services and automates releases so transfer, loan and secure messaging journeys can continue to evolve.',
+    caseStudy: {
+      need: {
+        fr: 'Réunir les virements, les prêts en ligne et la messagerie sécurisée dans le portail de la Banque des Territoires.',
+        en: 'Bring transfers, online loans, and secure messaging together in the Banque des Territoires banking portal.',
+      },
+      contribution: {
+        fr: 'Évolution des parcours bancaires et intégration des services qui les composent. Automatisation des livraisons pour accompagner les mises à jour du portail.',
+        en: 'Developed banking workflows and integrated their supporting services. Automated software releases to support ongoing portal updates.',
+      },
+      solution: {
+        fr: 'Trois services bancaires accessibles depuis un même portail, avec des livraisons automatisées pour faire évoluer les parcours de virement, de prêt et de messagerie.',
+        en: 'Three banking services accessible through one portal, with automated releases supporting updates to transfer, loan, and messaging workflows.',
+      },
     },
     tags: {
       fr: ['Banque en ligne', 'Dématérialisation', 'Parcours client'],
@@ -190,11 +250,21 @@ export const projects = [
     },
     text: {
       fr: 'Suivre l’avancement des chantiers, les contrats, les risques et les documents : des outils pensés pour les besoins du terrain.',
-      en: 'Track construction progress, contracts, risks and documents with tools built around the needs of construction sites.',
+      en: 'Track construction progress, contracts, risks, and documents with tools built around the needs of construction sites.',
     },
-    detail: {
-      fr: 'Des applications métier au service du suivi des chantiers et de leurs documents. Les interfaces et les fonctions existantes évoluent, tandis que les livraisons sont coordonnées et automatisées pour accompagner les besoins du terrain.',
-      en: 'Business applications that support construction-site tracking and documentation. Interfaces and existing features evolve, with coordinated and automated releases to support the needs of construction sites.',
+    caseStudy: {
+      need: {
+        fr: 'Donner aux utilisateurs sur le terrain des outils pour suivre l’avancement des chantiers, les contrats, les risques et les documents associés.',
+        en: 'Give on-site users tools to track construction progress, contracts, risks, and related documents.',
+      },
+      contribution: {
+        fr: 'Évolution des interfaces et des fonctionnalités des applications métier. Coordination et automatisation des livraisons pour accompagner les besoins du suivi de chantier et de la gestion documentaire.',
+        en: 'Updated interfaces and features across business applications. Coordinated and automated releases to support construction tracking and document management needs.',
+      },
+      solution: {
+        fr: 'Des applications adaptées au suivi des chantiers et de leurs documents, avec un processus de livraison coordonné pour accompagner les évolutions fonctionnelles.',
+        en: 'Applications supporting construction tracking and documentation, with a coordinated release process for ongoing feature development.',
+      },
     },
     tags: {
       fr: ['Suivi de chantier', 'Gestion documentaire', 'Applications métier'],
@@ -217,11 +287,21 @@ export const projects = [
     },
     text: {
       fr: 'Permettre l’envoi de codes PIN par SMS avec une authentification renforcée et une protection dédiée aux données sensibles.',
-      en: 'Enable PIN delivery by SMS with strong authentication and dedicated protection for sensitive data.',
+      en: 'Enable PIN delivery by SMS with strong authentication and protections for sensitive data.',
     },
-    detail: {
-      fr: 'Un parcours qui associe contrôles de sécurité et envoi par SMS. L’intégration des services de messagerie et l’automatisation des tests accompagnent la mise en œuvre de cette solution d’envoi sécurisé.',
-      en: 'A workflow that combines security checks with SMS delivery. Messaging-service integration and automated tests support the implementation of this secure delivery solution.',
+    caseStudy: {
+      need: {
+        fr: 'Permettre l’envoi de codes PIN par SMS en intégrant des contrôles d’authentification et une protection adaptée aux données sensibles.',
+        en: 'Enable PIN delivery by SMS with authentication checks and protections for sensitive data.',
+      },
+      contribution: {
+        fr: 'Intégration des services de messagerie dans un parcours associant contrôles de sécurité et envoi des codes. Automatisation des tests pour accompagner la validation de la solution.',
+        en: 'Integrated messaging services into a workflow combining security checks and code delivery. Automated tests to support validation of the solution.',
+      },
+      solution: {
+        fr: 'Un parcours d’envoi de codes PIN par SMS qui associe authentification, intégration des services de messagerie et tests automatisés.',
+        en: 'A PIN delivery workflow combining authentication, SMS service integration, and automated tests.',
+      },
     },
     tags: {
       fr: ['Cybersécurité', 'Authentification', 'Messagerie'],
@@ -240,11 +320,21 @@ export const projects = [
     },
     text: {
       fr: 'Réunir la supervision et l’administration des terminaux de paiement dans un même point de contrôle.',
-      en: 'Bring payment terminal monitoring and administration together in one control point.',
+      en: 'Bring payment terminal monitoring and administration together in one place.',
     },
-    detail: {
-      fr: 'Une solution de supervision des terminaux, accompagnée d’une interface d’administration repensée. Le projet couvre les nouvelles fonctions, leur validation par des prototypes et la préparation de leur déploiement.',
-      en: 'A terminal-monitoring solution with a redesigned administration interface. The project covers new features, prototype validation and preparation for deployment.',
+    caseStudy: {
+      need: {
+        fr: 'Réunir la supervision et l’administration des terminaux de paiement dans un même point de contrôle.',
+        en: 'Bring payment terminal monitoring and administration together in one place.',
+      },
+      contribution: {
+        fr: 'Développement de fonctions de supervision et refonte de l’interface d’administration. Validation des nouvelles fonctionnalités par des prototypes et préparation de leur déploiement.',
+        en: 'Developed monitoring capabilities and redesigned the administration interface. Validated new features through prototypes and prepared them for deployment.',
+      },
+      solution: {
+        fr: 'Une solution de supervision accompagnée d’une interface d’administration repensée, avec des fonctionnalités validées par prototypage avant leur déploiement.',
+        en: 'A monitoring solution with a redesigned administration interface and features validated through prototyping before deployment.',
+      },
     },
     tags: {
       fr: ['Paiement', 'Supervision', 'Administration web'],
@@ -263,15 +353,25 @@ export const projects = [
     },
     text: {
       fr: 'Électricité et gaz : simuler un tarif, souscrire et gérer son contrat depuis un même portail.',
-      en: 'Electricity and gas: estimate a tariff, subscribe and manage a contract through one portal.',
+      en: 'Electricity and gas: estimate a rate, sign up, and manage your contract through one portal.',
     },
-    detail: {
-      fr: 'Trois démarches clés — simuler, souscrire, gérer — réunies pour l’électricité et le gaz dans une expérience adaptée au profil de l’abonné. Le portail relie les services existants pour accompagner le client de la découverte d’une offre au suivi de son contrat.',
-      en: 'Three key tasks — estimate, subscribe, manage — brought together for electricity and gas in an experience tailored to each subscriber. The portal connects existing services to support customers from exploring an offer through to managing their contract.',
+    caseStudy: {
+      need: {
+        fr: 'Permettre aux clients d’estimer un tarif, de souscrire et de gérer leur contrat d’électricité ou de gaz depuis un même portail.',
+        en: 'Let customers estimate a rate, sign up, and manage their electricity or gas contract through one portal.',
+      },
+      contribution: {
+        fr: 'Intégration des services existants et adaptation des parcours au profil de l’abonné. Accompagnement des trois démarches clés : simulation, souscription et gestion du contrat.',
+        en: 'Integrated existing services and adapted workflows to customer profiles. Supported three key tasks: rate estimates, sign-up, and contract management.',
+      },
+      solution: {
+        fr: 'Trois démarches réunies pour deux offres d’énergie — électricité et gaz — dans un portail qui accompagne le client de la découverte d’une offre au suivi de son contrat.',
+        en: 'Three customer tasks covering electricity and gas in a single portal, from exploring an offer to managing an active contract.',
+      },
     },
     tags: {
       fr: ['Portail client', 'Souscription en ligne', 'Personnalisation'],
-      en: ['Customer portal', 'Online subscriptions', 'Personalization'],
+      en: ['Customer portal', 'Online sign-up', 'Personalization'],
     },
     color: 'green',
   },

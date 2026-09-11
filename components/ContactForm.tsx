@@ -166,7 +166,7 @@ export default function ContactForm({ lang }: Readonly<{ lang: Lang }>) {
                 name="email"
                 type="email"
                 autoComplete="email"
-                placeholder="vous@entreprise.com"
+                placeholder={t('vous@entreprise.com', 'you@company.com')}
                 required
                 maxLength={254}
               />

@@ -3,7 +3,7 @@
 Swirl IT's bilingual company website uses Astro 7 and React 19, served by a
 Node 24 application on the bare-metal K3s cluster at `https://swirlit.dev`.
 Pages are rendered at build time; the header, project gallery and contact form
-hydrate independently. Contact enquiries are stored privately on the server.
+hydrate independently. Contact inquiries are stored privately on the server.
 
 ## Local development
 
@@ -54,30 +54,28 @@ SQLite migrations are plain SQL under `db/migrations`, applied transactionally
 at startup and recorded with checksums. Preserve applied filenames and contents;
 add a new numbered SQL file for a change. PostgreSQL's versioned schema and
 migration/import commands are in `runtime/postgres.ts` and
-`runtime/migrate-postgres.ts`. Neither adapter uses an ORM.
+`runtime/migrate-postgres.ts`.
 
-## Content and presentation
+## Source map
 
-- `data/portfolio.ts`: bilingual services and client projects.
-- `components/Portfolio.tsx`: static company presentation, rendered on the server.
-- `src/layouts/Home.astro`: combines the static presentation with independent interactive components.
-- `components/SiteHeader.tsx`: mobile menu, hydrated only below 1100px.
-- `components/ProjectGallery.tsx`: project filters and dialogs, hydrated near the viewport; `data/project-view.ts` supplies only the active language.
-- `components/ClientLogo.tsx`: shared client wordmarks in the reference rows and projects; [asset sources and theme treatment](docs/client-logos.md).
-- `components/SoftwareLifecycle.tsx`: accessible four-step diagram, with modular building blocks and translated labels.
-- `components/ContactForm.tsx`: accessible form and submission feedback, hydrated near the viewport.
-- `app/globals.css`: shared theme and responsive styles.
-- `src/layouts/Layout.astro`: SEO, language and social metadata.
-- `server/contact.ts`: validation, persistence, rate limits and optional Resend or Exchange notifications.
-- `server/handler.ts`: page/API routing and response security.
-- `runtime/contact.ts`: shared development/production database and notification setup.
-- `runtime/server.ts`: Node HTTP server, canonical redirects and safe static assets.
+| Area | Files |
+| --- | --- |
+| French and US English content | `data/portfolio.ts`, `data/site.ts` |
+| Pages and metadata | `src/layouts/` |
+| UI and shared project content | `components/`, `data/project-view.ts` |
+| Styles and assets | `app/globals.css`, `public/assets/` |
+| Contact API and notifications | `server/contact.ts`, `runtime/contact.ts` |
+| Request handling | `server/handler.ts`, `runtime/server.ts` |
+| Deployment | `infra/` |
 
-## Contact enquiries
+See [SEO maintenance](docs/seo.md) for route and metadata changes, and
+[client asset sources](docs/client-logos.md) when updating logos.
 
-The form stores enquiries in the private `contact_messages` table and confirms **storage**, not email delivery. It uses origin checks, strict field validation (including a free-text subject of 1–160 characters), bounded request bodies, a honeypot, timing checks, atomic rate counters and idempotency keys. There is no public endpoint to list messages.
+## Contact inquiries
 
-Inspect production enquiries through an authenticated operator session against
+The form stores inquiries in the private `contact_messages` table and confirms **storage**, not email delivery. It uses origin checks, strict field validation (including a free-text subject of 1–160 characters), bounded request bodies, a honeypot, timing checks, atomic rate counters and idempotency keys. There is no public endpoint to list messages.
+
+Inspect production inquiries through an authenticated operator session against
 the selected database. To inspect a local SQLite database without modifying it:
 
 ```sh
@@ -112,18 +110,16 @@ python3 infra/scripts/test-onboarding.py
 bash infra/scripts/test-postgres.sh
 ```
 
-Contact and runtime tests use real temporary SQLite databases and the same SQL
-migrations as production. They cover validation, persistence, idempotency,
-quotas, rollbacks, notification contracts, proxy trust, redirects and security
-headers. Provider requests are mocked. Development middleware tests check the
-local contact endpoint and storage across server restarts. The PostgreSQL test
-helper requires Docker and creates an isolated localhost-only database; it
-never uses the application's `DATABASE_URL` or the live cluster.
+Tests use temporary databases and mocked email providers. The PostgreSQL helper
+requires Docker and creates an isolated local database.
 
-## Cookies and privacy
+## Privacy maintenance
 
-The application has no advertising or analytics trackers, browser cookies, localStorage, sessionStorage or IndexedDB usage. Fonts, images, CSS and scripts are served from the site. Contact requests go to the same-origin `/api/contact` endpoint. Submission timing and retry identifiers stay in React memory; enquiry records and temporary anti-abuse hashes are stored server-side in SQLite, or PostgreSQL when that profile is selected. Intranet is a regular external link, and email notifications are server-side.
+The site uses no analytics, advertising trackers or browser storage. Review
+consent requirements before introducing third-party scripts or embeds, and keep
+the bilingual notice in `src/layouts/Privacy.astro` aligned with data handling.
+See [CNIL guidance](https://www.cnil.fr/fr/cookies-et-autres-traceurs/que-dit-la-loi).
 
-No cookie banner is installed because the current application has no consent-requiring tracker. This follows the [CNIL distinction between necessary functions and trackers requiring consent](https://www.cnil.fr/fr/cookies-et-autres-traceurs/que-dit-la-loi). Reassess this decision before adding analytics, advertising, embedded media or third-party widgets. The separate Intranet has its own privacy scope.
-
-The bilingual privacy notice explains this behavior and is linked beside the form’s consent checkbox. Visitor rate-limit hashes expire after windows of up to one hour; expired rows are deleted on the next valid new submission, rather than by a scheduled task. Global daily counters contain no visitor identifier. Contact messages are not automatically purged: a retention period and deletion procedure still need to be defined for operational use. The cookie review is not a full GDPR compliance assessment.
+Expired visitor rate-limit records are deleted on the next valid new submission.
+Contact messages have no automatic retention limit; define and operate a deletion
+policy for production data.

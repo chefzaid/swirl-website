@@ -2,15 +2,17 @@
 import Layout from './Layout.astro';
 import SiteFooter from '../../components/SiteFooter';
 import ClientLogo from '../../components/ClientLogo';
+import ProjectCaseStudy from '../../components/ProjectCaseStudy';
+import { localizeCaseStudy } from '../../data/project-view';
 import { projects, type Lang, type Project } from '../../data/portfolio';
-import { absoluteUrl, homePath, projectPath } from '../../data/site';
+import { absoluteUrl, homePath, projectPath, siteConfig } from '../../data/site';
 interface Props { project: Project; lang: Lang; }
 const { project, lang } = Astro.props;
 const en = lang === 'en';
 const home = homePath(lang);
 const path = projectPath(project.id, lang);
 const related = projects.filter(p => p.id !== project.id && p.sector === project.sector).slice(0, 2);
-const title = `${project.client} : ${project.tags[lang][0]} | Swirl IT`;
+const title = `${siteConfig.name} | ${project.client} : ${project.tags[lang][0]}`;
 const breadcrumbs = {
   '@type': 'BreadcrumbList', '@id': absoluteUrl(path) + '#breadcrumb',
   itemListElement: [
@@ -19,7 +21,7 @@ const breadcrumbs = {
   ],
 };
 ---
-<Layout lang={lang} path={path} title={title} description={project.text[lang]} structuredData={[breadcrumbs]} shareImage={false}>
+<Layout lang={lang} path={path} title={title} description={project.text[lang]} structuredData={[breadcrumbs]}>
   <a class="skip-link" href="#main">{en ? 'Skip to content' : 'Aller au contenu'}</a>
   <header class="header wrap case-header">
     <a class="brand" href={home} aria-label="Swirl"><img src="/assets/mark.svg" alt="" width="40" height="38" />Swirl<i>.</i></a>
@@ -44,7 +46,7 @@ const breadcrumbs = {
       </header>
       <section class="case-body" aria-labelledby="project-heading">
         <h2 id="project-heading">{en ? 'The project' : 'Le projet'}</h2>
-        <p>{project.detail[lang]}</p>
+        <ProjectCaseStudy lang={lang} caseStudy={localizeCaseStudy(project.caseStudy, lang)} />
         <p class="case-attribution">{en ? 'Project delivered directly or through consulting partnerships.' : 'Projet réalisé directement ou dans le cadre de partenariats de conseil.'}</p>
       </section>
       <aside class="case-contact">

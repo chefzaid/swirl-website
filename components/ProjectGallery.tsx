@@ -11,6 +11,7 @@ import {
 import type { Lang } from '@/data/portfolio';
 import type { ProjectView } from '@/data/project-view';
 import ClientLogo from './ClientLogo';
+import ProjectCaseStudy from './ProjectCaseStudy';
 export default function ProjectGallery({
   lang,
   projects,
@@ -92,7 +93,7 @@ export default function ProjectGallery({
             <p className="section-intro">
               {t(
                 'Banque, assurance, énergie, industrie et services : des projets qui simplifient le quotidien et font avancer les entreprises.',
-                'Banking, insurance, energy, industry and services: projects that simplify everyday work and help businesses move forward.',
+                'Banking, insurance, energy, industry, and services: projects that simplify everyday work and help businesses move forward.',
               )}
             </p>
           </div>
@@ -181,8 +182,7 @@ export default function ProjectGallery({
                 {t('Voir la page du projet', 'Open the project page')}{' '}
                 <ArrowUpRight size={16} />
               </a>
-              <h3>{t('Le projet', 'The project')}</h3>
-              <p>{selected.detail}</p>
+              <ProjectCaseStudy lang={lang} caseStudy={selected.caseStudy} />
               <div className="tags">
                 {selected.tags.map((tag) => (
                   <span key={tag}>{tag}</span>

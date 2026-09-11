@@ -1,4 +1,4 @@
-# Future multi-node deployment
+# PostgreSQL and high availability
 
 `infra/overlays/ha` is an opt-in profile for two Website replicas on different
 hosts. The normal `infra/k8s` deployment remains one SQLite writer with a
@@ -21,7 +21,6 @@ connection uses `postgres.infra.svc.cluster.local:5432`. Vault KV v2 path
 receives only `DATABASE_URL`; the administrator credentials at
 `secret/infra/postgres` are reserved for the setup hook.
 
-Build and release an image containing this runtime before using the overlay.
 From an authenticated operator environment, prepare the ExternalSecrets:
 
 ```sh
@@ -41,8 +40,7 @@ database provisioning with a PostgreSQL advisory lock. It refuses an existing
 database with a different owner. `website-schema-migration` initializes or
 checks the versioned schema under a transaction lock. Both inherit the exact
 Deployment image digest. The website process only checks schema readiness; it
-does not create PostgreSQL tables during concurrent pod startup. Neither hook
-imports SQLite data or sends email.
+does not create PostgreSQL tables during concurrent pod startup. Import SQLite data separately as described below.
 
 For the first cutover, run these two rendered Jobs in order and wait for each
 to Complete while the default Application path is still selected. Rendering
@@ -55,7 +53,7 @@ run the hooks through Argo CD automatically.
 
 Plan a short maintenance window. Pause application reconciliation and block
 contact submissions before taking the final backup, keeping writes blocked
-until PostgreSQL is selected. A snapshot taken while new enquiries continue
+until PostgreSQL is selected. A snapshot taken while new inquiries continue
 arriving cannot be used as a final cutover snapshot. Use SQLite's online backup
 API or a verified consistent volume backup; copying an open database file
 without its WAL loses committed records.
@@ -94,11 +92,11 @@ writes, returning to SQLite requires reconciling those writes first.
 ## Contact delivery across replicas
 
 PostgreSQL serializes the small shared submission quota and inserts each
-enquiry with its notification job in the same transaction. Request IDs remain
+inquiry with its notification job in the same transaction. Request IDs remain
 idempotent across pods. A request tries immediate delivery after commit; each
 pod also drains queued jobs. Row locks claim work, a two-minute lease bounds
 ownership, and a unique claim token fences completion after recovery. A failed
-email attempt never removes the saved enquiry. Liveness uses `/livez`;
+email attempt never removes the saved inquiry. Liveness uses `/livez`;
 readiness `/healthz` checks the database schema.
 
 Resend retries use the existing `contact/<id>` key and the stored sender and
@@ -112,11 +110,11 @@ confirmed inbox delivery.
 Microsoft Graph's [sendMail API](https://learn.microsoft.com/en-us/graph/api/user-sendmail?view=graph-rest-1.0)
 does not provide the same documented idempotency-key contract. Failed or
 interrupted Graph attempts therefore become `manual` without automatic retry
-or provider fallback. Inspect provider/Sent Items records and the saved enquiry
+or provider fallback. Inspect provider/Sent Items records and the saved inquiry
 before deciding on manual delivery; do not blindly reset these jobs. Historical
 SQLite messages and submissions made without configured email credentials
 remain outside the automatic queue. Provider outages can delay email even
-while enquiries remain available in PostgreSQL.
+while inquiries remain available in PostgreSQL.
 
 ## Verification
 
@@ -134,9 +132,8 @@ fixture. It does not use `DATABASE_URL`. Tests exercise concurrent quotas,
 duplicate submissions, rollback, claim fencing, Graph recovery, retry expiry,
 idempotent/conflicting snapshot imports and database-dependent readiness.
 
-Before admitting traffic on future nodes, test an actual host loss, PostgreSQL
-primary failover, application drain and restore from backup. Verify enquiries
+Before admitting traffic on new nodes, test an actual host loss, PostgreSQL
+primary failover, application drain and restore from backup. Verify inquiries
 and quotas persist, old notification owners cannot overwrite recovered work,
 the real client IP remains trusted only through the configured ingress, and
-both root and `www` URLs work. These are operator acceptance tests; rendering
-the profile on a one-host cluster does not establish HA.
+both root and `www` URLs work.

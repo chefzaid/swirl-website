@@ -1,9 +1,7 @@
 # Client wordmarks
 
-The reference rows, project cards, dialogs and project pages share
-`components/ClientLogo.tsx` and `data/client-logos.ts`. Every logo includes the
-company name as artwork and has a text alternative. The files are served locally;
-visitors make no requests to the source sites.
+Client assets are served from `public/assets/clients/` and mapped in
+`data/client-logos.ts`. `components/ClientLogo.tsx` renders them across the site.
 
 Sources retrieved on 2026-09-07:
 
@@ -21,15 +19,10 @@ Sources retrieved on 2026-09-07:
 | `ingenico.svg` | [Ingenico](https://ingenico.com/themes/custom/ingenico/logo.svg) |
 | `engie.svg` | [ENGIE](https://www.engie.com/) — inline header SVG |
 
-CSS applies the site's grey/white treatment while preserving aspect ratios.
-BPCE/Natixis, Société Générale and Bouygues Construction retain the contrasting
-details within their symbols through grayscale/inversion. The Caisse des Dépôts SVG keeps the
-original white seal and lettering with its solid red background removed. The
-Natixis asset keeps the original symbol and wordmark, without the CIB business-line
-descriptor, and trims the surrounding SVG whitespace. Enedis has an explicit
-viewBox matching its source dimensions so it scales correctly.
+When replacing an asset, update this source list and check its aspect ratio,
+contrast and text alternative in `components/ClientLogo.tsx`. Theme rules live in
+`app/globals.css`; keep any transformations compatible with the source artwork.
 
-The two Commons source pages identify their logos as public-domain text/geometry
-and note trademark protection. All company marks remain those of their respective
-owners. They identify the existing project references; the project attribution
-continues to describe direct assignments or consulting partnerships.
+The Commons sources identify the Caisse des Dépôts and Bouygues marks as
+public-domain text/geometry while noting trademark protection. All company
+marks remain those of their respective owners.

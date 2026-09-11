@@ -3,15 +3,13 @@
 The production website is `https://swirlit.dev`, with French at `/` and English
 at `/en/`. `https://www.swirlit.dev` redirects to the same apex URL, preserving
 the path and query string. GitHub `chefzaid/website` and GitLab `swirlit/website`
-are private source repositories. Publishing the website does not change repository
-visibility.
+are private source repositories.
 
 This repository owns its runtime image, resources in the `apps` namespace,
 Argo CD Application, and operator playbook. `bm-cluster` supplies K3s, the
 private GitLab Registry, Vault/External Secrets, Longhorn, ingress, Cloudflare,
-and the existing `apps/swirlit-dev-tls` certificate. The platform's former apex
-dashboard redirect must be removed before the website Ingress owns `swirlit.dev`.
-The dashboard remains available at `dashboard.swirlit.dev`.
+and the `apps/swirlit-dev-tls` certificate. Keep website ingress separate from
+the dashboard at `dashboard.swirlit.dev`.
 
 The website Ingress routes both names to the application. The Node runtime
 redirects the `www` host with HTTP 308 to the fixed `PUBLIC_ORIGIN`, retaining
@@ -28,30 +26,19 @@ reach the apex before using the same-origin contact form.
 [Repository onboarding](onboarding.md) configures a new deployment through the
 platform's `add-repos.sh` entrypoint, using this repository's declaration.
 
-GitLab runs the required `verify` job for every branch or merge request. It
-installs the lockfile dependencies, performs Astro/TypeScript and lint checks,
-runs contact/runtime tests, builds all documents, verifies the compiled CSP and
-public artifacts, checks SEO, rejects high/critical npm audit findings, and
-tests the delivery scripts. A failure blocks the release.
+Push source changes to `main` to deploy. GitLab runs three required stages:
 
-Successful `main` pipelines automatically build the Dockerfile's `prebuilt`
-target from those verified `dist` artifacts in a dedicated official Kaniko
-container. It publishes a commit-SHA image tag to the internal Registry and
-passes its digest artifact to a fresh release job, which updates
-`infra/k8s/kustomization.yaml` with that immutable digest. The runtime pulls
-`registry.swirlit.dev/swirlit/website/site@sha256:...` through the cluster's
-private Registry mapping.
+1. `verify`: type checks, lint, tests, build, security/SEO checks, dependency audit
+   and delivery-script checks.
+2. `image-build`: builds the Dockerfile's `prebuilt` target with Kaniko and pushes
+   the verified artifacts to the registry under the source commit SHA.
+3. `release`: commits the immutable image digest to
+   `infra/k8s/kustomization.yaml` with `[skip ci]`, then waits for Argo CD to report
+   that revision as Synced/Healthy and verifies the image and `/healthz`.
 
-The digest update is a normal Git push with `[skip ci]`, which prevents a
-recursive pipeline. Releases share the `website-production` resource group.
-Before updating GitOps, the release job verifies that its source commit still
-leads `main`; a superseded job skips deployment even if its image was already
-published. A concurrent source push after that check causes the normal Git push
-to fail rather than overwrite it.
-The successful job waits for Argo CD to report the exact deployment revision
-as Synced/Healthy, verifies the running Deployment's image digest, and checks
-the internal `/healthz` endpoint. Build artifacts and release metadata remain
-available in GitLab for seven days.
+Releases share the `website-production` resource group. A superseded source
+revision skips deployment; concurrent source changes cannot be overwritten.
+Build artifacts and release metadata are available in GitLab for seven days.
 
 GitLab project settings must permit this project's CI job token to push its own
 repository, including its protected default branch. Registry pushes use the
@@ -61,9 +48,8 @@ permissions. `infra/k8s/delivery-rbac.yaml` grants it read/watch access to only 
 named `apps/website` Deployment for rollout and digest verification. The pipeline
 cannot modify website workloads or read application Secrets.
 
-The initial `bootstrap` image is deliberately replaced by the first successful
-pipeline before the Application is installed. Later deployments require only a
-source push; Argo CD continuously reconciles `infra/k8s` from GitLab `main`.
+Complete the first pipeline before installing the Application so its image
+digest replaces `bootstrap`. Argo CD reconciles `infra/k8s` from GitLab `main`.
 
 ## Private GitLab and Registry access
 
@@ -91,19 +77,15 @@ kubectl apply -f infra/k8s/delivery-rbac.yaml
 ansible-playbook infra/ansible/site.yaml
 ```
 
-The playbook reconciles credentials and the Application, requests a fresh Argo
-CD reconciliation, and waits for the Deployment. Credentials remain in Vault
-and Kubernetes Secrets; they are never copied into Git.
+The playbook reconciles credentials and the Application, then waits for rollout.
 
 ## GitHub and GitLab synchronization
 
 `.github/workflows/sync-gitlab.yml` reconciles all branches and tags after a
 GitHub push or GitLab `repository_dispatch`. It fast-forwards the lagging side,
 merges compatible divergence with a normal merge, and fails on merge conflicts
-or conflicting tag objects. It never force-pushes or changes repository
-visibility. Equivalent refs produce no write, so notification round trips stop
-once both sides match. Branch deletions require coordination; an existing
-branch on either remote is preserved.
+or conflicting tag objects. It does not force-push or delete branches; coordinate
+branch deletions on both remotes.
 
 The workflow uses GitHub Actions secrets `GITLAB_SYNC_USERNAME`,
 `GITLAB_SYNC_TOKEN`, and `REPOSITORY_SYNC_ADMIN_TOKEN`, plus the non-secret
@@ -122,12 +104,10 @@ GITHUB_OWNER=chefzaid GITHUB_REPOSITORY=website \
 ```
 
 Set `GITLAB_ADMIN_TOKEN` and `GITHUB_ADMIN_TOKEN` in the caller's environment;
-do not put token literals in command history. The helper discovers the GitLab
-project ID and writes the workflow variable. It can prepare credentials before
-the workflow exists. Set `TEST_REPOSITORY_SYNC_WEBHOOK=true` only after the
+do not put token literals in command history. Set `TEST_REPOSITORY_SYNC_WEBHOOK=true` only after the
 workflow is present on GitHub's default branch to send a dispatch test.
 
-## Runtime and stored enquiries
+## Runtime and stored inquiries
 
 The Node container listens on port 8080 as UID/GID 10001 with a read-only root
 filesystem. `PUBLIC_ORIGIN=https://swirlit.dev` fixes the origin used by the
@@ -137,18 +117,15 @@ the `website-data` Longhorn PVC at `/data`; the Node adapter stores
 `Recreate` ensures two application replicas never write the same database during
 an update, with a short interruption while the replacement starts.
 
-The opt-in [multi-node profile and PostgreSQL cutover](high-availability.md)
-remove that single-writer constraint after its prerequisites are met. The
-default Application path and SQLite volume remain unchanged until an operator
-selects the profile. `DATABASE_URL` is absent in the base deployment and
-required by the PostgreSQL overlay. The application does not switch databases
-merely because PostgreSQL is available on the platform.
+To use PostgreSQL and multiple replicas, follow the
+[cutover guide](high-availability.md) before selecting `infra/overlays/ha`.
+`DATABASE_URL` is unset in the SQLite profile and required for PostgreSQL.
 
 The PVC uses `Prune=false` so an Argo CD manifest removal does not delete saved
-enquiries. Longhorn replication is not an independent backup; include this
+inquiries. Longhorn replication is not an independent backup; include this
 volume in the platform backup policy. Do not copy only the database file while
 it is open in WAL mode; use SQLite's online backup support or a consistent
-volume backup. Define retention and deletion for contact enquiries as part of
+volume backup. Define retention and deletion for contact inquiries as part of
 normal operations.
 
 Ingress overwrites `X-Real-IP` with the client address validated by the platform's
@@ -161,13 +138,6 @@ Update this CIDR if the cluster pod network changes. An arbitrary Internet
 HTML responses use `Cache-Control: no-cache, no-transform` so intermediary
 modifications cannot invalidate the generated hash-based Content Security Policy.
 Cloudflare [honors `no-transform` for JavaScript Detection injection](https://developers.cloudflare.com/cloudflare-challenges/challenge-types/javascript-detections/#if-your-origin-sends-a-no-transform-header).
-This is scoped to website documents; it does not relax CSP or change the zone's
-WAF settings. Static assets retain their separate cache policy.
-
-The contact form persists enquiries without an email provider. Resend and
-Microsoft Graph notifications require the server-side credentials described
-in the main README. Deploying this website does not send a test email or import
-contact data from another database.
 
 ## Contact email credentials
 
@@ -186,7 +156,7 @@ non-secret environment setting. Do not place credentials in manifests,
 CI variables, build arguments, Git, or browser code.
 
 The Secret reference is optional so a missing Secret does not prevent the
-website from serving pages or saving enquiries. Email remains unconfigured
+website from serving pages or saving inquiries. Email remains unconfigured
 until the key is present. The ExternalSecret itself will report a sync error
 until its Vault field exists; provision it before expecting a healthy Argo CD
 release. After provisioning or rotating the key, wait for the ExternalSecret
@@ -196,7 +166,7 @@ rotating rather than assuming a restart refreshes Vault data.
 
 The provider's successful response records `notification_status = sent`,
 meaning accepted for sending, not guaranteed inbox delivery. Check Resend logs
-for delivery or bounce events. Stored enquiries and failed notifications are
+for delivery or bounce events. Stored inquiries and failed notifications are
 not automatically replayed by the default SQLite adapter. The PostgreSQL
 profile's new submissions use the [bounded notification queue](high-availability.md#contact-delivery-across-replicas).
 Unit tests mock the provider; live delivery needs
@@ -210,35 +180,20 @@ kubectl kustomize infra/k8s
 ansible-playbook --syntax-check infra/ansible/site.yaml
 ```
 
-The delivery tests use temporary local Git repositories and mock registry and
-Kubernetes commands. They verify the canonical redirect/TLS contract, immutable
-release updates, credential/resource contracts, and source changes before and
-during image construction without touching a live cluster.
-
-The website container runs with UID/GID 10001 and a read-only root filesystem.
-The contact database volume receives group access through `fsGroup`; temporary
-files remain on the dedicated `/tmp` volume.
+These checks use temporary repositories and mock infrastructure commands.
+The container uses UID/GID 10001, a read-only root filesystem, `fsGroup` access to
+the database volume and a separate `/tmp` volume.
 
 ## Application logs
 
-Open [Website — Application Logs](https://kibana.swirlit.dev/app/dashboards#/view/website-logs)
-in Kibana for Website's container output, with separate recent-log and
-warnings/errors panels. The dashboard opens the last 24 hours and refreshes every
-30 seconds; widen the time picker when the application has been quiet.
+Use [Website — Application Logs](https://kibana.swirlit.dev/app/dashboards#/view/website-logs)
+in Kibana. Filter `kubernetes-logs-*` by `kubernetes.namespace_name: apps` and
+`app: website`. Fluent Bit collects stdout and stderr; the runtime does not log
+every HTTP request. Retention follows the platform's seven-day policy.
 
-Fluent Bit automatically collects stdout and stderr from every container in
-`apps`. Website is selected with `kubernetes.namespace_name : "apps" and
-app : "website"` in the shared `kubernetes-logs-*` data view. The warnings/errors
-panel includes stderr so unstructured Node diagnostics are visible alongside
-structured warning/error levels. These are application-emitted logs; the runtime
-does not emit an access log for every HTTP request.
-
-`infra/k8s/observability.yaml` owns the saved searches and dashboard. Its Argo CD
-PostSync hook imports them using the platform-managed
-`apps/kibana-bootstrap-credentials` Secret and the shared
-`kubernetes-container-logs` data view. The hook deletes itself after success.
-Logs continue to use the platform's seven-day lifecycle policy; this dashboard
-requires no additional collector, index, persistent volume, or application image.
+`infra/k8s/observability.yaml` defines the dashboard and saved searches. Its Argo
+CD PostSync hook imports them using `apps/kibana-bootstrap-credentials` and the
+`kubernetes-container-logs` data view.
 
 ## Automatic Sonar coverage
 
@@ -253,5 +208,4 @@ The platform discovers Website from its Argo CD workloads in `apps`, provisions 
 private Sonar project and masked analysis token, and refreshes missing or stale
 analysis. `.sonar-auto.json` declares this contract. A default-branch pipeline with
 `SONAR_SCAN_ONLY=true` runs `verify` and `sonar` without building an image or
-releasing. Its reports expire after seven days. Private repository and Sonar
-visibility are preserved.
+releasing. Reports expire after seven days.

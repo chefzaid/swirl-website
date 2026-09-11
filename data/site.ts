@@ -9,7 +9,8 @@ import {
 // domain is connected; metadata, alternates and the sitemap share this value.
 export const siteConfig = {
   origin: 'https://swirlit.dev',
-  name: 'Swirl IT',
+  name: 'Swirl',
+  organizationName: 'Swirl IT',
   email: 'contact@swirlit.dev',
   ceo: 'Zaïd Chefchaouni',
   linkedin: 'https://www.linkedin.com/in/chefzaid/',

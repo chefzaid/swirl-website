@@ -4,8 +4,7 @@ This repository owns `swirlit.dev` and `www.swirlit.dev` by default, including D
 and application redirects. The platform supplies the shared zone, TLS,
 ingress and optional HA Tunnel. [Repository onboarding](onboarding.md) asks the
 platform to reconcile the primary host and redirect alias declared by this
-application. Ordinary platform installation without selecting the repository
-leaves its DNS alone.
+application.
 For a customized deployment, use the primary host, alias and zone saved by
 onboarding instead of the default examples below.
 
@@ -36,16 +35,13 @@ kubectl get configmap bm-cluster-public-ingress -n infra -o json | \
 No output or a nonzero exit means the target is not ready. Do not infer readiness
 from a prepared Tunnel ID or keep pointing at the original host after the direct
 listener is retired. The platform's zone-wide Tunnel routes preserve the request
-hostname; the application-owned Ingress selects the backend. No application name
-needs adding to the platform repository.
+hostname; the application Ingress selects the backend.
 
-Review conflicting A/AAAA/CNAME records for these exact hostnames before changing
-their address target. Preserve unrelated records, especially MX and TXT records.
-[Cloudflare Tunnel DNS routing](https://developers.cloudflare.com/tunnel/routing/)
-describes the CNAME target. Verify the public URL and application health after
-DNS changes, then perform the application HA checks in the deployment guide.
+Review conflicting A/AAAA/CNAME records before changing targets, preserving MX,
+TXT and unrelated records. Cloudflare supports the apex CNAME through flattening;
+see [Tunnel DNS routing](https://developers.cloudflare.com/tunnel/routing/).
 
-Cloudflare supports the apex CNAME through flattening. Both names must reach the
-same application; its Node runtime owns the `www` to apex redirect. Keep the
-certificate valid for both hosts and verify that redirects preserve paths and
-queries. Preserve the apex mail records when editing its address record.
+Both names must reach the same application and have valid TLS certificates.
+After a change, verify public access, health and the `www` redirect with paths
+and queries. Complete the [HA acceptance checks](high-availability.md#verification)
+when switching ingress modes.

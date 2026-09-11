@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 import {
   services,
-  fixedPriceService,
+  applicationService,
   partners,
   projects,
   type Lang,
@@ -47,47 +47,47 @@ export default function Portfolio({
             <p className="eyebrow">
               <span className="status-dot" />
               {t(
-                'CONSEIL & INGÉNIERIE LOGICIELLE',
-                'SOFTWARE CONSULTING & ENGINEERING',
+                'Applications sur mesure & cloud privé',
+                'Tailored applications & private cloud',
               )}
             </p>
             <h1 id="hero-title">
               {en ? (
                 <>
-                  Ambitious
+                  Tailored
                   <br />
-                  ideas.
+                  applications.
                   <br />
                   <span>
-                    Solid
+                    Your private
                     <br />
-                    solutions.
+                    cloud.
                   </span>
                 </>
               ) : (
                 <>
-                  Des idées
+                  Vos applications
                   <br />
-                  ambitieuses.
+                  sur mesure.
                   <br />
                   <span>
-                    Des solutions
+                    Votre cloud
                     <br />
-                    solides.
+                    privé.
                   </span>
                 </>
               )}
             </h1>
             <p className="hero-description">
-              {fixedPriceService.description[lang]}
+              {applicationService.description[lang]}
             </p>
             <div className="hero-actions">
-              <a className="button" href="#projects">
-                {t('Explorer nos projets', 'Explore our projects')}
+              <a className="button" href="#contact">
+                {t('Parlons de votre projet', 'Let’s talk about your project')}
                 <ArrowUpRight size={18} />
               </a>
-              <a className="text-link" href="#about">
-                {t('Découvrir Swirl', 'About Swirl')}
+              <a className="text-link" href="#projects">
+                {t('Découvrir nos réalisations', 'Explore our work')}
                 <ArrowDown size={16} />
               </a>
             </div>
@@ -101,7 +101,7 @@ export default function Portfolio({
               <div>
                 <strong>{projects.length}</strong>
                 <small>
-                  {t('clients grands comptes', 'enterprise clients')}
+                  {t('références grands comptes', 'enterprise references')}
                 </small>
               </div>
               <div>
@@ -220,8 +220,8 @@ export default function Portfolio({
                 </span>
                 <span>
                   {t(
-                    "Le perfectionnisme n'est pas un défaut.",
-                    'Perfectionism is not a flaw.',
+                    'La simplicité et le perfectionnisme peuvent coexister',
+                    'Simplicity and perfectionism can coexist',
                   )}
                 </span>
                 <span className="quote-mark" aria-hidden="true">
@@ -239,20 +239,20 @@ export default function Portfolio({
             <p>
               {t(
                 'Nous privilégions les solutions simples, les échanges clairs et les collaborations qui durent.',
-                'We value simple solutions, clear communication and lasting partnerships.',
+                'We value simple solutions, clear communication, and lasting partnerships.',
               )}
             </p>
             <p>
               {t(
                 'Swirl s’appuie sur une expérience technique acquise depuis 2013 dans la banque, l’assurance, l’énergie, l’industrie et les services. Nous accompagnons les entreprises du développement web aux systèmes embarqués, jusqu’au cloud et à l’IA, avec une même exigence de qualité et de fiabilité.',
-                'Swirl draws on technical experience built since 2013 across banking, insurance, energy, industry and services. We support businesses in web development, embedded systems, cloud and AI, with the same commitment to quality and reliability.',
+                'Swirl draws on technical experience built since 2013 across banking, insurance, energy, industry, and services. We support businesses in web development, embedded systems, cloud, and AI, with the same commitment to quality and reliability.',
               )}
             </p>
             <ul className="values">
               {[
                 t(
                   'Des choix techniques expliqués, documentés et durables.',
-                  'Clear, documented technical decisions that last.',
+                  'Clear, documented technical decisions that stand the test of time.',
                 ),
                 t(
                   'Une implication concrète, de la conception à la production.',
@@ -260,7 +260,7 @@ export default function Portfolio({
                 ),
                 t(
                   'Du partage, des revues de code et de la transmission.',
-                  'Knowledge sharing, code reviews and mentoring.',
+                  'Knowledge sharing, code reviews, and mentoring.',
                 ),
               ].map((v) => (
                 <li key={v}>

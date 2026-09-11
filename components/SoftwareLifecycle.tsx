@@ -22,7 +22,7 @@ export default function SoftwareLifecycle({ lang }: Readonly<{ lang: Lang }>) {
       Icon: Lightbulb,
     },
     {
-      title: t('Assembler les briques', 'Connect the building blocks'),
+      title: t('Concevoir et développer', 'Design and build'),
       description: t(
         'Chaque brique a un rôle. Ensemble, elles créent votre solution.',
         'Each part has a role. Together, they make your solution.',
@@ -38,7 +38,7 @@ export default function SoftwareLifecycle({ lang }: Readonly<{ lang: Lang }>) {
       Icon: ShieldCheck,
     },
     {
-      title: t('Mettre en ligne', 'Launch your solution'),
+      title: t('Mettre en production', 'Deploy to production'),
       description: t(
         'Votre solution est prête à être utilisée.',
         'Your solution is ready to use.',
@@ -54,7 +54,7 @@ export default function SoftwareLifecycle({ lang }: Readonly<{ lang: Lang }>) {
           <ArrowUpRight size={16} aria-hidden="true" />
         </span>
         <strong id="lifecycle-title">
-          {t('De l’idée à la mise en ligne.', 'From idea to launch.')}
+          {t('De l’idée à la mise en production.', 'From idea to production.')}
         </strong>
       </figcaption>
       <ol className="lifecycle-stages">
