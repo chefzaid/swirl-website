@@ -44,13 +44,6 @@ export default function Portfolio({
         <div id="home" />
         <section className="hero wrap" aria-labelledby="hero-title">
           <div className="hero-copy">
-            <p className="eyebrow">
-              <span className="status-dot" />
-              {t(
-                'Applications sur mesure & cloud privé',
-                'Tailored applications & private cloud',
-              )}
-            </p>
             <h1 id="hero-title">
               {en ? (
                 <>
@@ -220,8 +213,8 @@ export default function Portfolio({
                 </span>
                 <span>
                   {t(
-                    'La simplicité et le perfectionnisme peuvent coexister',
-                    'Simplicity and perfectionism can coexist',
+                    "Le vrai perfectionnisme s'accomplit dans la simplicité.",
+                    'True perfectionism is the pursuit of absolute simplicity.',
                   )}
                 </span>
                 <span className="quote-mark" aria-hidden="true">
@@ -244,8 +237,8 @@ export default function Portfolio({
             </p>
             <p>
               {t(
-                'Swirl s’appuie sur une expérience technique acquise depuis 2013 dans la banque, l’assurance, l’énergie, l’industrie et les services. Nous accompagnons les entreprises du développement web aux systèmes embarqués, jusqu’au cloud et à l’IA, avec une même exigence de qualité et de fiabilité.',
-                'Swirl draws on technical experience built since 2013 across banking, insurance, energy, industry, and services. We support businesses in web development, embedded systems, cloud, and AI, with the same commitment to quality and reliability.',
+                'Swirl s’appuie sur une expérience technique acquise depuis 2013 dans la banque, l’assurance, l’énergie, l’industrie et les services. Architecture logicielle et urbanisation du système d’information : nous relions applications web, systèmes embarqués, cloud et IA avec une même exigence de qualité et de fiabilité.',
+                'Swirl draws on technical experience built since 2013 across banking, insurance, energy, industry, and services. Our software and enterprise architecture work connects web applications, embedded systems, cloud, and AI with the same commitment to quality and reliability.',
               )}
             </p>
             <ul className="values">

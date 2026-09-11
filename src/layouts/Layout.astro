@@ -12,8 +12,8 @@ interface Props {
 const { lang, path = homePath(Astro.props.lang), structuredData = [] } = Astro.props;
 const en = lang === 'en';
 const title = Astro.props.title ?? (en
-  ? `${siteConfig.name} | Tailored Software Solutions`
-  : `${siteConfig.name} | Solutions logicielles sur mesure`);
+  ? `${siteConfig.name} | Tailored Software Solutions & Private Cloud`
+  : `${siteConfig.name} | Solutions logicielles sur mesure & Cloud Privé`);
 const description = Astro.props.description ?? (en
   ? 'Swirl builds tailored web and mobile applications and hosts them in a private cloud. Explore our embedded software, IoT, and AI expertise.'
   : 'Swirl développe vos applications web et mobiles sur mesure et les héberge dans un cloud privé. Découvrez aussi nos expertises en systèmes embarqués, IoT et IA.');

@@ -12,7 +12,7 @@ const en = lang === 'en';
 const home = homePath(lang);
 const path = projectPath(project.id, lang);
 const related = projects.filter(p => p.id !== project.id && p.sector === project.sector).slice(0, 2);
-const title = `${siteConfig.name} | ${project.client} : ${project.tags[lang][0]}`;
+const title = `${siteConfig.name} | ${project.client}${en ? ':' : ' :'} ${project.tags[lang][0]}`;
 const breadcrumbs = {
   '@type': 'BreadcrumbList', '@id': absoluteUrl(path) + '#breadcrumb',
   itemListElement: [
@@ -51,7 +51,7 @@ const breadcrumbs = {
       </section>
       <aside class="case-contact">
         <h2>{en ? 'Planning a similar project?' : 'Un projet similaire ?'}</h2>
-        <p>{en ? 'Tell us what you want to achieve. Swirl supports your project from the first idea to the final result.' : 'Parlez-nous de ce que vous souhaitez accomplir. Swirl accompagne votre projet de l’idée au résultat final.'}</p>
+        <p>{en ? 'Tell us what you want to achieve. Swirl designs your application architecture and integrates it with your business systems, from idea to production.' : 'Parlez-nous de ce que vous souhaitez accomplir. Swirl conçoit l’architecture de vos applications et leur intégration dans votre système d’information, de l’idée à la production.'}</p>
         <a class="button" href={`${home}#contact`}>{en ? 'Let’s talk about your project' : 'Parlons de votre projet'} <span aria-hidden="true">↗</span></a>
       </aside>
     </article>

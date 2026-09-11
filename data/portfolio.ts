@@ -5,8 +5,8 @@ export const services = [
     id: 'web',
     title: { fr: 'Applications web et mobiles', en: 'Web & Mobile Apps' },
     text: {
-      fr: 'Vos applications web et mobiles sur mesure, conçues pour vos usages métier. Des interfaces intuitives, rapides et accessibles. Des API robustes pour connecter vos outils et vos données. Nous vous accompagnons de la conception à la mise en production.',
-      en: 'Tailored web and mobile applications built around your business needs. Intuitive, fast, and accessible interfaces. Robust APIs connecting your tools and data. We support you from design to production.',
+      fr: 'Vos applications web et mobiles sur mesure, conçues pour vos usages métier. Des interfaces intuitives, rapides et accessibles. Des API robustes pour connecter vos outils et vos données. Architecture et urbanisation de vos applications, de la conception à la mise en production.',
+      en: 'Tailored web and mobile applications built around your business needs. Intuitive, fast, and accessible interfaces. Robust APIs connecting your tools and data. Application and systems architecture, from design to production.',
     },
     tags: ['UI/UX', 'Android · iOS', 'API · System Design'],
   },
@@ -26,7 +26,7 @@ export const services = [
       fr: 'Votre cloud privé d’entreprise souverain, hébergé dans l’UE, opérationnel en quelques heures. Vos applications déployées instantanément. Nous intégrons également vos solutions d’IA et automatisons leur mise en production.',
       en: 'Your sovereign private enterprise cloud, hosted in the EU, ready within hours. Your applications deployed instantly. We also integrate your AI solutions and automate delivery.',
     },
-    tags: ['Dedicated Servers', 'CI/CD · DevOps', 'Machine Learning · GPU'],
+    tags: ['Dedicated Servers', 'DevOps · CI/CD', 'Machine Learning · GPU'],
   },
 ];
 export const applicationService = {
@@ -51,26 +51,26 @@ export const projects = [
       en: 'Turning calculations into decisions.',
     },
     text: {
-      fr: 'Rendre les résultats de calcul financier exploitables et offrir une vue claire de leur traitement.',
-      en: 'Make financial calculation results usable and provide a clear view of how they are processed.',
+      fr: 'Rendre les résultats des calculs XVA exploitables et offrir une vue claire de leur traitement.',
+      en: 'Make XVA calculation results usable and provide a clear view of how they are processed.',
     },
     caseStudy: {
       need: {
-        fr: 'Rendre les résultats de modèles d’IA exploitables pour les décisions financières, tout en gardant une vue claire sur l’exécution des calculs.',
-        en: 'Make AI model outputs useful for financial decisions while keeping calculation processing visible and manageable.',
+        fr: 'Rendre les résultats de modèles d’IA exploitables pour les calculs XVA, tout en gardant une vue claire sur leur exécution.',
+        en: 'Make AI model outputs usable for XVA calculations while keeping processing visible and manageable.',
       },
       contribution: {
-        fr: 'Intégration des résultats de modèles, supervision des traitements et optimisation de l’exécution des calculs. Automatisation des mises à jour pour accompagner l’évolution de la plateforme.',
-        en: 'Integrated model outputs, monitored processing, and worked on calculation performance. Automated software releases to support ongoing platform development.',
+        fr: 'Architecture de la plateforme de calcul XVA, intégration des résultats de modèles et supervision des traitements. Optimisation de l’exécution des calculs et automatisation des mises à jour.',
+        en: 'Designed XVA platform architecture, integrated model outputs, and monitored processing. Worked on calculation performance and automated software releases.',
       },
       solution: {
-        fr: 'Une plateforme qui relie les résultats de calcul à leur suivi opérationnel. Les travaux portent sur la performance des traitements, la visibilité de leur exécution et la régularité des livraisons.',
-        en: 'A platform connecting financial calculation results with operational monitoring. The work focuses on processing performance, execution visibility, and repeatable software delivery.',
+        fr: 'Une plateforme qui relie les résultats des calculs XVA à leur suivi opérationnel. Les travaux portent sur la performance des traitements, la visibilité de leur exécution et la régularité des livraisons.',
+        en: 'A platform connecting XVA calculation results with operational monitoring. The work focuses on processing performance, execution visibility, and repeatable software delivery.',
       },
     },
     tags: {
-      fr: ['Intelligence artificielle', 'Calcul financier', 'Supervision'],
-      en: ['Artificial intelligence', 'Financial computing', 'Monitoring'],
+      fr: ['XVA', 'Intelligence artificielle', 'Supervision'],
+      en: ['XVA', 'Artificial intelligence', 'Monitoring'],
     },
     color: 'green',
   },
@@ -84,7 +84,7 @@ export const projects = [
       en: 'Connecting the next generation of meters.',
     },
     text: {
-      fr: 'Connecter et superviser une nouvelle génération de compteurs pour accompagner les usages électriques professionnels.',
+      fr: 'Connecter et superviser une nouvelle génération de compteurs adaptés aux usages électriques professionnels.',
       en: 'Connect and monitor a new generation of electricity meters for business use.',
     },
     caseStudy: {
@@ -93,12 +93,12 @@ export const projects = [
         en: 'Connect and monitor a new generation of electricity meters for business use within the constraints of embedded hardware.',
       },
       contribution: {
-        fr: 'Développement de logiciels embarqués pour la communication et la supervision des compteurs. Simulation des composants constructeur et accompagnement de la conception à la mise en service.',
-        en: 'Developed embedded software for meter communication and monitoring. Simulated manufacturer components and supported the transition from design to deployment.',
+        fr: 'Architecture et développement des logiciels embarqués pour la communication et la supervision des compteurs. Simulation des composants constructeur, de la conception à la mise en service.',
+        en: 'Designed and developed embedded software architecture for meter communication and monitoring. Simulated manufacturer components from design to deployment.',
       },
       solution: {
         fr: 'Des fonctions de communication et de supervision intégrées aux compteurs, avec un travail de simulation pour préparer leur fonctionnement sur le matériel cible.',
-        en: 'Communication and monitoring capabilities integrated into the meters, supported by component simulations that prepare the software for its target hardware.',
+        en: 'Communication and monitoring capabilities integrated into the meters, with component simulations that prepare the software for its target hardware.',
       },
     },
     tags: {
@@ -126,8 +126,8 @@ export const projects = [
         en: 'Simplify insurance application journeys across three product families: life insurance, protection, and retirement savings, with smooth navigation and secure access.',
       },
       contribution: {
-        fr: 'Accompagnement des premiers prototypes aux parcours de souscription. Traitement des problèmes de performance et de connexion, avec une attention portée à la fluidité des interactions et à la sécurité des accès.',
-        en: 'Supported the project from early prototypes to insurance application journeys. Addressed performance and sign-in issues, with a focus on responsive interactions and secure access.',
+        fr: 'Architecture applicative, des premiers prototypes aux parcours de souscription. Traitement des problèmes de performance et de connexion, avec une attention portée à la fluidité des interactions et à la sécurité des accès.',
+        en: 'Designed application architecture from early prototypes to insurance application journeys. Addressed performance and sign-in issues, with a focus on responsive interactions and secure access.',
       },
       solution: {
         fr: 'Des parcours couvrant trois familles de produits, avec des améliorations ciblées sur les performances et la connexion des utilisateurs. Une même démarche de qualité appliquée aux différentes étapes de souscription.',
@@ -150,17 +150,17 @@ export const projects = [
       en: 'Clearer data for financing decisions.',
     },
     text: {
-      fr: 'Associer les données financières et les outils d’évaluation pour éclairer les décisions de financement de factures.',
-      en: 'Bring financial data and assessment tools together to support invoice-financing decisions.',
+      fr: 'Factoring : associer les données financières et les outils de scoring pour éclairer les décisions de financement des créances.',
+      en: 'Factoring: bring financial data and scoring tools together to inform receivables financing decisions.',
     },
     caseStudy: {
       need: {
-        fr: 'Rapprocher les données financières et les outils d’évaluation pour accompagner les décisions de financement de factures.',
-        en: 'Bring financial data and assessment tools together to support invoice financing decisions.',
+        fr: 'Rapprocher les données financières et les outils d’évaluation pour éclairer les décisions d’affacturage (factoring).',
+        en: 'Bring financial data and assessment tools together to inform factoring decisions.',
       },
       contribution: {
-        fr: 'Intervention sur deux outils complémentaires : un référentiel de données financières et un outil de scoring. Développement d’interfaces dédiées et gestion des accès selon les rôles des utilisateurs.',
-        en: 'Worked on two complementary tools: a financial data repository and a scoring application. Developed dedicated interfaces and access controls based on user roles.',
+        fr: 'Architecture de deux outils complémentaires pour le factoring : un référentiel de données financières et un outil de scoring. Développement d’interfaces dédiées et gestion des accès selon les rôles des utilisateurs.',
+        en: 'Designed the architecture of two complementary factoring tools: a financial data repository and a scoring application. Developed dedicated interfaces and access controls based on user roles.',
       },
       solution: {
         fr: 'Deux outils qui organisent l’information et la rendent exploitable pour l’évaluation financière, avec des accès adaptés aux responsabilités de chaque utilisateur.',
@@ -168,8 +168,8 @@ export const projects = [
       },
     },
     tags: {
-      fr: ['Données financières', 'Aide à la décision', 'Gestion des accès'],
-      en: ['Financial data', 'Decision support', 'Access management'],
+      fr: ['Factoring', 'Scoring', 'Gestion des accès'],
+      en: ['Factoring', 'Scoring', 'Access management'],
     },
     color: 'red',
   },
@@ -183,21 +183,21 @@ export const projects = [
       en: 'Moving credit insurance forward.',
     },
     text: {
-      fr: 'Moderniser les outils qui accompagnent les offres commerciales, les contrats et les flux financiers de l’assurance-crédit.',
+      fr: 'Moderniser les outils de gestion des offres commerciales, des contrats et des flux financiers de l’assurance-crédit.',
       en: 'Modernize the tools behind credit insurance offers, contracts, and financial flows.',
     },
     caseStudy: {
       need: {
-        fr: 'Faire évoluer les outils de l’assurance-crédit qui accompagnent les offres commerciales, les contrats et les flux financiers dans un contexte international.',
-        en: 'Evolve credit insurance tools supporting commercial offers, contracts, and financial flows across an international business.',
+        fr: 'Faire évoluer les outils de gestion des offres commerciales, des contrats et des flux financiers de l’assurance-crédit dans un contexte international.',
+        en: 'Evolve credit insurance tools for managing commercial offers, contracts, and financial flows across an international business.',
       },
       contribution: {
-        fr: 'Modernisation des fonctionnalités existantes et automatisation des mises à jour. Accompagnement des évolutions métier sur les différentes étapes de gestion de l’assurance-crédit.',
-        en: 'Modernized existing features and automated software releases. Supported changing business requirements across credit insurance management workflows.',
+        fr: 'Urbanisation des applications de gestion de l’assurance-crédit pour intégrer les évolutions métier. Modernisation des fonctionnalités existantes et automatisation des mises à jour.',
+        en: 'Aligned application architecture with changing credit insurance workflows. Modernized existing features and automated software releases.',
       },
       solution: {
-        fr: 'Des outils modernisés et un processus de livraison automatisé pour accompagner les évolutions des offres, des contrats et des opérations financières.',
-        en: 'Modernized tools and an automated release process supporting changes to offers, contracts, and financial operations.',
+        fr: 'Des outils modernisés et un processus de livraison automatisé pour faire évoluer les offres, les contrats et les opérations financières.',
+        en: 'Modernized tools and an automated release process for changes to offers, contracts, and financial operations.',
       },
     },
     tags: {
@@ -225,12 +225,12 @@ export const projects = [
         en: 'Bring transfers, online loans, and secure messaging together in the Banque des Territoires banking portal.',
       },
       contribution: {
-        fr: 'Évolution des parcours bancaires et intégration des services qui les composent. Automatisation des livraisons pour accompagner les mises à jour du portail.',
-        en: 'Developed banking workflows and integrated their supporting services. Automated software releases to support ongoing portal updates.',
+        fr: 'Architecture des parcours bancaires et intégration des services qui les composent. Automatisation des livraisons pour simplifier les mises à jour du portail.',
+        en: 'Designed banking workflow architecture and integrated the underlying services. Automated software releases to simplify portal updates.',
       },
       solution: {
         fr: 'Trois services bancaires accessibles depuis un même portail, avec des livraisons automatisées pour faire évoluer les parcours de virement, de prêt et de messagerie.',
-        en: 'Three banking services accessible through one portal, with automated releases supporting updates to transfer, loan, and messaging workflows.',
+        en: 'Three banking services accessible through one portal, with automated releases for updates to transfer, loan, and messaging workflows.',
       },
     },
     tags: {
@@ -258,12 +258,12 @@ export const projects = [
         en: 'Give on-site users tools to track construction progress, contracts, risks, and related documents.',
       },
       contribution: {
-        fr: 'Évolution des interfaces et des fonctionnalités des applications métier. Coordination et automatisation des livraisons pour accompagner les besoins du suivi de chantier et de la gestion documentaire.',
-        en: 'Updated interfaces and features across business applications. Coordinated and automated releases to support construction tracking and document management needs.',
+        fr: 'Évolution de l’architecture, des interfaces et des fonctionnalités des applications métier. Coordination et automatisation des livraisons pour le suivi de chantier et la gestion documentaire.',
+        en: 'Updated architecture, interfaces, and features across business applications. Coordinated and automated releases for construction tracking and document management.',
       },
       solution: {
-        fr: 'Des applications adaptées au suivi des chantiers et de leurs documents, avec un processus de livraison coordonné pour accompagner les évolutions fonctionnelles.',
-        en: 'Applications supporting construction tracking and documentation, with a coordinated release process for ongoing feature development.',
+        fr: 'Des applications adaptées au suivi des chantiers et de leurs documents, avec un processus de livraison coordonné pour intégrer les évolutions fonctionnelles.',
+        en: 'Applications for construction tracking and documentation, with a coordinated release process for ongoing feature development.',
       },
     },
     tags: {
@@ -295,8 +295,8 @@ export const projects = [
         en: 'Enable PIN delivery by SMS with authentication checks and protections for sensitive data.',
       },
       contribution: {
-        fr: 'Intégration des services de messagerie dans un parcours associant contrôles de sécurité et envoi des codes. Automatisation des tests pour accompagner la validation de la solution.',
-        en: 'Integrated messaging services into a workflow combining security checks and code delivery. Automated tests to support validation of the solution.',
+        fr: 'Architecture du parcours d’envoi des codes, intégrant les services de messagerie et les contrôles de sécurité. Automatisation des tests pour valider la solution.',
+        en: 'Designed code delivery workflow architecture with integrated messaging services and security checks. Automated tests to validate the solution.',
       },
       solution: {
         fr: 'Un parcours d’envoi de codes PIN par SMS qui associe authentification, intégration des services de messagerie et tests automatisés.',
@@ -332,7 +332,7 @@ export const projects = [
         en: 'Developed monitoring capabilities and redesigned the administration interface. Validated new features through prototypes and prepared them for deployment.',
       },
       solution: {
-        fr: 'Une solution de supervision accompagnée d’une interface d’administration repensée, avec des fonctionnalités validées par prototypage avant leur déploiement.',
+        fr: 'Une solution de supervision associée à une interface d’administration repensée, avec des fonctionnalités validées par prototypage avant leur déploiement.',
         en: 'A monitoring solution with a redesigned administration interface and features validated through prototyping before deployment.',
       },
     },
@@ -361,11 +361,11 @@ export const projects = [
         en: 'Let customers estimate a rate, sign up, and manage their electricity or gas contract through one portal.',
       },
       contribution: {
-        fr: 'Intégration des services existants et adaptation des parcours au profil de l’abonné. Accompagnement des trois démarches clés : simulation, souscription et gestion du contrat.',
-        en: 'Integrated existing services and adapted workflows to customer profiles. Supported three key tasks: rate estimates, sign-up, and contract management.',
+        fr: 'Urbanisation des services existants et adaptation des parcours au profil de l’abonné. Conception des trois démarches clés : simulation, souscription et gestion du contrat.',
+        en: 'Aligned existing services within the portal architecture and adapted workflows to customer profiles. Designed three key workflows: rate estimates, sign-up, and contract management.',
       },
       solution: {
-        fr: 'Trois démarches réunies pour deux offres d’énergie — électricité et gaz — dans un portail qui accompagne le client de la découverte d’une offre au suivi de son contrat.',
+        fr: 'Trois démarches réunies pour deux offres d’énergie — électricité et gaz — dans un portail couvrant la découverte d’une offre et le suivi du contrat.',
         en: 'Three customer tasks covering electricity and gas in a single portal, from exploring an offer to managing an active contract.',
       },
     },

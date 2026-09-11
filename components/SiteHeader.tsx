@@ -31,18 +31,6 @@ export default function SiteHeader({ lang }: Readonly<{ lang: Lang }>) {
           ))}
         </nav>
         <div className="header-actions">
-          <a
-            className="intranet-link"
-            href="https://dashboard.swirlit.dev"
-            aria-label={t(
-              'Intranet — Espace collaborateurs',
-              'Intranet — Employee access',
-            )}
-            title={t('Espace collaborateurs', 'Employee access')}
-          >
-            <LockKeyhole size={12} aria-hidden="true" />
-            Intranet
-          </a>
           <div className="language" aria-label={t('Langue', 'Language')}>
             <a
               href="/"
@@ -62,12 +50,17 @@ export default function SiteHeader({ lang }: Readonly<{ lang: Lang }>) {
               EN
             </a>
           </div>
-          <a className="button small contact-button" href="#contact">
-            <span className="contact-label-full">
-              {t('Parlons de votre projet', 'Let’s talk about your project')}
-            </span>
-            <span className="contact-label-compact">Contact</span>
-            <ArrowUpRight size={16} aria-hidden="true" />
+          <a
+            className="intranet-link"
+            href="https://dashboard.swirlit.dev"
+            aria-label={t(
+              'Intranet — Espace collaborateurs',
+              'Intranet — Employee access',
+            )}
+            title={t('Espace collaborateurs', 'Employee access')}
+          >
+            <LockKeyhole size={12} aria-hidden="true" />
+            Intranet
           </a>
           <Button
             className="menu-toggle"
@@ -98,21 +91,6 @@ export default function SiteHeader({ lang }: Readonly<{ lang: Lang }>) {
               <ArrowUpRight size={16} />
             </a>
           ))}
-          <a
-            className="intranet-link"
-            href="https://dashboard.swirlit.dev"
-            aria-label={t(
-              'Intranet — Espace collaborateurs',
-              'Intranet — Employee access',
-            )}
-            onClick={() => setMenu(false)}
-          >
-            <span>
-              Intranet{' '}
-              <small>{t('Espace collaborateurs', 'Employee access')}</small>
-            </span>
-            <LockKeyhole size={13} aria-hidden="true" />
-          </a>
         </nav>
       )}
     </>
