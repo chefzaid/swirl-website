@@ -213,8 +213,8 @@ export default function Portfolio({
                 </span>
                 <span>
                   {t(
-                    "Le vrai perfectionnisme s'accomplit dans la simplicité.",
-                    'True perfectionism is the pursuit of absolute simplicity.',
+                    "La perfection s'accomplit dans la simplicité.",
+                    'Perfection is achieved in simplicity.',
                   )}
                 </span>
                 <span className="quote-mark" aria-hidden="true">
