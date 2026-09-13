@@ -52,7 +52,7 @@ export default function SiteHeader({ lang }: Readonly<{ lang: Lang }>) {
           </div>
           <a
             className="intranet-link"
-            href="https://dashboard.swirlit.dev"
+            href="https://intranet.swirlit.dev"
             aria-label={t(
               'Intranet — Espace collaborateurs',
               'Intranet — Employee access',
