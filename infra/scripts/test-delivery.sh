@@ -30,18 +30,22 @@ assert mail_ref['name'] == mail_secret['spec']['target']['name']
 assert mail_ref['key'] == mail_secret['spec']['data'][0]['secretKey']
 assert mail_secret['spec']['data'][0]['remoteRef'] == {'key': 'apps/website/contact', 'property': 'RESEND_API_KEY'}
 assert 'contact-notifications.yaml' in yaml.safe_load((source / 'infra/k8s/kustomization.yaml').read_text())['resources']
-ingress = yaml.safe_load((source / 'infra/k8s/ingress.yaml').read_text())
+routes = list(yaml.safe_load_all((source / 'infra/k8s/ingress.yaml').read_text()))
+ingress = next(doc for doc in routes if doc['kind'] == 'Ingress')
 hosts = [rule['host'] for rule in ingress['spec']['rules']]
 assert len(hosts) == len(set(hosts)) == 2
-assert ingress['spec']['ingressClassName'] == 'nginx'
-assert ingress['metadata']['annotations']['nginx.ingress.kubernetes.io/force-ssl-redirect'] == 'true'
-assert ingress['metadata']['annotations']['nginx.ingress.kubernetes.io/preserve-trailing-slash'] == 'true'
+assert ingress['spec']['ingressClassName'] == 'traefik'
+assert ingress['metadata']['annotations']['traefik.ingress.kubernetes.io/router.entrypoints'] == 'websecure'
+assert ingress['metadata']['annotations']['traefik.ingress.kubernetes.io/router.tls'] == 'true'
+assert ingress['metadata']['annotations']['traefik.ingress.kubernetes.io/router.middlewares'] == 'apps-website-upload-limit@kubernetescrd'
+assert next(doc for doc in routes if doc['kind'] == 'Middleware')['spec'] == {'buffering': {'maxRequestBodyBytes': 18432}}
 assert set(ingress['spec']['tls'][0]['hosts']) == set(hosts)
 assert ingress['spec']['tls'][0]['secretName']
 assert mail_env['PUBLIC_ORIGIN']['value'] == 'https://' + ingress['spec']['rules'][0]['host']
 assert mail_env['PUBLIC_ALIAS_HOST']['value'] == hosts[1]
 assert ingress['spec']['rules'][1]['http']['paths'] == ingress['spec']['rules'][0]['http']['paths']
-assert 'nginx.ingress.kubernetes.io/permanent-redirect' not in ingress['metadata']['annotations']
+# Both hosts and the original path reach the app, which owns alias redirects.
+assert all(not key.startswith('nginx.ingress.kubernetes.io/') for key in ingress['metadata']['annotations'])
 credentials = yaml.safe_load((source / 'infra/argocd/repository-credentials.yaml').read_text())
 assert credentials['metadata']['namespace'] == 'infra'
 assert credentials['spec']['target']['template']['metadata']['labels']['argocd.argoproj.io/secret-type'] == 'repository'

@@ -55,10 +55,17 @@ export function clientIp(
   trust: (ip: string) => boolean,
 ): string {
   const direct = normalizedIp(remoteAddress);
-  // ingress-nginx overwrites X-Real-IP after trusting Cloudflare's network.
-  // Client-supplied CF-Connecting-IP and X-Forwarded-For never reach the contact handler.
-  const forwarded = headers.get('x-real-ip') ?? '';
-  return trust(direct) && isIP(forwarded) ? normalizedIp(forwarded) : direct;
+  if (!trust(direct)) return direct;
+  // Cloudflare appends the visitor to X-Forwarded-For; Traefik appends its
+  // trusted edge peer (or loopback for Tunnel). Ignore any visitor-supplied
+  // prefix. An untrusted peer's headers are stripped by Traefik, leaving one
+  // address; legacy ingress also supplies a single sanitized visitor address.
+  const chain = (headers.get('x-forwarded-for') ?? '')
+    .split(',')
+    .map((value) => value.trim());
+  const peer = normalizedIp(chain.at(-1) ?? '');
+  const visitor = normalizedIp(chain.at(-2) ?? chain[0]);
+  return peer && visitor ? visitor : direct;
 }
 
 const contentTypes: Record<string, string> = {

@@ -21,6 +21,13 @@ valid for both names. This repository owns both Cloudflare DNS records; see
 Canonical metadata and `PUBLIC_ORIGIN` remain `https://swirlit.dev`, so visitors
 reach the apex before using the same-origin contact form.
 
+Traefik serves the native Ingress on `websecure`; the platform owns the
+HTTP-to-HTTPS redirect. `infra/k8s/ingress.yaml` also owns the 18 KiB request-limit
+Middleware and a ServersTransport allowing 30 seconds for backend response
+headers. Connection timeouts are platform settings. The route forwards the
+original path to the app, which owns alias redirection; NetworkPolicy admits
+the platform's Traefik pods.
+
 ## Automatic delivery
 
 [Repository onboarding](onboarding.md) configures a new deployment through the
@@ -128,12 +135,20 @@ it is open in WAL mode; use SQLite's online backup support or a consistent
 volume backup. Define retention and deletion for contact inquiries as part of
 normal operations.
 
-Ingress overwrites `X-Real-IP` with the client address validated by the platform's
-Cloudflare real-IP configuration. The Node adapter trusts that header only
-from `10.42.0.0/16`, the current K3s pod network. The website NetworkPolicy admits
-only the `infra` ingress controller and the shared CI jobs used for smoke tests.
-Update this CIDR if the cluster pod network changes. An arbitrary Internet
-`X-Forwarded-For` or `CF-Connecting-IP` header is not trusted by the runtime.
+The Node adapter accepts `X-Forwarded-For` only from `TRUSTED_PROXY_CIDRS`
+(`10.42.0.0/16`, the current K3s pod network). Cloudflare appends the real visitor
+address, then Traefik appends its immediate edge peer or Tunnel loopback address.
+The adapter uses the penultimate address, ignoring any visitor-supplied prefix;
+a single address is accepted for sanitized direct or legacy ingress requests.
+Keep Traefik's `notAppendXForwardedFor` disabled and its trusted peers restricted
+to Cloudflare networks in direct mode or loopback in Tunnel mode. Missing or
+malformed chain tails fall back to the socket address. The adapter ignores
+`X-Real-IP`, `CF-Connecting-IP` and `Forwarded` supplied by callers, then passes
+only its validated address to contact rate limiting.
+
+The website NetworkPolicy admits the `infra` ingress controller and the shared
+CI jobs used for smoke tests. Update the trusted pod CIDR if the cluster network
+changes. Other reverse-proxy topologies require reviewing this two-hop contract.
 
 HTML responses use `Cache-Control: no-cache, no-transform` so intermediary
 modifications cannot invalidate the generated hash-based Content Security Policy.

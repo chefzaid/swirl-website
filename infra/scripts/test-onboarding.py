@@ -32,7 +32,6 @@ def context(domain="cluster.example", project="team/product"):
         "REGISTRY_PUSH_HOST": "gitlab-registry.services.internal:5050",
         "GITHUB_OWNER": "operator", "GITHUB_REPOSITORY": "product",
         "DEFAULT_BRANCH": "production", "KEYCLOAK_REALM": "company",
-        "PLATFORM_SECURITY_PROJECT_PATH": "team/security",
         "SONAR_PROJECT_KEY": project.replace("/", ":"),
     }
 

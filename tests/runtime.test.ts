@@ -172,25 +172,52 @@ void test('an applied migration cannot silently change', async (t) => {
   );
 });
 
-void test('proxy trust uses the socket and ingress X-Real-IP, excluding spoofed forwarding headers', () => {
+void test('proxy trust extracts the validated visitor from direct and Tunnel ingress chains', () => {
   const trust = trustedProxy('10.42.0.0/16');
   const headers = new Headers({
-    'x-real-ip': '192.0.2.3',
+    'x-real-ip': '198.51.100.7',
     'cf-connecting-ip': '198.51.100.9',
-    'x-forwarded-for': '198.51.100.8',
+    'x-forwarded-for': '198.51.100.8, 192.0.2.3, 173.245.48.5',
+    forwarded: 'for=198.51.100.6',
   });
   assert.equal(clientIp('10.42.1.2', headers, trust), '192.0.2.3');
   assert.equal(clientIp('::ffff:10.42.1.2', headers, trust), '192.0.2.3');
   assert.equal(clientIp('203.0.113.1', headers, trust), '203.0.113.1');
-  assert.equal(
-    clientIp(
+  headers.set('x-forwarded-for', 'untrusted, 192.0.2.3, 127.0.0.1');
+  assert.equal(clientIp('10.42.1.2', headers, trust), '192.0.2.3');
+  headers.set('x-forwarded-for', '198.51.100.8, 2001:db8::3, ::1');
+  assert.equal(clientIp('10.42.1.2', headers, trust), '2001:db8::3');
+  headers.set('x-forwarded-for', '::ffff:192.0.2.3');
+  assert.equal(clientIp('10.42.1.2', headers, trust), '192.0.2.3');
+  assert.throws(() => trustedProxy('0.0.0.0/0'));
+});
+
+void test('missing or malformed ingress chain tails do not select spoofed identity headers', () => {
+  const trust = trustedProxy('10.42.0.0/16');
+  for (const chain of [
+    '',
+    'invalid',
+    '192.0.2.3,',
+    ',127.0.0.1',
+    '192.0.2.3, invalid',
+  ]) {
+    assert.equal(
+      clientIp(
+        '10.42.1.2',
+        new Headers({
+          'x-forwarded-for': chain,
+          'x-real-ip': '198.51.100.7',
+          'cf-connecting-ip': '198.51.100.9',
+        }),
+        trust,
+      ),
       '10.42.1.2',
-      new Headers({ 'x-real-ip': '192.0.2.3, 192.0.2.4' }),
-      trust,
-    ),
+    );
+  }
+  assert.equal(
+    clientIp('10.42.1.2', new Headers({ 'x-real-ip': '192.0.2.3' }), trust),
     '10.42.1.2',
   );
-  assert.throws(() => trustedProxy('0.0.0.0/0'));
 });
 
 void test('Node serves bundled pages, headers, safe assets, durable contact, aliases and health', async (t) => {
