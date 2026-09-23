@@ -3,12 +3,12 @@ kind: Ingress
 metadata:
   name: website
   annotations:
-    gethomepage.dev/description: Swirl IT company website
+    gethomepage.dev/description: Swirl company website
     gethomepage.dev/enabled: "true"
     gethomepage.dev/group: Applications
     gethomepage.dev/href: https://swirlit.dev
     gethomepage.dev/icon: mdi-web
-    gethomepage.dev/name: Swirl IT
+    gethomepage.dev/name: Swirl
     gethomepage.dev/weight: "10"
     gethomepage.dev/pod-selector: app=website
     traefik.ingress.kubernetes.io/router.entrypoints: websecure
