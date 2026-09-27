@@ -1,6 +1,6 @@
 # Repository onboarding
 
-Run `./add-repos.sh` from the `bm-cluster` checkout on an operator host, enter this
+Run `./add-repos.sh` from the `swirl-cloud` checkout on an operator host, enter this
 GitHub repository, and select it for deployment. The installer offers the same
 flow. Re-selecting an imported repository reconciles its configuration again.
 

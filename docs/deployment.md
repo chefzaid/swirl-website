@@ -6,7 +6,7 @@ the path and query string. GitHub `chefzaid/website` and GitLab `swirlit/website
 are private source repositories.
 
 This repository owns its runtime image, resources in the `apps` namespace,
-Argo CD Application, and operator playbook. `bm-cluster` supplies K3s, the
+Argo CD Application, and operator playbook. `swirl-cloud` supplies K3s, the
 private GitLab Registry, Vault/External Secrets, Longhorn, ingress, Cloudflare,
 and the `apps/swirlit-dev-tls` certificate. Keep website ingress separate from
 the intranet at `intranet.swirlit.dev`, which the header's Intranet link opens.
@@ -50,7 +50,7 @@ Build artifacts and release metadata are available in GitLab for seven days.
 GitLab project settings must permit this project's CI job token to push its own
 repository, including its protected default branch. Registry pushes use the
 standard `CI_REGISTRY_USER` and `CI_REGISTRY_PASSWORD`; no CI credentials are
-committed. The shared `bm-cluster` runner uses its existing Argo CD Application
+committed. The shared `swirl-cloud` runner uses its existing Argo CD Application
 permissions. `infra/k8s/delivery-rbac.yaml` grants it read/watch access to only the
 named `apps/website` Deployment for rollout and digest verification. The pipeline
 cannot modify website workloads or read application Secrets.

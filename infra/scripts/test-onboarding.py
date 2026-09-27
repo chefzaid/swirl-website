@@ -14,7 +14,7 @@ import yaml
 ROOT = Path(__file__).resolve().parents[2]
 CONTRACT = json.loads((ROOT / "infra/onboarding.json").read_text())
 WEBSITE = CONTRACT["readiness"]["deployments"] == ["website"]
-PROFILE = "infra/k8s" if WEBSITE else "infra/k8s/overlays/bm-cluster"
+PROFILE = "infra/k8s" if WEBSITE else "infra/k8s/overlays/swirl-cloud"
 
 
 def context(domain="cluster.example", project="team/product"):
