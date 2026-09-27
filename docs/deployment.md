@@ -212,9 +212,9 @@ CD PostSync hook imports them using `apps/kibana-bootstrap-credentials` and the
 
 ## Automatic Sonar coverage
 
-The default branch automatically runs the non-blocking `sonar` job after `verify`,
-including when verification reports a failure, using available Node test LCOV
-coverage and the source paths in `sonar-project.properties`.
+The default branch automatically runs the non-blocking `sonar` job after a successful
+`verify`, using the Node test LCOV coverage and the source paths in
+`sonar-project.properties`. Other branches and merge requests offer it as a manual job.
 Sonar analyzes supported TypeScript/TSX, JavaScript, CSS and other supported source
 files; Astro templates are not a supported Sonar language and remain checked by
 `astro check`, the build and the compiled security/SEO checks.
