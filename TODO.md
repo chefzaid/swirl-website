@@ -22,3 +22,10 @@ Vault credentials, network policy) is tracked in `swirl-cloud/TODO.md` §23.
 - [ ] Update the Content Security Policy for the Odoo loader, styles and WebSocket connection.
 - [ ] Load the widget only on interaction or after consent if it sets cookies; the site currently promises no cookies and no third-party scripts.
 - [ ] Update the privacy page (FR and EN): Odoo processing of contact data and chat transcripts.
+
+## Domains
+
+- [x] `swirlit.dev`
+- [ ] `swirl.cloud`
+- [ ] `swirlcloud.io`
+- [ ] `swirl-cloud.com`
