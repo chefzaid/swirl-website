@@ -12,7 +12,7 @@ Vault credentials, network policy) is tracked in `swirl-cloud/TODO.md` §23.
 
 ## Odoo integration through its API
 
-- [ ] Create an Odoo CRM lead for every accepted contact-form submission through the Odoo API, using the integration user's key from Vault (`secret/apps/website/<env>/odoo`) and the in-cluster Odoo address.
+- [ ] Create an Odoo CRM lead for every accepted contact-form submission through the Odoo API, using the integration user's key from Vault (`secret/apps/swirl-website/<env>/odoo`) and the in-cluster Odoo address.
 - [ ] Keep the local SQLite storage as the source of truth, and retry Odoo delivery idempotently (store the Odoo lead ID) so an Odoo outage never loses an inquiry.
 - [ ] Tests for lead creation, Odoo unavailability and duplicate submissions.
 

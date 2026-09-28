@@ -7,7 +7,7 @@ flow. Re-selecting an imported repository reconciles its configuration again.
 The platform reads [`infra/onboarding.json`](../infra/onboarding.json) to configure registry/Vault credentials,
 the repository credential and delivery observation permissions, public DNS,
 and an automatic first pipeline. `verify`, `image-build` and `release` must
-succeed, followed by the Website Deployment readiness check.
+succeed, followed by the Swirl Website Deployment readiness check.
 
 The public inputs are:
 
@@ -22,7 +22,7 @@ Ingress, TLS hosts, runtime origin/alias, build-time canonical URLs, GitLab and
 registry locations are updated together. Public settings and replacement
 bindings are committed to `infra/onboarding-values.json`; repeat runs offer
 those choices and update the same application. Resource names and Vault paths
-remain Website's, so this contract supports one installation per cluster.
+remain Swirl Website's, so this contract supports one installation per cluster.
 
 DNS uses proxied A records with direct ingress, or the published same-zone HA
 Tunnel CNAME. The runtime redirects the chosen alias to the primary host while
@@ -33,7 +33,7 @@ The default deployment keeps one SQLite writer and its existing PVC. Onboarding
 never selects PostgreSQL HA or imports old data. Those remain explicit steps in
 the [HA guide](high-availability.md).
 
-The platform initializes the optional `apps/website/contact` Vault contract
+The platform initializes the optional `apps/swirl-website/contact` Vault contract
 with an empty `RESEND_API_KEY` if missing, preserving any existing value. Contact
 storage works without email. Configure sender, recipient and company contact details separately using the
 [deployment guide](deployment.md#contact-email-credentials).

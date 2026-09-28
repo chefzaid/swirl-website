@@ -22,7 +22,7 @@ export async function createContactRuntime(options: {
   if (!(await database.healthy())) {
     await database.close();
     throw new Error(
-      'Website schema is unavailable; run the explicit migration first',
+      'Swirl Website schema is unavailable; run the explicit migration first',
     );
   }
   const env = {

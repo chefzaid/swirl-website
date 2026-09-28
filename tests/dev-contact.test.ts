@@ -9,7 +9,7 @@ import { createServer } from 'vite';
 import { devContact } from '../server/dev-contact.mjs';
 
 void test('development stores contacts in SQLite across restarts and rejects spoofed origins', async (t) => {
-  const directory = await mkdtemp(join(tmpdir(), 'website-dev-contact-'));
+  const directory = await mkdtemp(join(tmpdir(), 'swirl-website-dev-contact-'));
   t.after(() => rm(directory, { recursive: true, force: true }));
   const variables = {
     DATA_DIR: join(directory, 'data'),

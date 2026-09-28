@@ -14,7 +14,7 @@ import tempfile
 import yaml
 
 source = Path(sys.argv[1])
-documents = list(yaml.safe_load_all((source / 'infra/k8s/website.yaml').read_text()))
+documents = list(yaml.safe_load_all((source / 'infra/k8s/swirl-website.yaml').read_text()))
 deployment = next(doc for doc in documents if doc['kind'] == 'Deployment')
 pvc = next(doc for doc in documents if doc['kind'] == 'PersistentVolumeClaim')
 assert deployment['spec']['replicas'] == 1 and deployment['spec']['strategy']['type'] == 'Recreate'
@@ -28,7 +28,7 @@ mail_ref = mail_env['RESEND_API_KEY']['valueFrom']['secretKeyRef']
 mail_secret = yaml.safe_load((source / 'infra/k8s/contact-notifications.yaml').read_text())
 assert mail_ref['name'] == mail_secret['spec']['target']['name']
 assert mail_ref['key'] == mail_secret['spec']['data'][0]['secretKey']
-assert mail_secret['spec']['data'][0]['remoteRef'] == {'key': 'apps/website/contact', 'property': 'RESEND_API_KEY'}
+assert mail_secret['spec']['data'][0]['remoteRef'] == {'key': 'apps/swirl-website/contact', 'property': 'RESEND_API_KEY'}
 assert 'contact-notifications.yaml' in yaml.safe_load((source / 'infra/k8s/kustomization.yaml').read_text())['resources']
 routes = list(yaml.safe_load_all((source / 'infra/k8s/ingress.yaml').read_text()))
 ingress = next(doc for doc in routes if doc['kind'] == 'Ingress')
@@ -37,7 +37,7 @@ assert len(hosts) == len(set(hosts)) == 2
 assert ingress['spec']['ingressClassName'] == 'traefik'
 assert ingress['metadata']['annotations']['traefik.ingress.kubernetes.io/router.entrypoints'] == 'websecure'
 assert ingress['metadata']['annotations']['traefik.ingress.kubernetes.io/router.tls'] == 'true'
-assert ingress['metadata']['annotations']['traefik.ingress.kubernetes.io/router.middlewares'] == 'apps-website-upload-limit@kubernetescrd'
+assert ingress['metadata']['annotations']['traefik.ingress.kubernetes.io/router.middlewares'] == 'apps-swirl-website-upload-limit@kubernetescrd'
 assert next(doc for doc in routes if doc['kind'] == 'Middleware')['spec'] == {'buffering': {'maxRequestBodyBytes': 18432}}
 assert set(ingress['spec']['tls'][0]['hosts']) == set(hosts)
 assert ingress['spec']['tls'][0]['secretName']
@@ -49,10 +49,10 @@ assert all(not key.startswith('nginx.ingress.kubernetes.io/') for key in ingress
 credentials = yaml.safe_load((source / 'infra/argocd/repository-credentials.yaml').read_text())
 assert credentials['metadata']['namespace'] == 'infra'
 assert credentials['spec']['target']['template']['metadata']['labels']['argocd.argoproj.io/secret-type'] == 'repository'
-assert all(item['remoteRef']['key'] == 'apps/website/registry' for item in credentials['spec']['data'])
+assert all(item['remoteRef']['key'] == 'apps/swirl-website/registry' for item in credentials['spec']['data'])
 role, binding = list(yaml.safe_load_all((source / 'infra/k8s/delivery-rbac.yaml').read_text()))
 assert role['rules'] == [{'apiGroups':['apps'], 'resources':['deployments'],
-                          'resourceNames':['website'], 'verbs':['get','list','watch']}]
+                          'resourceNames':['swirl-website'], 'verbs':['get','list','watch']}]
 assert binding['subjects'] == [{'kind':'ServiceAccount', 'name':'gitlab-ci-job', 'namespace':'gitlab-runners'}]
 pipeline = yaml.safe_load((source / '.gitlab-ci.yml').read_text())
 assert not pipeline['verify'].get('allow_failure', False)
@@ -71,11 +71,11 @@ if shutil.which('kubectl'):
     assert any(env['name'] == 'DATABASE_URL' and not env['valueFrom']['secretKeyRef'].get('optional') for env in app_container['env'])
     budget = next(doc for doc in rendered if doc['kind'] == 'PodDisruptionBudget')
     assert budget['spec']['minAvailable'] == 1 and budget['spec']['selector'] == ha['spec']['selector']
-    for hook_name in ('website-db-setup', 'website-schema-migration'):
+    for hook_name in ('swirl-website-db-setup', 'swirl-website-schema-migration'):
         hook = next(doc for doc in rendered if doc['kind'] == 'Job' and doc['metadata']['name'] == hook_name)
         assert hook['metadata']['annotations']['argocd.argoproj.io/hook'] == 'PreSync'
         assert hook['spec']['template']['spec']['containers'][0]['image'] == app_container['image']
-assert pipeline['release']['resource_group'] == 'website-production'
+assert pipeline['release']['resource_group'] == 'swirl-website-production'
 assert pipeline['image-build']['needs'] == [{'job': 'verify', 'artifacts': True}]
 assert pipeline['release']['needs'] == [{'job': 'image-build', 'artifacts': True}]
 assert pipeline['image-build']['image']['entrypoint'] == ['']
@@ -101,11 +101,11 @@ if name == 'kaniko':
         (repository/'new-source.txt').write_text('A newer source push during the image build\n')
         for command in (['git','add','.'], ['git','commit','-qm','newer source'], ['git','push','-q','origin','HEAD:main']):
             subprocess.run(command,cwd=repository,check=True)
-elif name == 'kubectl' and args[:3] == ['get','application','website']:
+elif name == 'kubectl' and args[:3] == ['get','application','swirl-website']:
     revision = subprocess.check_output(['git','rev-parse','HEAD'], text=True).strip()
     print(json.dumps({'status':{'sync':{'revision':revision,'status':'Synced'},'health':{'status':'Healthy'}}}))
-elif name == 'kubectl' and args[:3] == ['get','deployment','website']:
-    print(json.dumps({'spec':{'template':{'spec':{'containers':[{'name':'website','image':os.environ['MOCK_IMAGE']}]}}}}))
+elif name == 'kubectl' and args[:3] == ['get','deployment','swirl-website']:
+    print(json.dumps({'spec':{'template':{'spec':{'containers':[{'name':'swirl-website','image':os.environ['MOCK_IMAGE']}]}}}}))
 elif name == 'curl':
     print('{"ok":true}')
 '''
@@ -113,7 +113,7 @@ elif name == 'curl':
 def git(directory, *args):
     return subprocess.check_output(['git', *args], cwd=directory, text=True, stderr=subprocess.DEVNULL).strip()
 
-with tempfile.TemporaryDirectory(prefix='website-delivery-test.') as directory:
+with tempfile.TemporaryDirectory(prefix='swirl-website-delivery-test.') as directory:
     temporary = Path(directory)
     remote = temporary / 'remote.git'
     workspace = temporary / 'workspace'
@@ -149,7 +149,7 @@ with tempfile.TemporaryDirectory(prefix='website-delivery-test.') as directory:
                        APP_ONBOARDING='true', ONBOARDING_EXPECTED_SHA=revision,
                        CI_PIPELINE_SOURCE='api', CI_PIPELINE_ID='73', CI_COMMIT_BRANCH='main',
                        CI_PROJECT_DIR=str(workspace), DOCKER_CONFIG=str(temporary / 'docker-config'),
-                       CI_DEFAULT_BRANCH='main', CI_PROJECT_PATH='swirlit/website',
+                       CI_DEFAULT_BRANCH='main', CI_PROJECT_PATH='swirlit/swirl-website',
                        CI_REGISTRY_USER='fixture', CI_REGISTRY_PASSWORD='fixture-secret',
                        REGISTRY_PUSH_HOST='registry.internal:5050',
                        REGISTRY_PULL_IMAGE=image_name,

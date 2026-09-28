@@ -2,7 +2,7 @@
 
 The production website is `https://swirlit.dev`, with French at `/` and English
 at `/en/`. `https://www.swirlit.dev` redirects to the same apex URL, preserving
-the path and query string. GitHub `chefzaid/website` and GitLab `swirlit/website`
+the path and query string. GitHub `chefzaid/swirl-website` and GitLab `swirlit/swirl-website`
 are private source repositories.
 
 This repository owns its runtime image, resources in the `apps` namespace,
@@ -11,7 +11,7 @@ private GitLab Registry, Vault/External Secrets, Longhorn, ingress, Cloudflare,
 and the `apps/swirlit-dev-tls` certificate. Keep website ingress separate from
 the Swirl Cloud portal at `cloud.swirlit.dev`, which the header's Swirl Cloud link opens.
 
-The website Ingress routes both names to the application. The Node runtime
+The swirl-website Ingress routes both names to the application. The Node runtime
 redirects the `www` host with HTTP 308 to the fixed `PUBLIC_ORIGIN`, retaining
 the validated original path and query, including trailing slashes. Forwarded
 host and protocol headers cannot change this destination. Ingress also preserves
@@ -43,7 +43,7 @@ Push source changes to `main` to deploy. GitLab runs three required stages:
    `infra/k8s/kustomization.yaml` with `[skip ci]`, then waits for Argo CD to report
    that revision as Synced/Healthy and verifies the image and `/healthz`.
 
-Releases share the `website-production` resource group. A superseded source
+Releases share the `swirl-website-production` resource group. A superseded source
 revision skips deployment; concurrent source changes cannot be overwritten.
 Build artifacts and release metadata are available in GitLab for seven days.
 
@@ -52,7 +52,7 @@ repository, including its protected default branch. Registry pushes use the
 standard `CI_REGISTRY_USER` and `CI_REGISTRY_PASSWORD`; no CI credentials are
 committed. The shared `swirl-cloud` runner uses its existing Argo CD Application
 permissions. `infra/k8s/delivery-rbac.yaml` grants it read/watch access to only the
-named `apps/website` Deployment for rollout and digest verification. The pipeline
+named `apps/swirl-website` Deployment for rollout and digest verification. The pipeline
 cannot modify website workloads or read application Secrets.
 
 Complete the first pipeline before installing the Application so its image
@@ -60,7 +60,7 @@ digest replaces `bootstrap`. Argo CD reconciles `infra/k8s` from GitLab `main`.
 
 ## Private GitLab and Registry access
 
-Vault KV v2 path `secret/apps/website/registry` contains:
+Vault KV v2 path `secret/apps/swirl-website/registry` contains:
 
 | Field | Value |
 | --- | --- |
@@ -71,7 +71,7 @@ Vault KV v2 path `secret/apps/website/registry` contains:
 `infra/k8s/registry-credentials.yaml` creates the pull Secret in `apps`.
 `infra/argocd/repository-credentials.yaml` independently creates Argo CD's
 repository credential in `infra`, using the same token for
-`http://gitlab.swirlit.internal/swirlit/website.git`. The cluster's
+`http://gitlab.swirlit.internal/swirlit/swirl-website.git`. The cluster's
 `vault-backend` ClusterSecretStore must be ready first.
 
 Once the first CI image digest is committed, bootstrap from a configured
@@ -79,7 +79,7 @@ operator host:
 
 ```sh
 kubectl apply -f infra/argocd/repository-credentials.yaml
-kubectl wait --for=condition=Ready externalsecret/website-gitlab-repository -n infra --timeout=120s
+kubectl wait --for=condition=Ready externalsecret/swirl-website-gitlab-repository -n infra --timeout=120s
 kubectl apply -f infra/k8s/delivery-rbac.yaml
 ansible-playbook infra/ansible/site.yaml
 ```
@@ -105,8 +105,8 @@ An operator can reconcile these encrypted secrets and the GitLab webhook using
 environment-provided administrative credentials:
 
 ```sh
-GITLAB_PROJECT_PATH=swirlit/website \
-GITHUB_OWNER=chefzaid GITHUB_REPOSITORY=website \
+GITLAB_PROJECT_PATH=swirlit/swirl-website \
+GITHUB_OWNER=chefzaid GITHUB_REPOSITORY=swirl-website \
   infra/scripts/configure-repository-sync.sh
 ```
 
@@ -119,7 +119,7 @@ workflow is present on GitHub's default branch to send a dispatch test.
 The Node container listens on port 8080 as UID/GID 10001 with a read-only root
 filesystem. `PUBLIC_ORIGIN=https://swirlit.dev` fixes the origin used by the
 application. `/healthz` checks the SQLite connection. The single replica uses
-the `website-data` Longhorn PVC at `/data`; the Node adapter stores
+the `swirl-website-data` Longhorn PVC at `/data`; the Node adapter stores
 `contact.sqlite` and applies the plain SQL migrations in `db/migrations`.
 `Recreate` ensures two application replicas never write the same database during
 an update, with a short interruption while the replacement starts.
@@ -146,7 +146,7 @@ malformed chain tails fall back to the socket address. The adapter ignores
 `X-Real-IP`, `CF-Connecting-IP` and `Forwarded` supplied by callers, then passes
 only its validated address to contact rate limiting.
 
-The website NetworkPolicy admits the `infra` ingress controller and the shared
+The swirl-website NetworkPolicy admits the `infra` ingress controller and the shared
 CI jobs used for smoke tests. Update the trusted pod CIDR if the cluster network
 changes. Other reverse-proxy topologies require reviewing this two-hop contract.
 
@@ -163,9 +163,9 @@ only, leaving its Receiving option off and retaining Cloudflare's apex MX
 records. Add the sending DNS records supplied by Resend for this domain.
 
 Store the domain-restricted Sending access key as the `RESEND_API_KEY` field
-at Vault KV v2 path `secret/apps/website/contact` before deploying the email
+at Vault KV v2 path `secret/apps/swirl-website/contact` before deploying the email
 integration. `infra/k8s/contact-notifications.yaml` synchronizes it to the
-`apps/website-contact-email` Secret through `vault-backend`. The website
+`apps/swirl-website-contact-email` Secret through `vault-backend`. The website
 Deployment reads only that key through `secretKeyRef`; the sender is a
 non-secret environment setting. Do not place credentials in manifests,
 CI variables, build arguments, Git, or browser code.
@@ -201,9 +201,9 @@ the database volume and a separate `/tmp` volume.
 
 ## Application logs
 
-Use [Website — Application Logs](https://kibana.swirlit.dev/app/dashboards#/view/website-logs)
+Use [Swirl Website — Application Logs](https://kibana.swirlit.dev/app/dashboards#/view/swirl-website-logs)
 in Kibana. Filter `kubernetes-logs-*` by `kubernetes.namespace_name: apps` and
-`app: website`. Fluent Bit collects stdout and stderr; the runtime does not log
+`app: swirl-website`. Fluent Bit collects stdout and stderr; the runtime does not log
 every HTTP request. Retention follows the platform's seven-day policy.
 
 `infra/k8s/observability.yaml` defines the dashboard and saved searches. Its Argo
@@ -219,7 +219,7 @@ Sonar analyzes supported TypeScript/TSX, JavaScript, CSS and other supported sou
 files; Astro templates are not a supported Sonar language and remain checked by
 `astro check`, the build and the compiled security/SEO checks.
 
-The platform discovers Website from its Argo CD workloads in `apps`, provisions a
+The platform discovers Swirl Website from its Argo CD workloads in `apps`, provisions a
 private Sonar project and masked analysis token, and refreshes missing or stale
 analysis. `.sonar-auto.json` declares this contract. A default-branch pipeline with
 `SONAR_SCAN_ONLY=true` runs `verify` and `sonar` without building an image or

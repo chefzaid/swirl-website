@@ -27,7 +27,7 @@ variables:
   SONAR_USER_HOME: "$CI_PROJECT_DIR/.cache/sonar"
   NPM_CONFIG_CACHE: "$CI_PROJECT_DIR/.cache/npm"
   REGISTRY_PUSH_HOST: gitlab-registry.swirlit.internal:5050
-  REGISTRY_PULL_IMAGE: registry.swirlit.dev/swirlit/website/site
+  REGISTRY_PULL_IMAGE: registry.swirlit.dev/swirlit/swirl-website/site
   KANIKO_IMAGE: gcr.io/kaniko-project/executor:v1.24.0-debug@sha256:2562c4fe551399514277ffff7dcca9a3b1628c4ea38cb017d7286dc6ea52f4cd
   KANIKO_EXECUTOR: /kaniko/executor
 
@@ -38,7 +38,7 @@ verify:
     key:
       files:
         - package-lock.json
-      prefix: website-npm
+      prefix: swirl-website-npm
     paths:
       - .cache/npm/
   before_script:
@@ -57,7 +57,7 @@ verify:
     - python3 infra/scripts/test-onboarding.py
   artifacts:
     when: always
-    name: website-build-$CI_COMMIT_SHORT_SHA
+    name: swirl-website-build-$CI_COMMIT_SHORT_SHA
     expire_in: 7 days
     paths:
       - dist/
@@ -74,7 +74,7 @@ image-build:
   script:
     - sh infra/scripts/ci-build-image.sh
   artifacts:
-    name: website-image-$CI_COMMIT_SHORT_SHA
+    name: swirl-website-image-$CI_COMMIT_SHORT_SHA
     expire_in: 7 days
     paths:
       - image-digest.txt
@@ -89,14 +89,14 @@ release:
   needs:
     - job: image-build
       artifacts: true
-  resource_group: website-production
+  resource_group: swirl-website-production
   interruptible: false
   before_script:
     - apk add --no-cache bash ca-certificates curl git jq kubectl python3
   script:
     - bash infra/scripts/ci-release.sh
   artifacts:
-    name: website-release-$CI_COMMIT_SHORT_SHA
+    name: swirl-website-release-$CI_COMMIT_SHORT_SHA
     when: always
     expire_in: 7 days
     paths:
@@ -117,7 +117,7 @@ sonar:
     - job: verify
       artifacts: true
   cache:
-    key: website-sonar-v1
+    key: swirl-website-sonar-v1
     paths:
       - .cache/sonar/cache/
   before_script:

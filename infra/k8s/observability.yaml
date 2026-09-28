@@ -1,19 +1,19 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: website-kibana-saved-objects
+  name: swirl-website-kibana-saved-objects
   namespace: apps
 data:
-  website.ndjson: |
-    {"type":"search","id":"website-errors","attributes":{"title":"Website — warnings and errors","description":"Website container stderr and structured warnings/errors.","columns":["@timestamp","kubernetes.pod_name","kubernetes.container_name","stream","level","message","log"],"sort":[["@timestamp","desc"]],"grid":{},"hideChart":true,"kibanaSavedObjectMeta":{"searchSourceJSON":"{\"query\":{\"query\":\"kubernetes.namespace_name : \\\"apps\\\" and app : \\\"website\\\" and (stream : \\\"stderr\\\" or level : (\\\"error\\\" or \\\"warn\\\" or \\\"fatal\\\" or \\\"ERROR\\\" or \\\"WARN\\\" or \\\"FATAL\\\"))\",\"language\":\"kuery\"},\"filter\":[],\"highlightAll\":true,\"version\":true,\"indexRefName\":\"kibanaSavedObjectMeta.searchSourceJSON.index\"}"}},"references":[{"name":"kibanaSavedObjectMeta.searchSourceJSON.index","type":"index-pattern","id":"kubernetes-container-logs"}],"migrationVersion":{"search":"7.9.3"},"coreMigrationVersion":"7.17.0"}
-    {"type":"search","id":"website-recent-logs","attributes":{"title":"Website — recent logs","description":"All Website container stdout and stderr logs in the apps namespace.","columns":["@timestamp","kubernetes.pod_name","kubernetes.container_name","stream","level","message","log"],"sort":[["@timestamp","desc"]],"grid":{},"hideChart":false,"kibanaSavedObjectMeta":{"searchSourceJSON":"{\"query\":{\"query\":\"kubernetes.namespace_name : \\\"apps\\\" and app : \\\"website\\\"\",\"language\":\"kuery\"},\"filter\":[],\"highlightAll\":true,\"version\":true,\"indexRefName\":\"kibanaSavedObjectMeta.searchSourceJSON.index\"}"}},"references":[{"name":"kibanaSavedObjectMeta.searchSourceJSON.index","type":"index-pattern","id":"kubernetes-container-logs"}],"migrationVersion":{"search":"7.9.3"},"coreMigrationVersion":"7.17.0"}
-    {"type":"dashboard","id":"website-logs","attributes":{"title":"Website — Application Logs","description":"Swirl IT Website container logs. Stderr and structured warnings/errors are separated from the complete recent log stream.","hits":0,"timeRestore":true,"timeFrom":"now-24h","timeTo":"now","refreshInterval":{"pause":false,"value":30000},"optionsJSON":"{\"useMargins\":true,\"syncColors\":false,\"hidePanelTitles\":false}","panelsJSON":"[{\"version\":\"7.17.25\",\"type\":\"search\",\"gridData\":{\"x\":0,\"y\":0,\"w\":48,\"h\":10,\"i\":\"1\"},\"panelIndex\":\"1\",\"embeddableConfig\":{},\"panelRefName\":\"panel_0\"},{\"version\":\"7.17.25\",\"type\":\"search\",\"gridData\":{\"x\":0,\"y\":10,\"w\":48,\"h\":24,\"i\":\"2\"},\"panelIndex\":\"2\",\"embeddableConfig\":{},\"panelRefName\":\"panel_1\"}]","kibanaSavedObjectMeta":{"searchSourceJSON":"{\"query\":{\"query\":\"\",\"language\":\"kuery\"},\"filter\":[]}"}},"references":[{"name":"panel_0","type":"search","id":"website-errors"},{"name":"panel_1","type":"search","id":"website-recent-logs"}],"migrationVersion":{"dashboard":"7.17.3"},"coreMigrationVersion":"7.17.0"}
+  swirl-website.ndjson: |
+    {"type":"search","id":"swirl-website-errors","attributes":{"title":"Swirl Website — warnings and errors","description":"Swirl Website container stderr and structured warnings/errors.","columns":["@timestamp","kubernetes.pod_name","kubernetes.container_name","stream","level","message","log"],"sort":[["@timestamp","desc"]],"grid":{},"hideChart":true,"kibanaSavedObjectMeta":{"searchSourceJSON":"{\"query\":{\"query\":\"kubernetes.namespace_name : \\\"apps\\\" and app : \\\"swirl-website\\\" and (stream : \\\"stderr\\\" or level : (\\\"error\\\" or \\\"warn\\\" or \\\"fatal\\\" or \\\"ERROR\\\" or \\\"WARN\\\" or \\\"FATAL\\\"))\",\"language\":\"kuery\"},\"filter\":[],\"highlightAll\":true,\"version\":true,\"indexRefName\":\"kibanaSavedObjectMeta.searchSourceJSON.index\"}"}},"references":[{"name":"kibanaSavedObjectMeta.searchSourceJSON.index","type":"index-pattern","id":"kubernetes-container-logs"}],"migrationVersion":{"search":"7.9.3"},"coreMigrationVersion":"7.17.0"}
+    {"type":"search","id":"swirl-website-recent-logs","attributes":{"title":"Swirl Website — recent logs","description":"All Swirl Website container stdout and stderr logs in the apps namespace.","columns":["@timestamp","kubernetes.pod_name","kubernetes.container_name","stream","level","message","log"],"sort":[["@timestamp","desc"]],"grid":{},"hideChart":false,"kibanaSavedObjectMeta":{"searchSourceJSON":"{\"query\":{\"query\":\"kubernetes.namespace_name : \\\"apps\\\" and app : \\\"swirl-website\\\"\",\"language\":\"kuery\"},\"filter\":[],\"highlightAll\":true,\"version\":true,\"indexRefName\":\"kibanaSavedObjectMeta.searchSourceJSON.index\"}"}},"references":[{"name":"kibanaSavedObjectMeta.searchSourceJSON.index","type":"index-pattern","id":"kubernetes-container-logs"}],"migrationVersion":{"search":"7.9.3"},"coreMigrationVersion":"7.17.0"}
+    {"type":"dashboard","id":"swirl-website-logs","attributes":{"title":"Swirl Website — Application Logs","description":"Swirl Website container logs. Stderr and structured warnings/errors are separated from the complete recent log stream.","hits":0,"timeRestore":true,"timeFrom":"now-24h","timeTo":"now","refreshInterval":{"pause":false,"value":30000},"optionsJSON":"{\"useMargins\":true,\"syncColors\":false,\"hidePanelTitles\":false}","panelsJSON":"[{\"version\":\"7.17.25\",\"type\":\"search\",\"gridData\":{\"x\":0,\"y\":0,\"w\":48,\"h\":10,\"i\":\"1\"},\"panelIndex\":\"1\",\"embeddableConfig\":{},\"panelRefName\":\"panel_0\"},{\"version\":\"7.17.25\",\"type\":\"search\",\"gridData\":{\"x\":0,\"y\":10,\"w\":48,\"h\":24,\"i\":\"2\"},\"panelIndex\":\"2\",\"embeddableConfig\":{},\"panelRefName\":\"panel_1\"}]","kibanaSavedObjectMeta":{"searchSourceJSON":"{\"query\":{\"query\":\"\",\"language\":\"kuery\"},\"filter\":[]}"}},"references":[{"name":"panel_0","type":"search","id":"swirl-website-errors"},{"name":"panel_1","type":"search","id":"swirl-website-recent-logs"}],"migrationVersion":{"dashboard":"7.17.3"},"coreMigrationVersion":"7.17.0"}
 
 ---
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: website-kibana-bootstrap
+  name: swirl-website-kibana-bootstrap
   namespace: apps
   annotations:
     argocd.argoproj.io/hook: PostSync
@@ -24,7 +24,7 @@ spec:
   template:
     metadata:
       labels:
-        app: website-kibana-bootstrap
+        app: swirl-website-kibana-bootstrap
     spec:
       restartPolicy: OnFailure
       automountServiceAccountToken: false
@@ -48,8 +48,8 @@ spec:
               until curl --connect-timeout 5 --max-time 15 -fsS --user "${KIBANA_BOOTSTRAP_USERNAME}:${KIBANA_BOOTSTRAP_PASSWORD}" \
                 http://kibana.swirlit.internal:5601/api/status >/dev/null; do sleep 5; done
               response="$(curl --connect-timeout 5 --max-time 60 -fsS --user "${KIBANA_BOOTSTRAP_USERNAME}:${KIBANA_BOOTSTRAP_PASSWORD}" -X POST \
-                -H 'kbn-xsrf: website-observability-bootstrap' \
-                -F file=@/saved-objects/website.ndjson \
+                -H 'kbn-xsrf: swirl-website-observability-bootstrap' \
+                -F file=@/saved-objects/swirl-website.ndjson \
                 'http://kibana.swirlit.internal:5601/api/saved_objects/_import?overwrite=true')"
               echo "$response"
               echo "$response" | grep -q '"success":true'
@@ -72,4 +72,4 @@ spec:
       volumes:
         - name: saved-objects
           configMap:
-            name: website-kibana-saved-objects
+            name: swirl-website-kibana-saved-objects

@@ -30,7 +30,7 @@
     "infra/argocd/application.yaml",
     "infra/argocd/repository-credentials.yaml",
     "infra/k8s/kustomization.yaml",
-    "infra/k8s/website.yaml",
+    "infra/k8s/swirl-website.yaml",
     "infra/k8s/ingress.yaml",
     "infra/k8s/observability.yaml",
     "infra/overlays/ha/database-setup.yaml"
@@ -41,11 +41,11 @@
       "to": "targetRevision: {{DEFAULT_BRANCH}}"
     },
     {
-      "from": "http://gitlab.swirlit.internal/swirlit/website.git",
+      "from": "http://gitlab.swirlit.internal/swirlit/swirl-website.git",
       "to": "{{GITLAB_REPOSITORY_URL}}"
     },
     {
-      "from": "https://gitlab.swirlit.dev/swirlit/website.git",
+      "from": "https://gitlab.swirlit.dev/swirlit/swirl-website.git",
       "to": "{{GITLAB_PUBLIC_URL}}/{{GITLAB_PROJECT_PATH}}.git"
     },
     {
@@ -57,7 +57,7 @@
       "to": "{{REGISTRY_PUSH_HOST}}"
     },
     {
-      "from": "registry.swirlit.dev/swirlit/website",
+      "from": "registry.swirlit.dev/swirlit/swirl-website",
       "to": "{{REGISTRY_HOST}}/{{GITLAB_PROJECT_PATH}}"
     },
     {
@@ -85,7 +85,7 @@
       "to": "{{INTERNAL_DNS_ZONE}}"
     },
     {
-      "from": "swirlit:website",
+      "from": "swirlit:swirl-website",
       "to": "{{SONAR_PROJECT_KEY}}"
     },
     {
@@ -94,11 +94,11 @@
     }
   ],
   "registry": {
-    "path": "apps/website/registry"
+    "path": "apps/swirl-website/registry"
   },
   "vault": [
     {
-      "path": "apps/website/contact",
+      "path": "apps/swirl-website/contact",
       "fields": {
         "RESEND_API_KEY": {
           "value": ""
@@ -128,7 +128,7 @@
   },
   "readiness": {
     "deployments": [
-      "website"
+      "swirl-website"
     ]
   }
 }

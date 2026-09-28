@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: website
+  name: swirl-website
   annotations:
     gethomepage.dev/description: Swirl company website
     gethomepage.dev/enabled: "true"
@@ -10,10 +10,10 @@ metadata:
     gethomepage.dev/icon: mdi-web
     gethomepage.dev/name: Swirl
     gethomepage.dev/weight: "10"
-    gethomepage.dev/pod-selector: app=website
+    gethomepage.dev/pod-selector: app=swirl-website
     traefik.ingress.kubernetes.io/router.entrypoints: websecure
     traefik.ingress.kubernetes.io/router.tls: "true"
-    traefik.ingress.kubernetes.io/router.middlewares: apps-website-upload-limit@kubernetescrd
+    traefik.ingress.kubernetes.io/router.middlewares: apps-swirl-website-upload-limit@kubernetescrd
 spec:
   ingressClassName: traefik
   tls:
@@ -29,7 +29,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: website
+                name: swirl-website
                 port:
                   number: 80
     - host: www.swirlit.dev
@@ -39,14 +39,14 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: website
+                name: swirl-website
                 port:
                   number: 80
 ---
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
 metadata:
-  name: website-upload-limit
+  name: swirl-website-upload-limit
 spec:
   buffering:
     maxRequestBodyBytes: 18432
@@ -54,7 +54,7 @@ spec:
 apiVersion: traefik.io/v1alpha1
 kind: ServersTransport
 metadata:
-  name: website-backend
+  name: swirl-website-backend
 spec:
   forwardingTimeouts:
     responseHeaderTimeout: 30s

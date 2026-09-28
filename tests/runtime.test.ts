@@ -23,7 +23,7 @@ import {
 import { createRequestHandler } from '../server/handler.ts';
 
 void test('a configured alias redirects to a custom primary host without trusting forwarding headers', async (t) => {
-  const directory = await mkdtemp(join(tmpdir(), 'website-alias-'));
+  const directory = await mkdtemp(join(tmpdir(), 'swirl-website-alias-'));
   t.after(() => rm(directory, { recursive: true, force: true }));
   const db = new SqliteContactDatabase(
     join(directory, 'contact.sqlite'),
@@ -103,7 +103,7 @@ void test('a configured alias redirects to a custom primary host without trustin
 });
 
 void test('SQLite survives a migration-directory move, migrates once, and rolls a failed batch back', async (t) => {
-  const directory = await mkdtemp(join(tmpdir(), 'website-db-'));
+  const directory = await mkdtemp(join(tmpdir(), 'swirl-website-db-'));
   t.after(() => rm(directory, { recursive: true, force: true }));
   const file = join(directory, 'contact.sqlite');
   const oldMigrations = join(directory, 'old-migrations');
@@ -139,7 +139,7 @@ void test('SQLite survives a migration-directory move, migrates once, and rolls 
   assert.equal(
     (
       await db
-        .prepare('SELECT count(*) AS n FROM _website_migrations')
+        .prepare('SELECT count(*) AS n FROM _swirl_website_migrations')
         .first<{ n: number }>()
     )?.n,
     1,
@@ -152,7 +152,7 @@ void test('SQLite survives a migration-directory move, migrates once, and rolls 
 });
 
 void test('an applied migration cannot silently change', async (t) => {
-  const directory = await mkdtemp(join(tmpdir(), 'website-migrations-'));
+  const directory = await mkdtemp(join(tmpdir(), 'swirl-website-migrations-'));
   t.after(() => rm(directory, { recursive: true, force: true }));
   const migrations = join(directory, 'migrations');
   await mkdir(migrations);
@@ -221,7 +221,7 @@ void test('missing or malformed ingress chain tails do not select spoofed identi
 });
 
 void test('Node serves bundled pages, headers, safe assets, durable contact, aliases and health', async (t) => {
-  const directory = await mkdtemp(join(tmpdir(), 'website-http-'));
+  const directory = await mkdtemp(join(tmpdir(), 'swirl-website-http-'));
   t.after(() => rm(directory, { recursive: true, force: true }));
   await mkdir(join(directory, 'assets'));
   await writeFile(join(directory, 'assets', 'style.css'), 'body{color:blue}');

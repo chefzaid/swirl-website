@@ -6,7 +6,7 @@ import postgres from 'postgres';
 async function main() {
   const username = process.env.POSTGRES_ADMIN_USER;
   const password = process.env.POSTGRES_ADMIN_PASSWORD;
-  const appPassword = process.env.WEBSITE_DB_PASSWORD;
+  const appPassword = process.env.SWIRL_WEBSITE_DB_PASSWORD;
   if (!username || !password || !appPassword)
     throw new Error('Database credentials are required');
   const sql = postgres({
@@ -19,7 +19,7 @@ async function main() {
     connect_timeout: 5,
     connection: {
       statement_timeout: 60000,
-      application_name: 'website-db-setup',
+      application_name: 'swirl-website-db-setup',
     },
     onnotice: () => {},
   });
@@ -28,21 +28,25 @@ async function main() {
     try {
       await connection.unsafe('SELECT pg_advisory_lock(193720)');
       const exists = await connection.unsafe(
-        "SELECT 1 FROM pg_roles WHERE rolname = 'website_user'",
+        "SELECT 1 FROM pg_roles WHERE rolname = 'swirl_website_user'",
       );
       const command = await connection.unsafe(
-        `SELECT format('${exists.length ? 'ALTER' : 'CREATE'} ROLE website_user LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS PASSWORD %L', $1::text) AS statement`,
+        `SELECT format('${exists.length ? 'ALTER' : 'CREATE'} ROLE swirl_website_user LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS PASSWORD %L', $1::text) AS statement`,
         [appPassword],
       );
       await connection.unsafe(command[0].statement);
       const database = await connection.unsafe(
-        "SELECT pg_get_userbyid(datdba) AS owner FROM pg_database WHERE datname = 'website'",
+        "SELECT pg_get_userbyid(datdba) AS owner FROM pg_database WHERE datname = 'swirl_website'",
       );
       if (!database.length)
-        await connection.unsafe('CREATE DATABASE website OWNER website_user');
-      else if (database[0].owner !== 'website_user')
-        throw new Error('Existing website database has a different owner');
-      console.log('Website database and role are ready');
+        await connection.unsafe(
+          'CREATE DATABASE swirl_website OWNER swirl_website_user',
+        );
+      else if (database[0].owner !== 'swirl_website_user')
+        throw new Error(
+          'Existing swirl_website database has a different owner',
+        );
+      console.log('Swirl Website database and role are ready');
     } finally {
       try {
         await connection.unsafe('SELECT pg_advisory_unlock(193720)');
@@ -55,6 +59,6 @@ async function main() {
   }
 }
 main().catch(() => {
-  console.error('Website database provisioning failed');
+  console.error('Swirl Website database provisioning failed');
   process.exitCode = 1;
 });

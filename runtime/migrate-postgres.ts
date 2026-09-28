@@ -30,7 +30,7 @@ export async function importSqliteSnapshot(
       if (
         (
           await sql.unsafe(
-            'SELECT checksum FROM website_imports WHERE checksum = $1',
+            'SELECT checksum FROM swirl_website_imports WHERE checksum = $1',
             [checksum],
           )
         ).length
@@ -94,7 +94,7 @@ export async function importSqliteSnapshot(
           counters++;
         }
       }
-      await sql.unsafe('INSERT INTO website_imports VALUES ($1,$2)', [
+      await sql.unsafe('INSERT INTO swirl_website_imports VALUES ($1,$2)', [
         checksum,
         Date.now(),
       ]);
@@ -119,7 +119,7 @@ async function main() {
   try {
     if (args[0] === '--initialize') {
       await initializePostgres(database);
-      console.log('Website PostgreSQL schema is ready');
+      console.log('Swirl Website PostgreSQL schema is ready');
     } else {
       console.log(
         JSON.stringify(await importSqliteSnapshot(database, resolve(args[1]))),
@@ -136,7 +136,7 @@ if (
 ) {
   main().catch(() => {
     console.error(
-      'Website database migration failed; inspect the source/target before retrying',
+      'Swirl Website database migration failed; inspect the source/target before retrying',
     );
     process.exitCode = 1;
   });

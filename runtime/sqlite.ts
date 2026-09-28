@@ -78,7 +78,7 @@ export class SqliteContactDatabase implements ContactDatabase {
 
   private migrate(directory: string) {
     this.sqlite.exec(
-      'CREATE TABLE IF NOT EXISTS _website_migrations (name TEXT PRIMARY KEY, checksum TEXT NOT NULL, applied_at INTEGER NOT NULL)',
+      'CREATE TABLE IF NOT EXISTS _swirl_website_migrations (name TEXT PRIMARY KEY, checksum TEXT NOT NULL, applied_at INTEGER NOT NULL)',
     );
     this.sqlite.exec('BEGIN IMMEDIATE');
     try {
@@ -88,7 +88,9 @@ export class SqliteContactDatabase implements ContactDatabase {
         const sql = readFileSync(join(directory, name), 'utf8');
         const checksum = createHash('sha256').update(sql).digest('hex');
         const previous = this.sqlite
-          .prepare('SELECT checksum FROM _website_migrations WHERE name = ?')
+          .prepare(
+            'SELECT checksum FROM _swirl_website_migrations WHERE name = ?',
+          )
           .get(name);
         if (previous) {
           if (previous.checksum !== checksum)
@@ -97,7 +99,7 @@ export class SqliteContactDatabase implements ContactDatabase {
         }
         this.sqlite.exec(sql);
         this.sqlite
-          .prepare('INSERT INTO _website_migrations VALUES (?, ?, ?)')
+          .prepare('INSERT INTO _swirl_website_migrations VALUES (?, ?, ?)')
           .run(name, checksum, Date.now());
       }
       this.sqlite.exec('COMMIT');
@@ -135,7 +137,7 @@ export class SqliteContactDatabase implements ContactDatabase {
   healthy(): boolean {
     return (
       this.sqlite
-        .prepare('SELECT 1 AS ready FROM _website_migrations LIMIT 1')
+        .prepare('SELECT 1 AS ready FROM _swirl_website_migrations LIMIT 1')
         .get()?.ready === 1
     );
   }

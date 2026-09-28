@@ -32,7 +32,7 @@ jobs:
       GITHUB_ADMIN_TOKEN: ${{ secrets.REPOSITORY_SYNC_ADMIN_TOKEN }}
       GITLAB_API_URL: https://gitlab.swirlit.dev/api/v4
       GITLAB_PROJECT_ID: ${{ vars.GITLAB_PROJECT_ID }}
-      GITLAB_REPOSITORY: https://gitlab.swirlit.dev/swirlit/website.git
+      GITLAB_REPOSITORY: https://gitlab.swirlit.dev/swirlit/swirl-website.git
       GITLAB_USERNAME: ${{ secrets.GITLAB_SYNC_USERNAME }}
       GITLAB_TOKEN: ${{ secrets.GITLAB_SYNC_TOKEN }}
     steps:

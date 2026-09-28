@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: website-db-setup
+  name: swirl-website-db-setup
   annotations:
     argocd.argoproj.io/hook: PreSync
     argocd.argoproj.io/hook-delete-policy: BeforeHookCreation,HookSucceeded
@@ -20,20 +20,20 @@ spec:
         seccompProfile:
           type: RuntimeDefault
       imagePullSecrets:
-        - name: website-registry-auth
+        - name: swirl-website-registry-auth
       containers:
         - name: db-setup
-          image: registry.swirlit.dev/swirlit/website/site:bootstrap
+          image: registry.swirlit.dev/swirlit/swirl-website/site:bootstrap
           command: [node, dist/runtime/provision-postgres.js]
           envFrom:
             - secretRef:
-                name: website-db-admin-credentials
+                name: swirl-website-db-admin-credentials
           env:
-            - name: WEBSITE_DB_PASSWORD
+            - name: SWIRL_WEBSITE_DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: website-database
-                  key: WEBSITE_DB_PASSWORD
+                  name: swirl-website-database
+                  key: SWIRL_WEBSITE_DB_PASSWORD
           resources:
             requests: {cpu: 25m, memory: 64Mi}
             limits: {cpu: 250m, memory: 128Mi}
@@ -46,7 +46,7 @@ spec:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: website-schema-migration
+  name: swirl-website-schema-migration
   annotations:
     argocd.argoproj.io/hook: PreSync
     argocd.argoproj.io/hook-delete-policy: BeforeHookCreation,HookSucceeded
@@ -65,16 +65,16 @@ spec:
         seccompProfile:
           type: RuntimeDefault
       imagePullSecrets:
-        - name: website-registry-auth
+        - name: swirl-website-registry-auth
       containers:
         - name: schema-migration
-          image: registry.swirlit.dev/swirlit/website/site:bootstrap
+          image: registry.swirlit.dev/swirlit/swirl-website/site:bootstrap
           command: [node, dist/runtime/migrate-postgres.js, --initialize]
           env:
             - name: DATABASE_URL
               valueFrom:
                 secretKeyRef:
-                  name: website-database
+                  name: swirl-website-database
                   key: DATABASE_URL
           resources:
             requests: {cpu: 25m, memory: 64Mi}

@@ -43,12 +43,12 @@ and [repository onboarding](docs/onboarding.md) for a new cluster or import.
 
 The default deployment (`infra/k8s`) runs one replica with **SQLite**, using
 Node's built-in `node:sqlite` module and `/data/contact.sqlite` on the
-`website-data` persistent volume. `DATABASE_URL` is unset in this profile.
+`swirl-website-data` persistent volume. `DATABASE_URL` is unset in this profile.
 PostgreSQL support exists but is **opt-in**: setting `DATABASE_URL` selects it
 only after the database/schema and any existing data have been prepared.
 Follow [the PostgreSQL cutover guide](docs/high-availability.md) before selecting
 `infra/overlays/ha`. Enabling the platform's PostgreSQL service alone does not
-switch Website's contact storage.
+switch Swirl Website's contact storage.
 
 SQLite migrations are plain SQL under `db/migrations`, applied transactionally
 at startup and recorded with checksums. Preserve applied filenames and contents;

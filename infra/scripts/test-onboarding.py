@@ -13,8 +13,8 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[2]
 CONTRACT = json.loads((ROOT / "infra/onboarding.json").read_text())
-WEBSITE = CONTRACT["readiness"]["deployments"] == ["website"]
-PROFILE = "infra/k8s" if WEBSITE else "infra/k8s/overlays/swirl-cloud"
+SWIRL_WEBSITE = CONTRACT["readiness"]["deployments"] == ["swirl-website"]
+PROFILE = "infra/k8s" if SWIRL_WEBSITE else "infra/k8s/overlays/swirl-cloud"
 
 
 def context(domain="cluster.example", project="team/product"):
@@ -152,7 +152,7 @@ class OnboardingTests(unittest.TestCase):
                              values["GITLAB_PUBLIC_URL"] + "/" + values["GITLAB_PROJECT_PATH"] + ".git")
 
         manifest = yaml.safe_load((self.copy / PROFILE / "kustomization.yaml").read_text())
-        if WEBSITE:
+        if SWIRL_WEBSITE:
             subprocess.run(["bash", "infra/scripts/set-image-digest.sh", "sha256:" + "b" * 64], cwd=self.copy, check=True)
             updated = yaml.safe_load((self.copy / PROFILE / "kustomization.yaml").read_text())
             self.assertEqual(updated["images"][0]["digest"], "sha256:" + "b" * 64)
@@ -180,7 +180,7 @@ class OnboardingTests(unittest.TestCase):
             for doc in docs:
                 if doc["kind"] == "Ingress":
                     self.assertTrue(all(tls["secretName"] == values["TLS_SECRET_NAME"] for tls in doc["spec"]["tls"]))
-            if WEBSITE:
+            if SWIRL_WEBSITE:
                 deployment = next(doc for doc in docs if doc["kind"] == "Deployment")
                 env = {item["name"]: item for item in deployment["spec"]["template"]["spec"]["containers"][0]["env"]}
                 self.assertEqual(env["PUBLIC_ORIGIN"]["value"], "https://" + values["APP_HOST"])
@@ -227,7 +227,7 @@ if sys.argv[1:3] == ["get", "application"]:
     revision = subprocess.check_output(["git", "rev-parse", "origin/main"], text=True).strip()
     print(json.dumps({"status": {"sync": {"revision": revision, "status": "Synced"}, "health": {"status": "Healthy"}}}))
 elif sys.argv[1:3] == ["get", "deployment"]:
-    print(json.dumps({"spec": {"template": {"spec": {"containers": [{"name": "website", "image": os.environ["EXPECTED_IMAGE"]}]}}}}))
+    print(json.dumps({"spec": {"template": {"spec": {"containers": [{"name": "swirl-website", "image": os.environ["EXPECTED_IMAGE"]}]}}}}))
 ''')
         kubectl.chmod(0o755)
         curl = commands / "curl"
@@ -276,11 +276,11 @@ elif sys.argv[1:3] == ["get", "deployment"]:
         self.assertEqual(git(self.copy, "rev-parse", "origin/main"), unrelated)
 
     def test_secret_requests_and_bootstrap_are_bounded(self):
-        self.assertEqual(CONTRACT["registry"]["path"], "apps/" + ("website" if WEBSITE else "thoughty") + "/registry")
+        self.assertEqual(CONTRACT["registry"]["path"], "apps/" + ("swirl-website" if SWIRL_WEBSITE else "thoughty") + "/registry")
         requests = {item["path"]: item["fields"] for item in CONTRACT["vault"]}
-        if WEBSITE:
-            self.assertEqual(requests, {"apps/website/contact": {"RESEND_API_KEY": {"value": ""}}})
-            self.assertNotIn("apps/website/database", requests)
+        if SWIRL_WEBSITE:
+            self.assertEqual(requests, {"apps/swirl-website/contact": {"RESEND_API_KEY": {"value": ""}}})
+            self.assertNotIn("apps/swirl-website/database", requests)
         else:
             self.assertEqual(requests["apps/thoughty/database"]["POSTGRES_PASSWORD"], {"generate": 24, "encoding": "hex"})
             required = requests["apps/thoughty/app"]
@@ -295,7 +295,7 @@ elif sys.argv[1:3] == ["get", "deployment"]:
 
     def test_release_rules_preserve_manual_and_scan_only_pipelines(self):
         pipeline = yaml.safe_load((ROOT / ".gitlab-ci.yml").read_text())
-        job = "release" if WEBSITE else "01-release"
+        job = "release" if SWIRL_WEBSITE else "01-release"
         defaults = dict(CI_DEFAULT_BRANCH="main", CI_COMMIT_BRANCH="main", CI_PIPELINE_SOURCE="api",
                         SONAR_SCAN_ONLY="false", APP_ONBOARDING="true", PIPELINE_MODE="standard")
         self.assertEqual(job_when(pipeline, job, **defaults), "on_success")
@@ -303,7 +303,7 @@ elif sys.argv[1:3] == ["get", "deployment"]:
         self.assertEqual(job_when(pipeline, "workflow", **settings), "on_success")
         self.assertEqual(job_when(pipeline, job, **{**defaults, "SONAR_SCAN_ONLY": "true"}), "never")
         self.assertEqual(job_when(pipeline, job, **{**defaults, "CI_COMMIT_BRANCH": "feature"}), "never")
-        if not WEBSITE:
+        if not SWIRL_WEBSITE:
             for source in ("api", "push"):
                 self.assertEqual(job_when(pipeline, job, **{**defaults, "CI_PIPELINE_SOURCE": source, "APP_ONBOARDING": "false"}), "manual")
             self.assertEqual(job_when(pipeline, job, **{**defaults, "CI_PIPELINE_SOURCE": "web", "APP_ONBOARDING": "false", "PIPELINE_MODE": "full"}), "on_success")
@@ -328,17 +328,17 @@ elif sys.argv[1:3] == ["get", "deployment"]:
         for bad in ({"ONBOARDING_EXPECTED_SHA": "a" * 40}, {"ONBOARDING_EXPECTED_SHA": ""},
                     {"CI_PIPELINE_SOURCE": "push"}, {"CI_COMMIT_BRANCH": "feature"}):
             changed = {**environment, **bad}
-            for phase in (["publish", "deploy"] if not WEBSITE else [""]):
+            for phase in (["publish", "deploy"] if not SWIRL_WEBSITE else [""]):
                 result = subprocess.run(["bash", "infra/scripts/ci-release.sh", phase],
                                         cwd=self.copy, env=changed, capture_output=True)
                 self.assertNotEqual(result.returncode, 0)
                 self.assertFalse((self.copy / "release.env").exists())
-            builder = "ci-build-image.sh" if WEBSITE else "ci-container-build.sh"
+            builder = "ci-build-image.sh" if SWIRL_WEBSITE else "ci-container-build.sh"
             changed.update(CI_PROJECT_DIR=str(self.copy), CI_PROJECT_PATH="team/product",
                            CI_REGISTRY_USER="fixture", CI_REGISTRY_PASSWORD="private-fixture",
                            REGISTRY_PUSH_HOST="registry.invalid:5050", APP_VERSION="1.2.3",
                            KANIKO_EXECUTOR="/unavailable-builder")
-            result = subprocess.run(["sh" if WEBSITE else "bash", "infra/scripts/" + builder, "publish"],
+            result = subprocess.run(["sh" if SWIRL_WEBSITE else "bash", "infra/scripts/" + builder, "publish"],
                                     cwd=self.copy, env=changed, capture_output=True, text=True)
             self.assertNotEqual(result.returncode, 0)
             self.assertNotIn("unavailable-builder", result.stderr)

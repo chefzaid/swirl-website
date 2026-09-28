@@ -27,7 +27,7 @@ const server = createNodeServer({
   healthy: contact.healthy,
 });
 server.listen(port, '0.0.0.0', () => {
-  console.log(`Website listening on port ${port}`);
+  console.log(`Swirl Website listening on port ${port}`);
 });
 let stopping = false;
 function stop() {

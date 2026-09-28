@@ -48,11 +48,11 @@ image_digest="$(< image-digest.txt)"
 git checkout --quiet -B "$CI_DEFAULT_BRANCH" "origin/$CI_DEFAULT_BRANCH"
 if [[ "$resume_release" == false ]]; then
   bash infra/scripts/set-image-digest.sh "$image_digest"
-  git config user.name 'Website GitLab CI'
+  git config user.name 'Swirl Website GitLab CI'
   git config user.email 'gitlab-ci@swirlit.dev'
   git add infra/k8s/kustomization.yaml
   if [[ "${APP_ONBOARDING:-false}" == true ]] || ! git diff --cached --quiet; then
-    infra/scripts/commit-deployment.sh "deploy: website ${CI_COMMIT_SHA:0:12} [skip ci]"
+    infra/scripts/commit-deployment.sh "deploy: swirl-website ${CI_COMMIT_SHA:0:12} [skip ci]"
     git push origin "HEAD:$CI_DEFAULT_BRANCH"
   fi
 fi
@@ -63,21 +63,21 @@ printf 'DEPLOY_SKIPPED=false\nSOURCE_REVISION=%s\nDEPLOY_REVISION=%s\nIMAGE=%s@%
 # Repository credentials are provisioned by the operator bootstrap playbook;
 # the CI service account manages Applications without access to infra secrets.
 kubectl apply -f infra/argocd/application.yaml
-kubectl annotate application website -n infra argocd.argoproj.io/refresh=hard --overwrite
+kubectl annotate application swirl-website -n infra argocd.argoproj.io/refresh=hard --overwrite
 deadline=$((SECONDS + 900))
 while (( SECONDS < deadline )); do
-  application="$(kubectl get application website -n infra -o json)"
+  application="$(kubectl get application swirl-website -n infra -o json)"
   if jq -e --arg revision "$deploy_revision" '
       .status.sync.revision == $revision and
       .status.sync.status == "Synced" and .status.health.status == "Healthy"
     ' <<< "$application" >/dev/null; then
-    kubectl rollout status deployment/website -n apps --timeout=120s
-    kubectl get deployment website -n apps -o json | jq -e \
+    kubectl rollout status deployment/swirl-website -n apps --timeout=120s
+    kubectl get deployment swirl-website -n apps -o json | jq -e \
       --arg image "$REGISTRY_PULL_IMAGE@$image_digest" \
-      'any(.spec.template.spec.containers[]; .name == "website" and .image == $image)' >/dev/null
+      'any(.spec.template.spec.containers[]; .name == "swirl-website" and .image == $image)' >/dev/null
     curl --fail --silent --show-error --retry 3 --retry-delay 3 \
-      --connect-timeout 5 --max-time 15 http://website.apps.svc.cluster.local/healthz >/dev/null
-    printf 'Website deployed at %s with %s@%s\n' "$deploy_revision" "$REGISTRY_PULL_IMAGE" "$image_digest"
+      --connect-timeout 5 --max-time 15 http://swirl-website.apps.svc.cluster.local/healthz >/dev/null
+    printf 'Swirl Website deployed at %s with %s@%s\n' "$deploy_revision" "$REGISTRY_PULL_IMAGE" "$image_digest"
     exit 0
   fi
   # If a newer pipeline has already advanced GitOps, an older job must not
@@ -93,5 +93,5 @@ while (( SECONDS < deadline )); do
   fi
   sleep 10
 done
-echo 'Argo CD did not reconcile the website release within 15 minutes' >&2
+echo 'Argo CD did not reconcile the Swirl Website release within 15 minutes' >&2
 exit 1

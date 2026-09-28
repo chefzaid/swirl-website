@@ -11,16 +11,16 @@ patches:
 replacements:
   - source:
       kind: Deployment
-      name: website
-      fieldPath: spec.template.spec.containers.[name=website].image
+      name: swirl-website
+      fieldPath: spec.template.spec.containers.[name=swirl-website].image
     targets:
       - select:
           kind: Job
-          name: website-db-setup
+          name: swirl-website-db-setup
         fieldPaths:
           - spec.template.spec.containers.[name=db-setup].image
       - select:
           kind: Job
-          name: website-schema-migration
+          name: swirl-website-schema-migration
         fieldPaths:
           - spec.template.spec.containers.[name=schema-migration].image

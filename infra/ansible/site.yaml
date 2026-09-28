@@ -1,12 +1,12 @@
 ---
-- name: Reconcile the Swirl IT website through Argo CD
+- name: Reconcile Swirl Website through Argo CD
   hosts: localhost
   connection: local
   gather_facts: false
   tasks:
     - name: Read the previous Argo CD reconciliation timestamp
       ansible.builtin.command:
-        argv: [kubectl, get, application, website, -n, infra, -o, "jsonpath={.status.reconciledAt}"]
+        argv: [kubectl, get, application, swirl-website, -n, infra, -o, "jsonpath={.status.reconciledAt}"]
       register: previous_reconciliation
       changed_when: false
       failed_when: previous_reconciliation.rc not in [0, 1]
@@ -23,7 +23,7 @@
 
     - name: Wait for the private repository credentials
       ansible.builtin.command:
-        argv: [kubectl, wait, --for=condition=Ready, externalsecret/website-gitlab-repository, -n, infra, --timeout=120s]
+        argv: [kubectl, wait, --for=condition=Ready, externalsecret/swirl-website-gitlab-repository, -n, infra, --timeout=120s]
       changed_when: false
 
     - name: Apply the repository-owned Argo CD application
@@ -38,12 +38,12 @@
 
     - name: Request a fresh source reconciliation
       ansible.builtin.command:
-        argv: [kubectl, annotate, application, website, -n, infra, argocd.argoproj.io/refresh=hard, --overwrite]
+        argv: [kubectl, annotate, application, swirl-website, -n, infra, argocd.argoproj.io/refresh=hard, --overwrite]
       changed_when: true
 
     - name: Wait for the application to be synced and healthy
       ansible.builtin.command:
-        argv: [kubectl, get, application, website, -n, infra, -o, json]
+        argv: [kubectl, get, application, swirl-website, -n, infra, -o, json]
       register: application_status
       changed_when: false
       until:
@@ -53,7 +53,7 @@
       retries: 90
       delay: 10
 
-    - name: Wait for the website deployment
+    - name: Wait for the swirl-website deployment
       ansible.builtin.command:
-        argv: [kubectl, rollout, status, deployment/website, -n, apps, --timeout=120s]
+        argv: [kubectl, rollout, status, deployment/swirl-website, -n, apps, --timeout=120s]
       changed_when: false

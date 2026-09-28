@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: website
+  name: swirl-website
   namespace: apps
 spec:
   replicas: 2
@@ -22,14 +22,14 @@ spec:
           nodeTaintsPolicy: Honor
           labelSelector:
             matchLabels:
-              app: website
+              app: swirl-website
       containers:
-        - name: website
+        - name: swirl-website
           env:
             - name: DATABASE_URL
               valueFrom:
                 secretKeyRef:
-                  name: website-database
+                  name: swirl-website-database
                   key: DATABASE_URL
           livenessProbe:
             httpGet:

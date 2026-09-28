@@ -16,14 +16,14 @@ import { insertWithinLimits } from '../server/contact-limits.ts';
 import { handleContact, type ContactData } from '../server/contact.ts';
 import { createNodeServer } from '../runtime/server.ts';
 
-const url = process.env.WEBSITE_PG_TEST_URL;
+const url = process.env.SWIRL_WEBSITE_PG_TEST_URL;
 if (
   !url ||
   !['127.0.0.1', 'localhost'].includes(new URL(url).hostname) ||
-  new URL(url).pathname !== '/website_ha_test'
+  new URL(url).pathname !== '/swirl_website_ha_test'
 )
   throw new Error(
-    'Use the disposable local website_ha_test database via infra/scripts/test-postgres.sh',
+    'Use the disposable local swirl_website_ha_test database via infra/scripts/test-postgres.sh',
   );
 const fixture = (): ContactData => ({
   id: crypto.randomUUID(),
@@ -49,7 +49,7 @@ void test('PostgreSQL shared storage, delivery ownership and snapshot migration'
   assert.equal(await db.healthy(), true);
   const reset = () =>
     db.sql.unsafe(
-      'TRUNCATE contact_notification_queue,contact_messages,contact_rate_limits,website_imports',
+      'TRUNCATE contact_notification_queue,contact_messages,contact_rate_limits,swirl_website_imports',
     );
 
   await t.test(
@@ -237,7 +237,9 @@ void test('PostgreSQL shared storage, delivery ownership and snapshot migration'
   await t.test(
     'snapshot imports preserve statuses and quotas, are repeatable, and reject conflicts atomically',
     async () => {
-      const directory = await mkdtemp(join(tmpdir(), 'website-pg-import-'));
+      const directory = await mkdtemp(
+        join(tmpdir(), 'swirl-website-pg-import-'),
+      );
       try {
         const path = join(directory, 'contact.sqlite');
         const sqlite = new SqliteContactDatabase(path, 'db/migrations');
@@ -271,14 +273,17 @@ void test('PostgreSQL shared storage, delivery ownership and snapshot migration'
           )[0].n,
           0,
         );
-        await db.sql.unsafe('DELETE FROM website_imports');
+        await db.sql.unsafe('DELETE FROM swirl_website_imports');
         await db.sql.unsafe(
           "UPDATE contact_messages SET message = 'existing newer enquiry'",
         );
         await assert.rejects(importSqliteSnapshot(db, path), /conflicts/);
         assert.equal(
-          (await db.sql.unsafe('SELECT count(*) AS n FROM website_imports'))[0]
-            .n,
+          (
+            await db.sql.unsafe(
+              'SELECT count(*) AS n FROM swirl_website_imports',
+            )
+          )[0].n,
           0,
         );
       } finally {
@@ -303,7 +308,7 @@ void test('PostgreSQL shared storage, delivery ownership and snapshot migration'
         const address = server.address() as AddressInfo;
         const origin = `http://127.0.0.1:${address.port}`;
         assert.equal((await fetch(`${origin}/healthz`)).status, 200);
-        await db.sql.unsafe('DROP TABLE website_schema');
+        await db.sql.unsafe('DROP TABLE swirl_website_schema');
         assert.equal((await fetch(`${origin}/healthz`)).status, 503);
         assert.equal((await fetch(`${origin}/livez`)).status, 200);
       } finally {

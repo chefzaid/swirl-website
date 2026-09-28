@@ -70,7 +70,10 @@ export class PostgresContactDatabase implements ContactDatabase {
       connect_timeout: 5,
       idle_timeout: 20,
       max_lifetime: 1800,
-      connection: { statement_timeout: 10000, application_name: 'website' },
+      connection: {
+        statement_timeout: 10000,
+        application_name: 'swirl-website',
+      },
       onnotice: () => {},
       types: {
         safeInteger: {
@@ -107,7 +110,7 @@ export class PostgresContactDatabase implements ContactDatabase {
   async healthy(): Promise<boolean> {
     try {
       const rows = await this.sql.unsafe(
-        'SELECT version FROM website_schema WHERE singleton = true',
+        'SELECT version FROM swirl_website_schema WHERE singleton = true',
       );
       return rows[0]?.version === SCHEMA_VERSION;
     } catch {
@@ -124,13 +127,15 @@ export async function initializePostgres(
 ): Promise<void> {
   await database.sql.begin(async (sql) => {
     await sql.unsafe('SELECT pg_advisory_xact_lock($1)', [CONTACT_LOCK]);
-    await sql.unsafe(`CREATE TABLE IF NOT EXISTS website_schema (
+    await sql.unsafe(`CREATE TABLE IF NOT EXISTS swirl_website_schema (
       singleton boolean PRIMARY KEY DEFAULT true CHECK (singleton), version integer NOT NULL
     )`);
-    const previous = await sql.unsafe('SELECT version FROM website_schema');
+    const previous = await sql.unsafe(
+      'SELECT version FROM swirl_website_schema',
+    );
     if (previous.length) {
       if (previous[0].version !== SCHEMA_VERSION)
-        throw new Error('Unsupported website schema version');
+        throw new Error('Unsupported Swirl Website schema version');
       return;
     }
     await sql.unsafe(`CREATE TABLE contact_messages (
@@ -155,9 +160,9 @@ export async function initializePostgres(
       "CREATE INDEX contact_notification_due ON contact_notification_queue (run_at) WHERE status = 'queued'",
     );
     await sql.unsafe(
-      'CREATE TABLE website_imports (checksum text PRIMARY KEY, imported_at bigint NOT NULL)',
+      'CREATE TABLE swirl_website_imports (checksum text PRIMARY KEY, imported_at bigint NOT NULL)',
     );
-    await sql.unsafe('INSERT INTO website_schema (version) VALUES ($1)', [
+    await sql.unsafe('INSERT INTO swirl_website_schema (version) VALUES ($1)', [
       SCHEMA_VERSION,
     ]);
   });
