@@ -9,7 +9,7 @@ This repository owns its runtime image, resources in the `apps` namespace,
 Argo CD Application, and operator playbook. `swirl-cloud` supplies K3s, the
 private GitLab Registry, Vault/External Secrets, Longhorn, ingress, Cloudflare,
 and the `apps/swirlit-dev-tls` certificate. Keep website ingress separate from
-the intranet at `intranet.swirlit.dev`, which the header's Intranet link opens.
+the Swirl Cloud portal at `cloud.swirlit.dev`, which the header's Swirl Cloud link opens.
 
 The website Ingress routes both names to the application. The Node runtime
 redirects the `www` host with HTTP 308 to the fixed `PUBLIC_ORIGIN`, retaining

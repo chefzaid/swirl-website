@@ -51,16 +51,16 @@ export default function SiteHeader({ lang }: Readonly<{ lang: Lang }>) {
             </a>
           </div>
           <a
-            className="intranet-link"
-            href="https://intranet.swirlit.dev"
+            className="cloud-link"
+            href="https://cloud.swirlit.dev"
             aria-label={t(
-              'Intranet — Espace collaborateurs',
-              'Intranet — Employee access',
+              'Swirl Cloud — Espace collaborateurs',
+              'Swirl Cloud — Employee access',
             )}
             title={t('Espace collaborateurs', 'Employee access')}
           >
             <LockKeyhole size={12} aria-hidden="true" />
-            Intranet
+            Swirl Cloud
           </a>
           <Button
             className="menu-toggle"
