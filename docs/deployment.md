@@ -227,8 +227,33 @@ start within 20 seconds the button offers the contact form instead. The channel
 ID (`chatChannelId`) and Odoo origin are in `data/site.ts`. The channel's
 colours match the site (header and button `#d7ee92`, text `#171c11`) and are set
 in Odoo under **Live Chat → Configuration → Channels**. Agents answer in
-Odoo **Discuss**; while none is online, the platform's chatbot collects the
-visitor's email and request and creates a lead.
+Odoo **Discuss**; while none is online, the chatbot collects the visitor's email
+and request and creates a lead.
+
+### Chloé and answering by email
+
+The chatbot appears as **Chloé**, defined in `infra/odoo/chat-persona.json`
+(name, the `chloe.png` avatar drawn from `chloe.svg`, and the English and
+French text of each chatbot step). New visitor messages are emailed to the team;
+replying to that email answers in the chat as Chloé, and the answer is emailed
+to the visitor if they have left the site, so they can reply in turn. Apply the
+persona and the email settings from the platform host:
+
+```sh
+python3 scripts/configure-odoo-intake.py --application swirl-website \
+  --website-origin https://swirlit.dev \
+  --notify zaid@swirlit.dev --reply-sender zaid@swirlit.dev --reply-sender <mailbox you reply from> \
+  --timezone Europe/Paris --chat-persona ../swirl-website/infra/odoo/chat-persona.json \
+  --resend-key-path apps/swirl-website/contact --email-worker
+```
+
+Odoo then sends its mail through the same Resend account as the contact form,
+from `chat@swirlit.dev`. Replies reach Odoo through Cloudflare Email Routing
+(`chat@swirlit.dev` and its plus-addresses) and an Email Worker; `--email-worker`
+needs `CLOUDFLARE_API_TOKEN` with Workers Scripts and Email Routing Rules edit
+rights. List every address you reply from with `--reply-sender`: replies from
+other senders are bounced. To change Chloé's texts or face, edit the persona
+file (keep one message per chatbot step, in order) and rerun the command.
 
 ## Local delivery verification
 

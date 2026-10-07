@@ -1,0 +1,26 @@
+{
+  "name": "Chloé",
+  "avatar": "chloe.png",
+  "messages": [
+    {
+      "type": "text",
+      "en": "Hi, I'm Chloé from Swirl IT 👋",
+      "fr": "Bonjour, je suis Chloé de Swirl IT 👋"
+    },
+    {
+      "type": "question_email",
+      "en": "So we can answer you even if you leave this page, what is your email address?",
+      "fr": "Pour pouvoir vous répondre même si vous quittez la page, quelle est votre adresse e-mail ?"
+    },
+    {
+      "type": "free_input_multi",
+      "en": "Thank you! How can we help you?",
+      "fr": "Merci ! Comment pouvons-nous vous aider ?"
+    },
+    {
+      "type": "create_lead",
+      "en": "Noted ✅ We will reply to you by email very soon.",
+      "fr": "C'est noté ✅ Nous vous répondons très vite par e-mail."
+    }
+  ]
+}
