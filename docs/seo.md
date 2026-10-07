@@ -18,10 +18,8 @@ The public site name and organization name are separate configuration fields.
 
 Service URLs sit at the root and carry the main search terms. Inner pages use
 `src/layouts/Subpage.astro` for the shared header, visible breadcrumbs and
-`BreadcrumbList`. The footer is a crawlable site map, so every service and the
-hub are one link from any page and every case study is at most two. Home
-service cards, case studies and service pages link to each other: keep
-`projects` in `data/expertise.ts` covering every case study.
+`BreadcrumbList`. Home service cards, case studies and service pages link to
+each other: keep `projects` in `data/expertise.ts` covering every case study.
 
 When adding or renaming a page, update the route map and both language versions.
 Each page needs a unique title (brand first: `Swirl | …`) and description, one

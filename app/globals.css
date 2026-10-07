@@ -382,7 +382,7 @@ h1 > span {
   }
   .footer-copyright {
     grid-column: 1 / -1;
-    grid-row: 3;
+    grid-row: 2;
   }
 }
 @media (max-width: 760px) {
@@ -1602,7 +1602,7 @@ h2 span {
   }
   .footer .footer-copyright {
     grid-column: 1;
-    grid-row: 4;
+    grid-row: 3;
     line-height: 1.6;
   }
   .project-dialog[data-slot='dialog-content'] {
@@ -1876,7 +1876,7 @@ h2 span {
     width: 25px;
   }
 }
-/* Service pages, case-study hub, 404 and footer site map */
+/* Service pages, case-study hub and 404 */
 .services-grid .service-card {
   display: flex;
   flex-direction: column;
@@ -2031,33 +2031,6 @@ h2 span {
 .not-found .text-link {
   font-size: 14px;
 }
-.footer-nav {
-  grid-column: 1 / -1;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 32px;
-  padding-bottom: 36px;
-  border-bottom: 1px solid var(--border);
-  font-size: 12px;
-  color: var(--muted-foreground);
-}
-.footer-heading {
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 2.1px;
-  text-transform: uppercase;
-  color: #d8ded7;
-}
-.footer-nav ul {
-  list-style: none;
-  padding: 0;
-  margin: 16px 0 0;
-  display: grid;
-  gap: 11px;
-}
-.footer-nav a:hover {
-  color: var(--foreground);
-}
 @media (max-width: 1100px) {
   .service-steps {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2070,9 +2043,5 @@ h2 span {
   .service-capabilities,
   .service-steps {
     grid-template-columns: 1fr;
-  }
-  .footer-nav {
-    grid-template-columns: 1fr 1fr;
-    text-align: left;
   }
 }

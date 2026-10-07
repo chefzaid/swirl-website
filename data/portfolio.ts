@@ -378,7 +378,7 @@ export const projects = [
   },
 ] as const;
 export type Project = (typeof projects)[number];
-// Sector groups for the case-study hub; anchors are linked from the footer.
+// Sector groups for the case-study hub.
 export const sectors = [
   {
     id: 'finance',
