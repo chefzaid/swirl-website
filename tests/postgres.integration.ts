@@ -11,6 +11,7 @@ import {
 } from '../runtime/postgres.ts';
 import { SqliteContactDatabase } from '../runtime/sqlite.ts';
 import { importSqliteSnapshot } from '../runtime/migrate-postgres.ts';
+import { CrmDispatcher } from '../runtime/crm.ts';
 import { NotificationDispatcher } from '../runtime/notifications.ts';
 import { insertWithinLimits } from '../server/contact-limits.ts';
 import { handleContact, type ContactData } from '../server/contact.ts';
@@ -49,7 +50,7 @@ void test('PostgreSQL shared storage, delivery ownership and snapshot migration'
   assert.equal(await db.healthy(), true);
   const reset = () =>
     db.sql.unsafe(
-      'TRUNCATE contact_notification_queue,contact_messages,contact_rate_limits,swirl_website_imports',
+      'TRUNCATE contact_crm_queue,contact_notification_queue,contact_messages,contact_rate_limits,swirl_website_imports',
     );
 
   await t.test(
@@ -253,6 +254,11 @@ void test('PostgreSQL shared storage, delivery ownership and snapshot migration'
         sqlite.sqlite
           .prepare("UPDATE contact_messages SET notification_status = 'failed'")
           .run();
+        sqlite.sqlite
+          .prepare(
+            "UPDATE contact_crm_queue SET status = 'sent', attempts = 1, lead_id = 9",
+          )
+          .run();
         sqlite.close();
         const result = await importSqliteSnapshot(db, path);
         assert.deepEqual(result, { imported: true, contacts: 1, counters: 4 });
@@ -273,6 +279,17 @@ void test('PostgreSQL shared storage, delivery ownership and snapshot migration'
           )[0].n,
           0,
         );
+        // CRM delivery state travels with the contact.
+        assert.deepEqual(
+          {
+            ...(
+              await db.sql.unsafe(
+                'SELECT contact_id,status,lead_id FROM contact_crm_queue',
+              )
+            )[0],
+          },
+          { contact_id: row.id, status: 'sent', lead_id: 9 },
+        );
         await db.sql.unsafe('DELETE FROM swirl_website_imports');
         await db.sql.unsafe(
           "UPDATE contact_messages SET message = 'existing newer enquiry'",
@@ -289,6 +306,70 @@ void test('PostgreSQL shared storage, delivery ownership and snapshot migration'
       } finally {
         await rm(directory, { recursive: true, force: true });
       }
+    },
+  );
+  await reset();
+  await t.test(
+    'stored inquiries reach the CRM once from any replica',
+    async () => {
+      const row = fixture();
+      await insertWithinLimits(
+        db,
+        row,
+        { ip: 'crm', email: 'crm' },
+        Date.now(),
+      );
+      const references: string[] = [];
+      const send = (async (_url: URL, init: RequestInit) => {
+        references.push(JSON.parse(init.body as string).reference);
+        return Response.json({ id: 5, created: true });
+      }) as unknown as typeof fetch;
+      const env = {
+        ODOO_URL: 'http://odoo.test',
+        ODOO_API_KEY: 'k'.repeat(40),
+      };
+      const delivered = await Promise.all([
+        new CrmDispatcher(db, env, send).deliver(),
+        new CrmDispatcher(other, env, send).deliver(),
+      ]);
+      assert.deepEqual(delivered.filter(Boolean).length, 1);
+      assert.deepEqual(references, [`contact:${row.id}`]);
+      assert.deepEqual(
+        {
+          ...(
+            await db.sql.unsafe(
+              'SELECT status,attempts,lead_id FROM contact_crm_queue',
+            )
+          )[0],
+        },
+        { status: 'sent', attempts: 1, lead_id: 5 },
+      );
+    },
+  );
+  await reset();
+  await t.test(
+    'schema version 1 upgrades and queues existing inquiries',
+    async () => {
+      const row = fixture();
+      await db.sql.unsafe('DROP TABLE contact_crm_queue');
+      await db.sql.unsafe('UPDATE swirl_website_schema SET version = 1');
+      await db.sql.unsafe(
+        "INSERT INTO contact_messages (id,name,email,service,message,lang,created_at) VALUES ($1,'A','a@example.test','S','A long enough message.','fr',123)",
+        [row.id],
+      );
+      assert.equal(await db.healthy(), false);
+      await initializePostgres(db);
+      assert.equal(await db.healthy(), true);
+      assert.deepEqual(
+        {
+          ...(
+            await db.sql.unsafe(
+              'SELECT contact_id,status,run_at FROM contact_crm_queue',
+            )
+          )[0],
+        },
+        { contact_id: row.id, status: 'queued', run_at: 123 },
+      );
     },
   );
   await t.test(
