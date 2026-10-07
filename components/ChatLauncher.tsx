@@ -112,8 +112,8 @@ export default function ChatLauncher({ lang }: Readonly<{ lang: Lang }>) {
             aria-busy={state === 'loading'}
             title={
               en
-                ? 'Opens our live chat, hosted by Swirl IT'
-                : 'Ouvre notre chat en direct, hébergé par Swirl IT'
+                ? 'Opens our live chat, hosted by Swirl'
+                : 'Ouvre notre chat en direct, hébergé par Swirl'
             }
           >
             {state === 'loading' ? (
