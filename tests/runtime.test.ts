@@ -4,6 +4,7 @@ import {
   mkdtemp,
   mkdir,
   readFile,
+  readdir,
   writeFile,
   rm,
   symlink,
@@ -142,7 +143,8 @@ void test('SQLite survives a migration-directory move, migrates once, and rolls 
         .prepare('SELECT count(*) AS n FROM _swirl_website_migrations')
         .first<{ n: number }>()
     )?.n,
-    1,
+    (await readdir('db/migrations')).filter((name) => name.endsWith('.sql'))
+      .length,
   );
   assert.equal(
     (await db.prepare('PRAGMA journal_mode').first<{ journal_mode: string }>())

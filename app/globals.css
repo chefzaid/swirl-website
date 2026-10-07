@@ -442,6 +442,94 @@ h1 > span {
     letter-spacing: 1.5px;
   }
 }
+.chat-launcher {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 40;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  padding: 13px 18px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 35%);
+  transition:
+    background 0.2s,
+    transform 0.2s;
+}
+button.chat-launcher {
+  cursor: pointer;
+}
+button.chat-launcher:hover:not(:disabled) {
+  background: #e7f8b9;
+  transform: translateY(-2px);
+}
+button.chat-launcher:disabled {
+  cursor: progress;
+}
+.chat-frame {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 40;
+  width: min(400px, calc(100vw - 48px));
+  height: min(620px, calc(100dvh - 48px));
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--popover);
+  box-shadow: 0 16px 48px rgb(0 0 0 / 45%);
+}
+.chat-frame[hidden] {
+  display: none;
+}
+.chat-failed {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  max-width: min(320px, calc(100vw - 48px));
+  background: var(--popover);
+  color: var(--foreground);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-weight: 500;
+}
+.chat-failed a {
+  color: var(--primary);
+  text-decoration: underline;
+}
+.chat-dismiss {
+  display: inline-flex;
+  margin-left: auto;
+  padding: 4px;
+  color: var(--muted-foreground);
+  cursor: pointer;
+}
+.chat-spin {
+  animation: chat-spin 1s linear infinite;
+}
+@keyframes chat-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (max-width: 760px) {
+  .chat-launcher {
+    right: 16px;
+    bottom: 16px;
+  }
+  .chat-frame {
+    inset: 0;
+    width: 100%;
+    height: 100dvh;
+    border: 0;
+    border-radius: 0;
+  }
+}
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

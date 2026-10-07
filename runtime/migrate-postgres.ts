@@ -38,6 +38,22 @@ export async function importSqliteSnapshot(
         return { imported: false, contacts: 0, counters: 0 };
       let contacts = 0;
       let counters = 0;
+      // CRM delivery state travels with each contact; snapshots taken before
+      // the CRM outbox existed queue their contacts for delivery.
+      const crm = new Map<string, Record<string, unknown>>();
+      if (
+        snapshot
+          .prepare(
+            "SELECT 1 AS present FROM sqlite_master WHERE type = 'table' AND name = 'contact_crm_queue'",
+          )
+          .get()
+      )
+        for (const state of snapshot
+          .prepare(
+            'SELECT contact_id,status,attempts,run_at,lead_id,last_error FROM contact_crm_queue',
+          )
+          .iterate())
+          crm.set(String(state.contact_id), state);
       // No historical record is enqueued for delivery. Existing sent, failed,
       // unconfigured and pending statuses survive exactly as saved in SQLite.
       for (const row of snapshot
@@ -66,6 +82,18 @@ export async function importSqliteSnapshot(
               String(row.lang),
               Number(row.created_at),
               String(row.notification_status),
+            ],
+          );
+          const state = crm.get(String(row.id));
+          await sql.unsafe(
+            'INSERT INTO contact_crm_queue (contact_id,status,attempts,run_at,lead_id,last_error) VALUES ($1,$2,$3,$4,$5,$6)',
+            [
+              String(row.id),
+              state ? String(state.status) : 'queued',
+              state ? Number(state.attempts) : 0,
+              state ? Number(state.run_at) : Number(row.created_at),
+              state?.lead_id == null ? null : Number(state.lead_id),
+              typeof state?.last_error === 'string' ? state.last_error : null,
             ],
           );
           contacts++;

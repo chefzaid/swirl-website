@@ -1,0 +1,27 @@
+# Odoo CRM lead intake key, issued by swirl-cloud's configure-odoo-intake.py
+# (docs/deployment.md#odoo-crm-and-live-chat).
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: swirl-website-odoo
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    name: vault-backend
+    kind: ClusterSecretStore
+  target:
+    name: swirl-website-odoo
+    creationPolicy: Owner
+  data:
+    - secretKey: ODOO_URL
+      remoteRef:
+        key: apps/swirl-website/odoo
+        property: url
+    - secretKey: ODOO_DATABASE
+      remoteRef:
+        key: apps/swirl-website/odoo
+        property: database
+    - secretKey: ODOO_API_KEY
+      remoteRef:
+        key: apps/swirl-website/odoo
+        property: apiKey

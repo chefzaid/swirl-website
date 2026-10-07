@@ -44,6 +44,8 @@ for path, html in pages.items():
     assert directives['object-src'] == ["'none'"]
     assert directives['base-uri'] == ["'none'"]
     assert directives['connect-src'] == ["'self'"]
+    # Only the Odoo Live Chat origin may be framed; never a wildcard or http.
+    assert len(directives['frame-src']) == 1 and directives['frame-src'][0].startswith('https://odoo.'), path
     print(str(path) + ': CSP hashes match every inline script/style')
 for path in Path('dist/client').rglob('*'):
     if path.is_file():

@@ -16,7 +16,9 @@ export default defineConfig({
         "default-src 'self'",
         "base-uri 'none'",
         "object-src 'none'",
-        "frame-src 'none'",
+        // Odoo Live Chat runs in a frame on Odoo's origin
+        // (components/ChatLauncher.tsx), outside this page's policy.
+        `frame-src ${siteConfig.odooOrigin}`,
         "connect-src 'self'",
         "form-action 'self'",
         "img-src 'self' data:",

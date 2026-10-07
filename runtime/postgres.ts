@@ -5,7 +5,7 @@ import type {
   DatabaseStatement,
 } from '../db/index.ts';
 
-export const SCHEMA_VERSION = 1;
+export const SCHEMA_VERSION = 2;
 export const CONTACT_LOCK = 193720;
 type Connection = Pick<postgres.Sql, 'unsafe'>;
 type Binding = string | number | null;
@@ -134,6 +134,13 @@ export async function initializePostgres(
       'SELECT version FROM swirl_website_schema',
     );
     if (previous.length) {
+      if (previous[0].version === 1) {
+        await createCrmQueue(sql);
+        await sql.unsafe('UPDATE swirl_website_schema SET version = $1', [
+          SCHEMA_VERSION,
+        ]);
+        return;
+      }
       if (previous[0].version !== SCHEMA_VERSION)
         throw new Error('Unsupported Swirl Website schema version');
       return;
@@ -162,8 +169,25 @@ export async function initializePostgres(
     await sql.unsafe(
       'CREATE TABLE swirl_website_imports (checksum text PRIMARY KEY, imported_at bigint NOT NULL)',
     );
+    await createCrmQueue(sql);
     await sql.unsafe('INSERT INTO swirl_website_schema (version) VALUES ($1)', [
       SCHEMA_VERSION,
     ]);
   });
+}
+
+// Version 2: Odoo CRM delivery state; existing inquiries are queued as well.
+async function createCrmQueue(sql: Connection): Promise<void> {
+  await sql.unsafe(`CREATE TABLE contact_crm_queue (
+    contact_id text PRIMARY KEY REFERENCES contact_messages(id),
+    status text NOT NULL DEFAULT 'queued' CHECK (status IN ('queued','sent','manual')),
+    attempts integer NOT NULL DEFAULT 0, run_at bigint NOT NULL, locked_until bigint,
+    lead_id bigint, last_error text
+  )`);
+  await sql.unsafe(
+    'CREATE INDEX contact_crm_queue_due ON contact_crm_queue (status, run_at)',
+  );
+  await sql.unsafe(
+    'INSERT INTO contact_crm_queue (contact_id, run_at) SELECT id, created_at FROM contact_messages',
+  );
 }

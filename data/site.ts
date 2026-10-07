@@ -14,6 +14,9 @@ export const siteConfig = {
   email: 'contact@swirlit.dev',
   ceo: 'Zaïd Chefchaouni',
   linkedin: 'https://www.linkedin.com/in/chefzaid/',
+  // Platform Odoo serving the "Chat with us" widget (Live Chat channel ID).
+  odooOrigin: 'https://odoo.swirlit.dev',
+  chatChannelId: 1,
 };
 
 const slugs: Record<Project['id'], Bilingual> = {

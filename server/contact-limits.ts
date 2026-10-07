@@ -183,6 +183,16 @@ export async function insertWithinLimits(
         ),
     );
   }
+  // Every stored inquiry also waits for Odoo CRM delivery (runtime/crm.ts).
+  statements.push(
+    db
+      .prepare(`
+    INSERT INTO contact_crm_queue (contact_id,run_at)
+    SELECT ?,? WHERE EXISTS (SELECT 1 FROM contact_rate_limits WHERE key = ?)
+    ON CONFLICT(contact_id) DO NOTHING
+  `)
+      .bind(row.id, now, reservation),
+  );
   statements.push(
     db
       .prepare('DELETE FROM contact_rate_limits WHERE key = ?')

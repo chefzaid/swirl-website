@@ -5,6 +5,7 @@ resources:
   - delivery-rbac.yaml
   - registry-credentials.yaml
   - contact-notifications.yaml
+  - odoo-integration.yaml
   - swirl-website.yaml
   - ingress.yaml
   - network-policy.yaml

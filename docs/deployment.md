@@ -187,6 +187,49 @@ profile's new submissions use the [bounded notification queue](high-availability
 Unit tests mock the provider; live delivery needs
 a separate contact submission after the domain and credentials are ready.
 
+## Odoo CRM and Live Chat
+
+The platform's Odoo (`swirl-cloud`, [Odoo website integration](https://gitlab.swirlit.dev/swirlit/swirl-cloud/-/blob/main/docs/guides/odoo-website.md))
+receives every inquiry as a CRM lead and hosts the site's live chat. Provision
+the integration once from the platform host:
+
+```sh
+python3 scripts/configure-odoo-intake.py --application swirl-website \
+  --website-origin https://swirlit.dev
+```
+
+It stores a key that can only create leads at Vault
+`secret/apps/swirl-website/odoo` (`url`, `database`, `login`, `apiKey`).
+`infra/k8s/odoo-integration.yaml` turns it into the `swirl-website-odoo`
+Secret, read as `ODOO_URL`, `ODOO_DATABASE` and `ODOO_API_KEY`. The
+Deployment's `swirl-cloud.io/odoo-crm-intake: "true"` pod label is what admits
+the pod to Odoo on port 8069. Without these values the site still stores
+inquiries; they wait in `contact_crm_queue` and are sent once Odoo is
+configured. The SQLite migration and PostgreSQL schema version 2 also queue
+inquiries stored before the integration existed.
+
+Each queue row records `status` (`queued`, `sent` or `manual`), `attempts`,
+`lead_id` and `last_error`. Odoo outages and unexpected replies are retried with
+backoff up to hourly; a rejected key or request (`401`, `403`, `422`) is set to
+`manual` for review. After fixing the cause, requeue those rows:
+
+```sql
+UPDATE contact_crm_queue SET status = 'queued', run_at = 0 WHERE status = 'manual';
+```
+
+The **Chat with us** button on the home pages loads nothing until the visitor
+selects it. It then frames
+`https://odoo.swirlit.dev/platform_crm_intake/chat/1?lang=<fr|en>&open=1`, which
+runs Odoo's widget on Odoo's origin, so the page's Content Security Policy only
+adds `frame-src https://odoo.swirlit.dev`. The frame reports whether the chat is
+open and the button reappears when the visitor closes it; if the chat cannot
+start within 20 seconds the button offers the contact form instead. The channel
+ID (`chatChannelId`) and Odoo origin are in `data/site.ts`. The channel's
+colours match the site (header and button `#d7ee92`, text `#171c11`) and are set
+in Odoo under **Live Chat → Configuration → Channels**. Agents answer in
+Odoo **Discuss**; while none is online, the platform's chatbot collects the
+visitor's email and request and creates a lead.
+
 ## Local delivery verification
 
 ```sh

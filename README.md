@@ -65,6 +65,7 @@ migration/import commands are in `runtime/postgres.ts` and
 | UI and shared project content | `components/`, `data/project-view.ts` |
 | Styles and assets | `app/globals.css`, `public/assets/` |
 | Contact API and notifications | `server/contact.ts`, `runtime/contact.ts` |
+| Odoo CRM delivery and Live Chat | `server/odoo.ts`, `runtime/crm.ts`, `components/ChatLauncher.tsx` |
 | Request handling | `server/handler.ts`, `runtime/server.ts` |
 | Deployment | `infra/` |
 
@@ -89,6 +90,14 @@ try {
 }
 JS
 ```
+
+Every stored inquiry is also queued for Odoo CRM (`contact_crm_queue`) and
+sent as a lead through the platform's intake API with the `ODOO_*` settings.
+Delivery runs after the response and retries with backoff until Odoo accepts it,
+so an Odoo outage delays leads without losing them; retries reuse the inquiry
+ID and never create a second lead. The home pages also offer a **Chat with us**
+button that opens Odoo Live Chat in a frame; see
+[Odoo CRM and Live Chat](docs/deployment.md#odoo-crm-and-live-chat).
 
 Optional notifications use `RESEND_API_KEY` and `CONTACT_SENDER`, or Microsoft
 Graph's `MS_TENANT_ID`, `MS_CLIENT_ID`, `MS_CLIENT_SECRET` and `CONTACT_SENDER`.

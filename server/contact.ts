@@ -7,6 +7,8 @@ import {
 } from './contact-limits.ts';
 export interface ContactEnv {
   DB?: ContactDatabase;
+  // Odoo CRM delivery of stored inquiries (runtime/crm.ts), when configured.
+  CRM?: { deliver(id: string): Promise<unknown> };
   RESEND_API_KEY?: string;
   MS_TENANT_ID?: string;
   MS_CLIENT_ID?: string;
@@ -357,6 +359,11 @@ async function storeContact(
       ? ({ provider, sender: env.CONTACT_SENDER } as const)
       : undefined;
   const inserted = await insertWithinLimits(db, data, keys, now, notification);
+  if (inserted)
+    // The visitor's response does not wait for Odoo; the queue retries.
+    void env.CRM?.deliver(data.id).catch(() =>
+      console.error('Odoo CRM delivery remains queued'),
+    );
   if (!inserted) {
     const raced = await findContact(db, data.id);
     if (!raced)
