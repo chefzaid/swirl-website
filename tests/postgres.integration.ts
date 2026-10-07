@@ -48,6 +48,14 @@ void test('PostgreSQL shared storage, delivery ownership and snapshot migration'
   assert.equal(await db.healthy(), false);
   await Promise.all([initializePostgres(db), initializePostgres(other)]);
   assert.equal(await db.healthy(), true);
+  const crmRow = async (columns: string) => {
+    const [row] = await db.sql.unsafe(
+      `SELECT ${columns} FROM contact_crm_queue`,
+    );
+    return Object.fromEntries(
+      columns.split(',').map((column) => [column, row?.[column]]),
+    );
+  };
   const reset = () =>
     db.sql.unsafe(
       'TRUNCATE contact_crm_queue,contact_notification_queue,contact_messages,contact_rate_limits,swirl_website_imports',
@@ -280,16 +288,11 @@ void test('PostgreSQL shared storage, delivery ownership and snapshot migration'
           0,
         );
         // CRM delivery state travels with the contact.
-        assert.deepEqual(
-          {
-            ...(
-              await db.sql.unsafe(
-                'SELECT contact_id,status,lead_id FROM contact_crm_queue',
-              )
-            )[0],
-          },
-          { contact_id: row.id, status: 'sent', lead_id: 9 },
-        );
+        assert.deepEqual(await crmRow('contact_id,status,lead_id'), {
+          contact_id: row.id,
+          status: 'sent',
+          lead_id: 9,
+        });
         await db.sql.unsafe('DELETE FROM swirl_website_imports');
         await db.sql.unsafe(
           "UPDATE contact_messages SET message = 'existing newer enquiry'",
@@ -334,16 +337,11 @@ void test('PostgreSQL shared storage, delivery ownership and snapshot migration'
       ]);
       assert.deepEqual(delivered.filter(Boolean).length, 1);
       assert.deepEqual(references, [`contact:${row.id}`]);
-      assert.deepEqual(
-        {
-          ...(
-            await db.sql.unsafe(
-              'SELECT status,attempts,lead_id FROM contact_crm_queue',
-            )
-          )[0],
-        },
-        { status: 'sent', attempts: 1, lead_id: 5 },
-      );
+      assert.deepEqual(await crmRow('status,attempts,lead_id'), {
+        status: 'sent',
+        attempts: 1,
+        lead_id: 5,
+      });
     },
   );
   await reset();
@@ -360,16 +358,11 @@ void test('PostgreSQL shared storage, delivery ownership and snapshot migration'
       assert.equal(await db.healthy(), false);
       await initializePostgres(db);
       assert.equal(await db.healthy(), true);
-      assert.deepEqual(
-        {
-          ...(
-            await db.sql.unsafe(
-              'SELECT contact_id,status,run_at FROM contact_crm_queue',
-            )
-          )[0],
-        },
-        { contact_id: row.id, status: 'queued', run_at: 123 },
-      );
+      assert.deepEqual(await crmRow('contact_id,status,run_at'), {
+        contact_id: row.id,
+        status: 'queued',
+        run_at: 123,
+      });
     },
   );
   await t.test(
