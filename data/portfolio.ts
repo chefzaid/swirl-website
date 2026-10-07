@@ -28,7 +28,8 @@ export const services = [
     },
     tags: ['Dedicated Servers', 'DevOps · CI/CD', 'Machine Learning · GPU'],
   },
-];
+] as const;
+export type Service = (typeof services)[number];
 export const applicationService = {
   id: 'applications-sur-mesure',
   name: {
@@ -377,6 +378,28 @@ export const projects = [
   },
 ] as const;
 export type Project = (typeof projects)[number];
+// Sector groups for the case-study hub; anchors are linked from the footer.
+export const sectors = [
+  {
+    id: 'finance',
+    anchor: { fr: 'banque-assurance', en: 'banking-insurance' },
+    label: { fr: 'Banque & assurance', en: 'Banking & insurance' },
+  },
+  {
+    id: 'energy',
+    anchor: { fr: 'energie', en: 'energy' },
+    label: { fr: 'Énergie', en: 'Energy' },
+  },
+  {
+    id: 'industry',
+    anchor: { fr: 'industrie-services', en: 'industry-services' },
+    label: { fr: 'Industrie & services', en: 'Industry & services' },
+  },
+] as const satisfies readonly {
+  id: Project['sector'];
+  anchor: Bilingual;
+  label: Bilingual;
+}[];
 export const partners = [
   'Capgemini',
   'Akka Technologies',

@@ -16,6 +16,7 @@ import {
   type Lang,
 } from '@/data/portfolio';
 import { clientRows } from '@/data/client-logos';
+import { servicePath } from '@/data/site';
 import ClientLogo from './ClientLogo';
 import SoftwareLifecycle from './SoftwareLifecycle';
 import SiteFooter from './SiteFooter';
@@ -177,6 +178,14 @@ export default function Portfolio({
                       </span>
                     ))}
                   </div>
+                  <a
+                    className="text-link service-link"
+                    href={servicePath(s.id, lang)}
+                  >
+                    {t('Découvrir l’expertise', 'Explore this expertise')}
+                    <span className="sr-only"> : {s.title[lang]}</span>
+                    <ArrowUpRight size={16} aria-hidden="true" />
+                  </a>
                 </article>
               );
             })}

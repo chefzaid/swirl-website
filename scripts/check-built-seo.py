@@ -1,19 +1,21 @@
 from pathlib import Path
 from html.parser import HTMLParser
 from urllib.parse import urlsplit
-import json, re, xml.etree.ElementTree as ET
+import json, re, struct, xml.etree.ElementTree as ET
 
 JSON_LD_TYPE = '@type'
+CLIENT = Path('dist/client')
 
 class Page(HTMLParser):
     def __init__(self, html):
         super().__init__(convert_charrefs=True)
-        self.links = []; self.meta = {}; self.titles = []; self.h1s = []
+        self.links = []; self.meta = {}; self.titles = []; self.h1s = []; self.ids = set()
         self.graphs = []; self.active = None; self.text = ''; self.lang = None
         self.feed(html)
     def handle_starttag(self, tag, attrs):
         a = dict(attrs)
         if tag == 'html': self.lang = a['lang']
+        if 'id' in a: self.ids.add(a['id'])
         if tag in ('link', 'a'): self.links.append((tag, a))
         if tag == 'meta':
             key = a.get('name', a.get('property'))
@@ -40,10 +42,18 @@ class Page(HTMLParser):
         links = [a for tag, a in self.links if tag == 'link' and a.get('rel') == 'alternate']
         assert len(links) == 3
         return {a['hreflang']: a['href'] for a in links}
+    def entities(self, kind):
+        return [e for e in self.graphs[0]['@graph'] if e[JSON_LD_TYPE] == kind]
 
-raw = json.loads(Path('dist/runtime/page-manifest.json').read_text())
+def png_size(path):
+    data = path.read_bytes()
+    assert data[:8] == b'\x89PNG\r\n\x1a\n', path
+    return struct.unpack('>II', data[16:24])
+
+manifest = json.loads(Path('dist/runtime/page-manifest.json').read_text())
+raw = manifest['documents']
 pages = {path: Page(html) for path, html in raw.items()}
-assert len(pages) == 24
+assert len(pages) == 32
 origin = pages['/'].canonical().rstrip('/')
 titles = set(); descriptions = set()
 for path, page in pages.items():
@@ -61,6 +71,13 @@ for path, page in pages.items():
     assert page.meta['og:title'] == page.meta['twitter:title'] == page.titles[0]
     assert page.meta['og:description'] == page.meta['twitter:description'] == description
     assert 'noindex' not in page.meta['robots']
+    # Every document has its own 1200×630 social card, built with the site.
+    image = page.meta['og:image']
+    assert image == page.meta['twitter:image'] and image.startswith(origin + '/og/'), path
+    assert png_size(CLIENT / urlsplit(image).path.lstrip('/')) == (1200, 630), image
+    assert (page.meta['og:image:width'], page.meta['og:image:height']) == ('1200', '630')
+    assert page.meta['og:image:alt'] == page.meta['twitter:image:alt'] == page.titles[0]
+    assert page.meta['twitter:card'] == 'summary_large_image'
     alts = page.alternates()
     assert set(alts) == {'fr', 'en', 'x-default'}
     assert alts['x-default'] == alts['fr']
@@ -72,32 +89,63 @@ for path, page in pages.items():
     graph = page.graphs[0]
     assert graph['@context'] == 'https://schema.org'
     entities = graph['@graph']
-    assert any(e[JSON_LD_TYPE] == 'WebPage' and e['url'] == page.canonical() for e in entities)
-    project = path.startswith(('/projets/', '/en/projects/'))
+    webpages = [e for e in entities if e.get('url') == page.canonical() and e[JSON_LD_TYPE] in ('WebPage', 'CollectionPage')]
+    assert len(webpages) == 1 and webpages[0]['primaryImageOfPage']['url'] == image, path
+    assert [e['logo']['url'] for e in page.entities('Organization')] == [origin + '/logo.png']
+    assert len(page.entities('Person')) == 1
+    home = path in ('/', '/en/')
+    if not home:
+        crumbs = page.entities('BreadcrumbList')
+        assert len(crumbs) == 1 and crumbs[0]['itemListElement'][-1]['item'] == page.canonical(), path
+        assert webpages[0]['breadcrumb']['@id'] == crumbs[0]['@id']
+        islands = re.findall(r'<astro-island[^>]*component-url="([^"]+)"', raw[path])
+        assert all('ChatLauncher' in url for url in islands), ('Subpages hydrate only the chat launcher', path, islands)
+    project = re.match(r'/(?:en/projects|projets)/[^/]+/$', path)
     if project:
-        assert any(e[JSON_LD_TYPE] == 'BreadcrumbList' for e in entities)
-        assert 'og:image' not in page.meta and 'twitter:image' not in page.meta
-        assert 'astro-island' not in raw[path], 'Project page should not need client JS'
+        assert len(page.entities('CreativeWork')) == 1
         assert not re.search(r'\b(?:équipes?|teams?)\b', raw[path], re.I), path
+    if page.entities('Service') and not home:
+        assert len(page.entities('Service')) == 1 and len(page.entities('FAQPage')) == 1, path
+        assert page.entities('Service')[0]['url'] == page.canonical()
+        assert all(q['acceptedAnswer']['text'] for q in page.entities('FAQPage')[0]['mainEntity'])
     for tag, a in page.links:
         if tag != 'a': continue
         href = a.get('href', '')
         if href.startswith('/'):
-            assert urlsplit(href).path in pages, ('broken internal document link', path, href)
-    print(path + ': metadata, language pairing and structured data OK')
+            target = urlsplit(href)
+            assert target.path in pages, ('broken internal document link', path, href)
+            if target.fragment:
+                assert target.fragment in pages[target.path].ids, ('missing link target', path, href)
+    print(path + ': metadata, social card, language pairing and structured data OK')
 
-for home, prefix in [('/', '/projets/'), ('/en/', '/en/projects/')]:
+services = [path for path, page in pages.items() if page.entities('Service') and path not in ('/', '/en/')]
+assert len(services) == 6, services
+for home, hub, prefix in [('/', '/projets/', '/projets/'), ('/en/', '/en/projects/', '/en/projects/')]:
     page = pages[home]
     hrefs = {a.get('href') for tag, a in page.links if tag == 'a'}
-    assert {path for path in pages if path.startswith(prefix)} <= hrefs, 'All projects must be crawlable without JS'
+    projects = {path for path in pages if path.startswith(prefix) and path != hub}
+    assert projects <= hrefs, 'All projects must be crawlable without JS'
+    lang_services = {path for path in services if pages[path].lang == page.lang}
+    assert lang_services | {hub} <= hrefs, 'Services and the hub must be linked from the homepage'
+    assert {e['url'] for e in page.entities('Service')} >= {origin + path for path in lang_services}
+    listed = pages[hub].entities('ItemList')[0]['itemListElement']
+    assert {item['url'] for item in listed} == {origin + path for path in projects}
     social = [a for tag, a in page.links if tag == 'a' and a.get('href') == 'https://www.linkedin.com/in/chefzaid/']
     assert len(social) == 1 and social[0].get('aria-label')
-    people = [e for e in page.graphs[0]['@graph'] if e[JSON_LD_TYPE] == 'Person']
+    people = page.entities('Person')
     assert len(people) == 1 and people[0]['sameAs'] == ['https://www.linkedin.com/in/chefzaid/']
+
+for lang, html in manifest['notFound'].items():
+    page = Page(html)
+    assert page.lang == lang and len(page.h1s) == 1
+    assert page.meta['robots'].startswith('noindex')
+    assert not [a for tag, a in page.links if tag == 'link' and a.get('rel') in ('canonical', 'alternate')]
+    assert not page.graphs and 'og:url' not in page.meta
+print('Localized 404 pages are noindex and carry no canonical or alternates')
 
 # These are XML namespace identifiers, not network requests; HTTPS would identify different elements.
 ns = {'s': 'http://www.sitemaps.org/schemas/sitemap/0.9', 'x': 'http://www.w3.org/1999/xhtml'}
-urls = ET.parse('dist/client/sitemap.xml').getroot().findall('s:url', ns)
+urls = ET.parse(CLIENT / 'sitemap.xml').getroot().findall('s:url', ns)
 assert len(urls) == len(pages)
 assert {u.findtext('s:loc', namespaces=ns) for u in urls} == {origin + path for path in pages}
 for url in urls:
@@ -105,7 +153,12 @@ for url in urls:
     alts = {link.attrib['hreflang']: link.attrib['href'] for link in url.findall('x:link', ns)}
     assert alts == pages[path].alternates()
     assert url.find('s:lastmod', ns) is None, 'Do not fabricate freshness dates'
-robots = Path('dist/client/robots.txt').read_text()
+robots = (CLIENT / 'robots.txt').read_text()
 assert 'Sitemap: ' + origin + '/sitemap.xml' in robots
 assert 'Disallow: /api/' in robots
-print(f'{len(pages)} sitemap entries, crawlable project links, LinkedIn and robots.txt verified')
+llms = (CLIENT / 'llms.txt').read_text()
+assert llms.startswith('# ') and all(origin + path in llms for path in pages if path.startswith('/en/'))
+assert png_size(CLIENT / 'logo.png') == (512, 512)
+assert png_size(CLIENT / 'apple-touch-icon.png') == (180, 180)
+assert (CLIENT / 'favicon.ico').read_bytes()[:4] == b'\x00\x00\x01\x00'
+print(f'{len(pages)} sitemap entries, crawlable links, llms.txt, icons, LinkedIn and robots.txt verified')

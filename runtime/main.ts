@@ -1,5 +1,5 @@
 import { resolve } from 'node:path';
-import pages from 'virtual:swirl-pages';
+import pages, { notFound } from 'virtual:swirl-pages';
 import { createRequestHandler } from '../server/handler.ts';
 import { createContactRuntime } from './contact.ts';
 import { assetFetcher, createNodeServer } from './server.ts';
@@ -19,7 +19,7 @@ const env = {
   ASSETS: assetFetcher(resolve(root, 'dist/client')),
 };
 const server = createNodeServer({
-  handler: createRequestHandler(pages),
+  handler: createRequestHandler(pages, notFound),
   env,
   origin: process.env.PUBLIC_ORIGIN ?? 'https://swirlit.dev',
   aliasHost: process.env.PUBLIC_ALIAS_HOST,

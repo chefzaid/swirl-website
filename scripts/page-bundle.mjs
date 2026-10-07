@@ -9,7 +9,10 @@ export function pageBundle() {
   const sources = Object.fromEntries(
     documentRoutes.map(({ path }) => [path, path.slice(1) + 'index.html']),
   );
+  // Astro writes the root 404 page as 404.html and nested ones as directories.
+  const notFoundSources = { fr: '404.html', en: 'en/404/index.html' };
   let pages;
+  let notFound;
   return {
     name: 'swirl-page-bundle',
     resolveId(id) {
@@ -23,33 +26,42 @@ export function pageBundle() {
       if (
         JSON.stringify(actual) !==
         JSON.stringify(
-          Object.values(sources).sort((a, b) => a.localeCompare(b)),
+          [...Object.values(sources), ...Object.values(notFoundSources)].sort(
+            (a, b) => a.localeCompare(b),
+          ),
         )
       ) {
         throw new Error('Update the page map before publishing changed routes');
       }
-      pages = Object.fromEntries(
-        Object.entries(sources).map(([route, file]) => [
-          route,
-          readFileSync(resolve(root, file), 'utf8'),
-        ]),
-      );
-      return `export default ${JSON.stringify(pages)};`;
+      const read = (files) =>
+        Object.fromEntries(
+          Object.entries(files).map(([key, file]) => [
+            key,
+            readFileSync(resolve(root, file), 'utf8'),
+          ]),
+        );
+      pages = read(sources);
+      notFound = read(notFoundSources);
+      return `export default ${JSON.stringify(pages)};\nexport const notFound = ${JSON.stringify(notFound)};`;
     },
     generateBundle() {
-      if (!pages) throw new Error('Missing bundled pages');
-      // Private build evidence used by the CSP regression checker.
+      if (!pages || !notFound) throw new Error('Missing bundled pages');
+      // Private build evidence used by the CSP and SEO regression checkers.
       this.emitFile({
         type: 'asset',
         fileName: 'page-manifest.json',
-        source: JSON.stringify(pages),
+        source: JSON.stringify({ documents: pages, notFound }),
       });
     },
     writeBundle() {
       if (!existsSync(resolve('dist/runtime/main.js')))
         throw new Error('Node runtime build missing');
       // Remove only after the Node runtime was successfully written.
-      for (const file of Object.values(sources)) rmSync(resolve(root, file));
+      for (const file of [
+        ...Object.values(sources),
+        ...Object.values(notFoundSources),
+      ])
+        rmSync(resolve(root, file));
     },
   };
 }

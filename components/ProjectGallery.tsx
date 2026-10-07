@@ -15,9 +15,12 @@ import ProjectCaseStudy from './ProjectCaseStudy';
 export default function ProjectGallery({
   lang,
   projects,
+  projectsHref,
 }: Readonly<{
   lang: Lang;
   projects: ProjectView[];
+  // Passed in so the island does not bundle the site's route map.
+  projectsHref: string;
 }>) {
   const en = lang === 'en';
   const t = (fr: string, eng: string) => (en ? eng : fr);
@@ -151,7 +154,11 @@ export default function ProjectGallery({
             {t(
               'Projets réalisés directement ou dans le cadre de partenariats de conseil.',
               'Projects delivered directly or through consulting partnerships.',
-            )}
+            )}{' '}
+            <a className="text-link" href={projectsHref}>
+              {t('Toutes les études de cas', 'All case studies')}
+              <ArrowUpRight size={15} aria-hidden="true" />
+            </a>
           </p>
         </div>
       </section>

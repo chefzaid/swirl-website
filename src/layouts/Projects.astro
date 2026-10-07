@@ -1,0 +1,44 @@
+---
+import Subpage from './Subpage.astro';
+import ClientLogo from '../../components/ClientLogo';
+import { projects, sectors, type Lang } from '../../data/portfolio';
+import { absoluteUrl, homePath, projectPath, projectsPath, siteConfig } from '../../data/site';
+interface Props { lang: Lang; }
+const { lang } = Astro.props;
+const en = lang === 'en';
+const path = projectsPath(lang);
+const canonical = absoluteUrl(path);
+const list = {
+  '@type': 'ItemList', '@id': canonical + '#case-studies', numberOfItems: projects.length,
+  itemListElement: projects.map((project, index) => ({ '@type': 'ListItem', position: index + 1,
+    name: `${project.client} — ${project.title[lang]}`, url: absoluteUrl(projectPath(project.id, lang)) })),
+};
+---
+<Subpage lang={lang} path={path}
+  title={en ? `${siteConfig.name} | Client Case Studies & References` : `${siteConfig.name} | Références et études de cas clients`}
+  description={en
+    ? `${projects.length} case studies across banking, insurance, energy, industry and services: the need, our contribution and the solution for each project.`
+    : `${projects.length} études de cas en banque, assurance, énergie, industrie et services : le besoin, notre contribution et la solution pour chaque projet.`}
+  breadcrumbs={[{ name: en ? 'Projects' : 'Références', path }]} structuredData={[list]}
+  webPage={{ '@type': 'CollectionPage', mainEntity: { '@id': canonical + '#case-studies' } }}>
+  <header class="case-intro">
+    <p class="eyebrow section-kicker">{en ? 'SELECTED WORK' : 'RÉFÉRENCES'}</p>
+    <h1>{en ? 'Case studies.' : 'Études de cas.'} <span>{en ? 'Projects that matter.' : 'Des projets qui comptent.'}</span></h1>
+    <p class="case-lead">{en
+      ? 'Banking, insurance, energy, industry and services: since 2013, projects that simplify everyday work and help businesses move forward. For each one: the need, our contribution and the solution.'
+      : 'Banque, assurance, énergie, industrie et services : depuis 2013, des projets qui simplifient le quotidien et font avancer les entreprises. Pour chacun, le besoin, notre contribution et la solution.'}</p>
+  </header>
+  {sectors.map(sector => <section class="service-section case-related" id={sector.anchor[lang]} aria-labelledby={`${sector.anchor[lang]}-heading`}>
+    <h2 id={`${sector.anchor[lang]}-heading`}>{sector.label[lang]}</h2>
+    <div class="case-related-grid">{projects.filter(p => p.sector === sector.id).map(p => <a href={projectPath(p.id, lang)}>
+      <ClientLogo id={p.id} />
+      <span class="eyebrow">{p.client} · {p.date}</span><h3>{p.title[lang]}</h3><p>{p.text[lang]}</p>
+      <span class="text-link">{en ? 'Explore the project' : 'Découvrir le projet'} ↗</span></a>)}</div>
+  </section>)}
+  <p class="case-attribution">{en ? 'Projects delivered directly or through consulting partnerships.' : 'Projets réalisés directement ou dans le cadre de partenariats de conseil.'}</p>
+  <aside class="case-contact">
+    <h2>{en ? 'Planning a similar project?' : 'Un projet similaire ?'}</h2>
+    <p>{en ? 'Tell us what you want to achieve. Swirl designs your application architecture and integrates it with your business systems, from idea to production.' : 'Parlez-nous de ce que vous souhaitez accomplir. Swirl conçoit l’architecture de vos applications et leur intégration dans votre système d’information, de l’idée à la production.'}</p>
+    <a class="button" href={`${homePath(lang)}#contact`}>{en ? 'Let’s talk about your project' : 'Parlons de votre projet'} <span aria-hidden="true">↗</span></a>
+  </aside>
+</Subpage>

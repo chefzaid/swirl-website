@@ -55,3 +55,19 @@ time, sovereignty mode, compliance evidence); mark the rest as roadmap.
 - [ ] `swirlcloud.io`
 - [ ] `swirl-cloud.com`
 - [ ] Choose which domain serves the product pages (a section of `swirlit.dev` or a product domain above), then set canonical URLs and redirects so both never compete in search.
+
+## SEO follow-up (added 2026-10-07)
+
+Review after the service pages, case-study hub, social cards and HTML
+compression: technical SEO A−, on-page B, content C, authority D,
+measurement D (C+ overall). The site is technically sound but thin and
+unmeasured; competitive terms need the items below, plus the legal notice
+(Company details) and the resource articles (Swirl Cloud product pages).
+
+- [ ] Verify `swirlit.dev` in Google Search Console and Bing Webmaster Tools, submit `/sitemap.xml` and record a baseline (indexed pages, queries, impressions).
+- [ ] After the next deployment, confirm documents reach visitors with `Content-Encoding` through Cloudflare, run Google's Rich Results Test on a service, hub and case-study page, and check a shared link in LinkedIn Post Inspector.
+- [ ] Keyword research with real volume and difficulty data (FR and EN); adjust service titles, H1s and slugs only where the data supports it.
+- [ ] Expand each case study to 600–1,000 words with measured outcomes, constraints and technology, and a subtitle or H2 carrying its search terms; verifiable facts only.
+- [ ] Add the company LinkedIn page and directory profiles (Clutch, Malt, Sortlist) to the `Organization` `sameAs` once they exist.
+- [ ] Create a Google Business Profile once the headquarters address is published.
+- [ ] Trim the chat launcher bundle on the home pages: its `data/site.ts` import pulls all portfolio content into a 21 KB chunk (7 KB gzipped); pass the values it needs as props instead.

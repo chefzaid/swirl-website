@@ -1,0 +1,30 @@
+---
+import Layout from './Layout.astro';
+import SiteFooter from '../../components/SiteFooter';
+import { services, type Lang } from '../../data/portfolio';
+import { homePath, projectsPath, servicePath, siteConfig } from '../../data/site';
+interface Props { lang: Lang; }
+const { lang } = Astro.props;
+const en = lang === 'en';
+const home = homePath(lang);
+const links = [
+  [home, en ? 'Home' : 'Accueil'],
+  ...services.map(service => [servicePath(service.id, lang), service.title[lang]]),
+  [projectsPath(lang), en ? 'Case studies' : 'Références'],
+  [`${home}#contact`, 'Contact'],
+];
+---
+<Layout lang={lang} noindex title={`${siteConfig.name} | ${en ? 'Page not found' : 'Page introuvable'}`}
+  description={en ? 'This page does not exist or has moved.' : 'Cette page n’existe pas ou a été déplacée.'}>
+  <header class="header wrap case-header">
+    <a class="brand" href={home} aria-label="Swirl"><img src="/assets/mark.svg" alt="" width="40" height="38" />Swirl<i>.</i></a>
+    <a class="button small" href={`${home}#contact`}>Contact <span aria-hidden="true">↗</span></a>
+  </header>
+  <main id="main" class="case-page wrap not-found">
+    <p class="eyebrow section-kicker">404</p>
+    <h1>{en ? 'This page could not be found.' : 'Cette page est introuvable.'}</h1>
+    <p class="case-lead">{en ? 'The link may be outdated or the address mistyped. Here is where to go next:' : 'Le lien est peut-être ancien ou l’adresse contient une erreur. Voici où poursuivre :'}</p>
+    <ul>{links.map(([href, label]) => <li><a class="text-link" href={href}>{label} <span aria-hidden="true">↗</span></a></li>)}</ul>
+  </main>
+  <SiteFooter lang={lang} />
+</Layout>

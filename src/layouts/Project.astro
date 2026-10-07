@@ -1,65 +1,58 @@
 ---
-import Layout from './Layout.astro';
-import SiteFooter from '../../components/SiteFooter';
+import Subpage from './Subpage.astro';
 import ClientLogo from '../../components/ClientLogo';
 import ProjectCaseStudy from '../../components/ProjectCaseStudy';
 import { localizeCaseStudy } from '../../data/project-view';
-import { projects, type Lang, type Project } from '../../data/portfolio';
-import { absoluteUrl, homePath, projectPath, siteConfig } from '../../data/site';
+import { projects, services, type Lang, type Project } from '../../data/portfolio';
+import { projectServices } from '../../data/expertise';
+import { absoluteUrl, homePath, projectPath, projectsPath, servicePath, siteConfig } from '../../data/site';
 interface Props { project: Project; lang: Lang; }
 const { project, lang } = Astro.props;
 const en = lang === 'en';
 const home = homePath(lang);
 const path = projectPath(project.id, lang);
 const related = projects.filter(p => p.id !== project.id && p.sector === project.sector).slice(0, 2);
-const title = `${siteConfig.name} | ${project.client}${en ? ':' : ' :'} ${project.tags[lang][0]}`;
-const breadcrumbs = {
-  '@type': 'BreadcrumbList', '@id': absoluteUrl(path) + '#breadcrumb',
-  itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Swirl', item: absoluteUrl(home) },
-    { '@type': 'ListItem', position: 2, name: project.client, item: absoluteUrl(path) },
-  ],
+const expertise = services.filter(service => projectServices(project.id).includes(service.id));
+const title = en
+  ? `${siteConfig.name} | ${project.client} Case Study: ${project.tags.en[0]}`
+  : `${siteConfig.name} | Étude de cas ${project.client} : ${project.tags.fr[0]}`;
+const summary = en ? ' The need, our contribution and the solution.' : ' Le besoin, notre contribution et la solution.';
+const description = project.text[lang].length + summary.length <= 160 ? project.text[lang] + summary : project.text[lang];
+const canonical = absoluteUrl(path);
+const caseStudy = {
+  '@type': 'CreativeWork', '@id': canonical + '#case-study', name: project.title[lang], abstract: project.text[lang],
+  inLanguage: lang, keywords: project.tags[lang].join(', '), temporalCoverage: project.date.replace(' — ', '/'),
+  creator: { '@id': absoluteUrl('/#organization') },
+  about: { '@type': 'Organization', name: project.client },
+  isPartOf: { '@id': absoluteUrl(projectsPath(lang)) + '#webpage' },
 };
 ---
-<Layout lang={lang} path={path} title={title} description={project.text[lang]} structuredData={[breadcrumbs]}>
-  <a class="skip-link" href="#main">{en ? 'Skip to content' : 'Aller au contenu'}</a>
-  <header class="header wrap case-header">
-    <a class="brand" href={home} aria-label="Swirl"><img src="/assets/mark.svg" alt="" width="40" height="38" />Swirl<i>.</i></a>
-    <div class="header-actions">
-      <div class="language" aria-label={en ? 'Language' : 'Langue'}>
-        <a href={projectPath(project.id, 'fr')} lang="fr" aria-label="Français" aria-current={!en ? 'page' : undefined}>FR</a>
-        <span aria-hidden="true">/</span>
-        <a href={projectPath(project.id, 'en')} lang="en" aria-label="English" aria-current={en ? 'page' : undefined}>EN</a>
-      </div>
-      <a class="button small" href={`${home}#contact`}>Contact <span aria-hidden="true">↗</span></a>
-    </div>
-  </header>
-  <main id="main" class="case-page wrap">
-    <nav class="breadcrumbs" aria-label={en ? 'Breadcrumb' : 'Fil d’Ariane'}><a href={home}>Swirl</a><span aria-hidden="true">/</span><span aria-current="page">{project.client}</span></nav>
-    <article>
-      <header class="case-intro">
-        <ClientLogo id={project.id} />
-        <p class="eyebrow section-kicker">{project.client} · {project.date}</p>
-        <h1>{project.title[lang]}</h1>
-        <p class="case-lead">{project.text[lang]}</p>
-        <ul class="tags case-tags" aria-label={en ? 'Project domains' : 'Domaines du projet'}>{project.tags[lang].map(tag => <li>{tag}</li>)}</ul>
-      </header>
-      <section class="case-body" aria-labelledby="project-heading">
-        <h2 id="project-heading">{en ? 'The project' : 'Le projet'}</h2>
-        <ProjectCaseStudy lang={lang} caseStudy={localizeCaseStudy(project.caseStudy, lang)} />
-        <p class="case-attribution">{en ? 'Project delivered directly or through consulting partnerships.' : 'Projet réalisé directement ou dans le cadre de partenariats de conseil.'}</p>
-      </section>
-      <aside class="case-contact">
-        <h2>{en ? 'Planning a similar project?' : 'Un projet similaire ?'}</h2>
-        <p>{en ? 'Tell us what you want to achieve. Swirl designs your application architecture and integrates it with your business systems, from idea to production.' : 'Parlez-nous de ce que vous souhaitez accomplir. Swirl conçoit l’architecture de vos applications et leur intégration dans votre système d’information, de l’idée à la production.'}</p>
-        <a class="button" href={`${home}#contact`}>{en ? 'Let’s talk about your project' : 'Parlons de votre projet'} <span aria-hidden="true">↗</span></a>
-      </aside>
-    </article>
-    {related.length > 0 && <section class="case-related" aria-labelledby="related-heading">
-      <h2 id="related-heading">{en ? 'Explore more projects' : 'Découvrez aussi'}</h2>
-      <div class="case-related-grid">{related.map(p => <a href={projectPath(p.id, lang)}><span class="eyebrow">{p.client}</span><h3>{p.title[lang]}</h3><p>{p.text[lang]}</p><span class="text-link">{en ? 'Explore the project' : 'Découvrir le projet'} ↗</span></a>)}</div>
-    </section>}
-    <a class="text-link" href={`${home}#projects`}>← {en ? 'All projects' : 'Tous les projets'}</a>
-  </main>
-  <SiteFooter lang={lang} />
-</Layout>
+<Subpage lang={lang} path={path} title={title} description={description}
+  breadcrumbs={[{ name: en ? 'Projects' : 'Références', path: projectsPath(lang) }, { name: project.client, path }]}
+  structuredData={[caseStudy]} webPage={{ mainEntity: { '@id': canonical + '#case-study' } }}>
+  <article>
+    <header class="case-intro">
+      <ClientLogo id={project.id} />
+      <p class="eyebrow section-kicker">{project.client} · {project.date}</p>
+      <h1>{project.title[lang]}</h1>
+      <p class="case-lead">{project.text[lang]}</p>
+      <ul class="tags case-tags" aria-label={en ? 'Project domains' : 'Domaines du projet'}>{project.tags[lang].map(tag => <li>{tag}</li>)}</ul>
+    </header>
+    <section class="case-body" aria-labelledby="project-heading">
+      <h2 id="project-heading">{en ? 'The project' : 'Le projet'}</h2>
+      <ProjectCaseStudy lang={lang} caseStudy={localizeCaseStudy(project.caseStudy, lang)} />
+      <p class="case-attribution">{en ? 'Project delivered directly or through consulting partnerships.' : 'Projet réalisé directement ou dans le cadre de partenariats de conseil.'}</p>
+      <p class="case-expertise">{en ? 'Related expertise:' : 'Expertises associées :'} {expertise.map((service, index) => <>{index > 0 && ', '}<a href={servicePath(service.id, lang)}>{service.title[lang]}</a></>)}</p>
+    </section>
+    <aside class="case-contact">
+      <h2>{en ? 'Planning a similar project?' : 'Un projet similaire ?'}</h2>
+      <p>{en ? 'Tell us what you want to achieve. Swirl designs your application architecture and integrates it with your business systems, from idea to production.' : 'Parlez-nous de ce que vous souhaitez accomplir. Swirl conçoit l’architecture de vos applications et leur intégration dans votre système d’information, de l’idée à la production.'}</p>
+      <a class="button" href={`${home}#contact`}>{en ? 'Let’s talk about your project' : 'Parlons de votre projet'} <span aria-hidden="true">↗</span></a>
+    </aside>
+  </article>
+  {related.length > 0 && <section class="case-related" aria-labelledby="related-heading">
+    <h2 id="related-heading">{en ? 'Explore more projects' : 'Découvrez aussi'}</h2>
+    <div class="case-related-grid">{related.map(p => <a href={projectPath(p.id, lang)}><span class="eyebrow">{p.client}</span><h3>{p.title[lang]}</h3><p>{p.text[lang]}</p><span class="text-link">{en ? 'Explore the project' : 'Découvrir le projet'} ↗</span></a>)}</div>
+  </section>}
+  <a class="text-link" href={projectsPath(lang)}>← {en ? 'All projects' : 'Tous les projets'}</a>
+</Subpage>

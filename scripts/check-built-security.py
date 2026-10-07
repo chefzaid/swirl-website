@@ -27,9 +27,12 @@ class Page(HTMLParser):
             self.inline.append(self.active)
             self.active = None
 
-pages = json.loads(Path('dist/runtime/page-manifest.json').read_text())
+manifest = json.loads(Path('dist/runtime/page-manifest.json').read_text())
+pages = dict(manifest['documents'])
 assert {'/', '/en/', '/confidentialite/', '/en/privacy/'} <= set(pages)
-assert len(pages) == 24, 'Expected bilingual home, privacy and 10 project pages'
+assert len(pages) == 32, 'Expected bilingual home, 3 services, case-study hub, 10 projects and privacy'
+assert set(manifest['notFound']) == {'fr', 'en'}
+pages.update({'404 (' + lang + ')': html for lang, html in manifest['notFound'].items()})
 assert not list(Path('dist/client').rglob('*.html')), 'HTML must be served by the Node request handler'
 for path, html in pages.items():
     page = Page()

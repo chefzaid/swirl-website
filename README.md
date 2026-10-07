@@ -33,8 +33,9 @@ npm start
 sets `PUBLIC_ORIGIN=http://127.0.0.1:8080`; use the same URL in your browser for
 contact submissions. Production sets `PUBLIC_ORIGIN` and `DATA_DIR=/data`
 through Kubernetes. `npm run build` bundles HTML and the request handler into
-`dist/runtime`; CSS, scripts, fonts, images, robots.txt and the sitemap remain
-in `dist/client`. The Node server applies security headers to every response.
+`dist/runtime`; CSS, scripts, fonts, images, social cards, robots.txt,
+llms.txt and the sitemap remain in `dist/client`. The Node server applies
+security headers to every response and compresses HTML documents.
 
 See [K3s deployment](docs/deployment.md) for delivery and persistent storage,
 and [repository onboarding](docs/onboarding.md) for a new cluster or import.
@@ -60,8 +61,9 @@ migration/import commands are in `runtime/postgres.ts` and
 
 | Area | Files |
 | --- | --- |
-| French and US English content | `data/portfolio.ts`, `data/site.ts` |
+| French and US English content | `data/portfolio.ts`, `data/expertise.ts`, `data/site.ts` |
 | Pages and metadata | `src/layouts/` |
+| Social cards and icons | `lib/social-image.tsx`, `src/pages/og/` |
 | UI and shared project content | `components/`, `data/project-view.ts` |
 | Styles and assets | `app/globals.css`, `public/assets/` |
 | Contact API and notifications | `server/contact.ts`, `runtime/contact.ts` |

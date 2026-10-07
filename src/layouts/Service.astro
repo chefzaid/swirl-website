@@ -1,0 +1,76 @@
+---
+import Subpage from './Subpage.astro';
+import { projects, services, type Lang, type Service } from '../../data/portfolio';
+import { servicePages } from '../../data/expertise';
+import { absoluteUrl, homePath, projectPath, projectsPath, servicePath, siteConfig } from '../../data/site';
+interface Props { service: Service; lang: Lang; }
+const { service, lang } = Astro.props;
+const en = lang === 'en';
+const page = servicePages[service.id];
+const path = servicePath(service.id, lang);
+const canonical = absoluteUrl(path);
+const number = String(services.findIndex(s => s.id === service.id) + 1).padStart(2, '0');
+const references = page.projects.map(id => projects.find(p => p.id === id)!);
+const others = services.filter(s => s.id !== service.id);
+const organization = { '@id': absoluteUrl('/#organization') };
+const structuredData = [
+  { '@type': 'Service', '@id': canonical + '#service', name: service.title[lang], serviceType: page.title[lang],
+    description: page.lead[lang], url: canonical, provider: organization,
+    audience: { '@type': 'BusinessAudience', name: en ? 'Companies and public organizations' : 'Entreprises et organismes publics' },
+    hasOfferCatalog: { '@type': 'OfferCatalog', name: service.title[lang],
+      itemListElement: page.capabilities.map(capability => ({ '@type': 'Offer',
+        itemOffered: { '@type': 'Service', name: capability.title[lang], description: capability.text[lang], provider: organization } })) },
+    subjectOf: references.map(project => ({ '@id': absoluteUrl(projectPath(project.id, lang)) + '#case-study' })) },
+  { '@type': 'FAQPage', '@id': canonical + '#faq', inLanguage: lang, isPartOf: { '@id': canonical + '#webpage' },
+    mainEntity: page.faq.map(item => ({ '@type': 'Question', name: item.question[lang],
+      acceptedAnswer: { '@type': 'Answer', text: item.answer[lang] } })) },
+];
+---
+<Subpage lang={lang} path={path} title={`${siteConfig.name} | ${page.title[lang]}`} description={page.description[lang]}
+  breadcrumbs={[{ name: service.title[lang], path }]} structuredData={structuredData}
+  webPage={{ mainEntity: { '@id': canonical + '#service' } }}>
+  <article class="service-page">
+    <header class="case-intro">
+      <p class="eyebrow section-kicker">{number} / {service.title[lang].toLocaleUpperCase(lang)}</p>
+      <h1>{page.heading[lang]} <span>{page.accent[lang]}</span></h1>
+      <p class="case-lead">{page.lead[lang]}</p>
+      <div class="hero-actions">
+        <a class="button" href={`${homePath(lang)}#contact`}>{en ? 'Let’s talk about your project' : 'Parlons de votre projet'} <span aria-hidden="true">↗</span></a>
+        <a class="text-link" href="#references">{en ? 'See related projects' : 'Voir les références'} <span aria-hidden="true">↓</span></a>
+      </div>
+    </header>
+    <section class="service-section" aria-labelledby="capabilities-heading">
+      <h2 id="capabilities-heading">{en ? 'What we deliver' : 'Ce que nous prenons en charge'}</h2>
+      <div class="service-capabilities">
+        {page.capabilities.map(capability => <section class="service-card"><h3>{capability.title[lang]}</h3><p>{capability.text[lang]}</p></section>)}
+      </div>
+      <ul class="tags case-tags" aria-label="Technologies">{service.tags.map(tag => <li>{tag}</li>)}</ul>
+    </section>
+    <section class="service-section" aria-labelledby="method-heading">
+      <h2 id="method-heading">{en ? 'How we work' : 'Notre méthode'}</h2>
+      <ol class="service-steps">
+        {page.steps.map((step, index) => <li><span aria-hidden="true">{String(index + 1).padStart(2, '0')}</span><h3>{step.title[lang]}</h3><p>{step.text[lang]}</p></li>)}
+      </ol>
+    </section>
+    <section class="service-section case-related" id="references" aria-labelledby="references-heading">
+      <h2 id="references-heading">{en ? 'Related case studies' : 'Projets de référence'}</h2>
+      <div class="case-related-grid">{references.map(p => <a href={projectPath(p.id, lang)}><span class="eyebrow">{p.client} · {p.date}</span><h3>{p.title[lang]}</h3><p>{p.text[lang]}</p><span class="text-link">{en ? 'Explore the project' : 'Découvrir le projet'} ↗</span></a>)}</div>
+      <p class="case-attribution">{en ? 'Projects delivered directly or through consulting partnerships.' : 'Projets réalisés directement ou dans le cadre de partenariats de conseil.'} <a class="text-link" href={projectsPath(lang)}>{en ? 'All case studies' : 'Toutes les références'} ↗</a></p>
+    </section>
+    <section class="service-section" aria-labelledby="faq-heading">
+      <h2 id="faq-heading">{en ? 'Frequently asked questions' : 'Questions fréquentes'}</h2>
+      <div class="service-faq">
+        {page.faq.map(item => <details><summary><h3>{item.question[lang]}</h3></summary><p>{item.answer[lang]}</p></details>)}
+      </div>
+    </section>
+    <aside class="case-contact">
+      <h2>{en ? 'Have a project in mind?' : 'Un projet en tête ?'}</h2>
+      <p>{en ? 'A technical challenge or an idea to explore: tell us what you want to achieve. It all starts with a conversation.' : 'Un défi technique ou une idée à explorer : parlez-nous de ce que vous souhaitez accomplir. Tout commence par une conversation.'}</p>
+      <a class="button" href={`${homePath(lang)}#contact`}>{en ? 'Contact Swirl' : 'Contacter Swirl'} <span aria-hidden="true">↗</span></a>
+    </aside>
+    <section class="service-others" aria-labelledby="others-heading">
+      <h2 id="others-heading">{en ? 'Other expertise' : 'Nos autres expertises'}</h2>
+      <div class="case-related-grid">{others.map(s => <a href={servicePath(s.id, lang)}><span class="eyebrow">{s.title[lang]}</span><p>{servicePages[s.id].description[lang]}</p><span class="text-link">{en ? 'Explore this expertise' : 'Découvrir l’expertise'} ↗</span></a>)}</div>
+    </section>
+  </article>
+</Subpage>
