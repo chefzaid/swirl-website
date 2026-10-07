@@ -12,4 +12,4 @@ resources:
   - observability.yaml
 images:
   - name: registry.swirlit.dev/swirlit/swirl-website/site
-    digest: sha256:b9bfe15be8de4500d7d860eb78f7e270a5334b6cdb19b7e123b441e6f961073d
+    digest: sha256:7ec67c09389c025d54a54e16ae557ee1e132eaf95bcf92822e78ae973aadf0ee
