@@ -1,7 +1,6 @@
 # TODO
 
-Open website work, added 2026-09-27. The Odoo side (modules, integration user,
-Vault credentials, network policy) is tracked in `swirl-cloud/TODO.md` §22.
+Open website work, added 2026-09-27.
 
 ## Company details
 
@@ -12,16 +11,16 @@ Vault credentials, network policy) is tracked in `swirl-cloud/TODO.md` §22.
 
 ## Odoo integration through its API
 
-- [ ] Create an Odoo CRM lead for every accepted contact-form submission through the Odoo API, using the integration user's key from Vault (`secret/apps/swirl-website/<env>/odoo`) and the in-cluster Odoo address.
-- [ ] Keep the local SQLite storage as the source of truth, and retry Odoo delivery idempotently (store the Odoo lead ID) so an Odoo outage never loses an inquiry.
-- [ ] Tests for lead creation, Odoo unavailability and duplicate submissions.
+- [x] Create an Odoo CRM lead for every accepted contact-form submission through the platform's intake API, with the integration key from Vault `secret/apps/swirl-website/odoo` and the in-cluster Odoo address. *(2026-10-07)*
+- [x] Keep the stored inquiry as the source of truth: `contact_crm_queue` retries with backoff until Odoo accepts, records the lead ID, and queues inquiries stored before the integration. *(2026-10-07)*
+- [x] Tests for lead creation, Odoo unavailability, rejected keys, concurrent claims and the backfill migration. *(2026-10-07)*
 
 ## Support / Chat with us widget
 
-- [ ] Embed Odoo Live Chat (`im_livechat`) as the "Chat with us" widget on every page, loaded from `odoo.<domain>`.
-- [ ] Update the Content Security Policy for the Odoo loader, styles and WebSocket connection.
-- [ ] Load the widget only on interaction or after consent if it sets cookies; the site currently promises no cookies and no third-party scripts.
-- [ ] Update the privacy page (FR and EN): Odoo processing of contact data and chat transcripts.
+- [x] "Chat with us" button on the home pages opening Odoo Live Chat in a frame served by `odoo.swirlit.dev`; project pages stay free of client JavaScript. *(2026-10-07)*
+- [x] Content Security Policy: only `frame-src https://odoo.swirlit.dev` is added; the widget runs under Odoo's origin. *(2026-10-07)*
+- [x] Nothing loads or is stored until the visitor selects the button. *(2026-10-07)*
+- [x] Privacy page (FR and EN): Odoo CRM leads, chat transcripts and the chat's cookies and storage. *(2026-10-07)*
 
 ## Swirl Cloud product pages (added 2026-10-04)
 
