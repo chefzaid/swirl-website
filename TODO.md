@@ -66,7 +66,8 @@ unmeasured; competitive terms need the items below, plus the legal notice
 (Company details) and the resource articles (Swirl Cloud product pages).
 
 - [ ] Verify `swirlit.dev` in Google Search Console and Bing Webmaster Tools, submit `/sitemap.xml` and record a baseline (indexed pages, queries, impressions).
-- [ ] After the next deployment, confirm documents reach visitors with `Content-Encoding` through Cloudflare, run Google's Rich Results Test on a service, hub and case-study page, and check a shared link in LinkedIn Post Inspector.
+- [x] Confirm documents reach visitors with `Content-Encoding` through Cloudflare (2026-10-08: Brotli for Brotli clients, also from the edge cache, and plain HTML for the others)
+- [ ] Run Google's Rich Results Test on a service, hub and case-study page, and check a shared link in LinkedIn Post Inspector.
 - [ ] Keyword research with real volume and difficulty data (FR and EN); adjust service titles, H1s and slugs only where the data supports it.
 - [ ] Expand each case study to 600–1,000 words with measured outcomes, constraints and technology, and a subtitle or H2 carrying its search terms; verifiable facts only.
 - [ ] Add the company LinkedIn page and directory profiles (Clutch, Malt, Sortlist) to the `Organization` `sameAs` once they exist.

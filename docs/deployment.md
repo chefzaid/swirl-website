@@ -173,7 +173,9 @@ in `infra/k8s/cache-purge.yaml` purges both hosts, leaving other applications'
 cache in the zone untouched. It runs the release image with outbound HTTPS only,
 reading `purge_token` and `zone_id` from Vault KV v2 path
 `secret/apps/swirl-website/cloudflare`. The token needs only **Zone → Cache Purge
-→ Purge** on the zone. Onboarding seeds both fields empty; until they are set
+→ Purge** on the zone; the current token also purges designxprint.com and is
+stored for designXprint too, so rotate both Vault entries together. Onboarding
+seeds both fields empty; until they are set
 the Job skips the purge, so a deployment without them must not enable the cache
 rule. A failed purge marks the Argo CD sync failed and Argo CD retries it; check
 `kubectl logs -n apps job/swirl-website-cache-purge`. To refresh the edge

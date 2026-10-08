@@ -53,8 +53,11 @@ engines from the same data.
 
 The Node handler serves Brotli or gzip HTML (negotiated, cached per document,
 `Vary: Accept-Encoding`) because `Cache-Control: no-transform` stops Cloudflare
-from compressing documents. Unknown document paths return the localized
-`noindex` 404 page with a 404 status; missing files keep a plain 404.
+from compressing documents. Cloudflare keeps documents and files at its edge
+until the next release, so crawlers and visitors are served from the nearest
+location; see [Cloudflare edge cache](deployment.md#cloudflare-edge-cache).
+Unknown document paths return the localized `noindex` 404 page with a 404
+status; missing files keep a plain 404. Neither is stored at the edge.
 
 ## Validation
 

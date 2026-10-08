@@ -37,7 +37,8 @@ through Kubernetes. `npm run build` bundles HTML and the request handler into
 llms.txt and the sitemap remain in `dist/client`. The Node server applies
 security headers to every response and compresses HTML documents.
 
-See [K3s deployment](docs/deployment.md) for delivery and persistent storage,
+See [K3s deployment](docs/deployment.md) for delivery, persistent storage and the
+[Cloudflare edge cache](docs/deployment.md#cloudflare-edge-cache),
 and [repository onboarding](docs/onboarding.md) for a new cluster or import.
 
 ## Contact storage
