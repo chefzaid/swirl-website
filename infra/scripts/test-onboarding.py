@@ -187,6 +187,10 @@ class OnboardingTests(unittest.TestCase):
                 self.assertEqual(env["PUBLIC_ALIAS_HOST"]["value"], "welcome.replacement.example")
                 self.assertEqual(env["TRUSTED_PROXY_CIDRS"]["value"], values["TRUSTED_PROXY_CIDRS"])
                 self.assertEqual(env["CONTACT_SENDER"]["value"], "noreply@swirlit.dev")
+                purge = next(doc for doc in docs if doc["kind"] == "Job" and doc["metadata"]["name"] == "swirl-website-cache-purge")
+                container = purge["spec"]["template"]["spec"]["containers"][0]
+                self.assertEqual(container["args"][1:], [values["APP_HOST"], "welcome.replacement.example"])
+                self.assertEqual(container["image"], deployment["spec"]["template"]["spec"]["containers"][0]["image"])
                 if profile == PROFILE:
                     self.assertEqual(deployment["spec"]["replicas"], 1)
                     self.assertEqual(deployment["spec"]["strategy"]["type"], "Recreate")
@@ -279,7 +283,10 @@ elif sys.argv[1:3] == ["get", "deployment"]:
         self.assertEqual(CONTRACT["registry"]["path"], "apps/" + ("swirl-website" if SWIRL_WEBSITE else "thoughty") + "/registry")
         requests = {item["path"]: item["fields"] for item in CONTRACT["vault"]}
         if SWIRL_WEBSITE:
-            self.assertEqual(requests, {"apps/swirl-website/contact": {"RESEND_API_KEY": {"value": ""}}})
+            self.assertEqual(requests, {
+                "apps/swirl-website/contact": {"RESEND_API_KEY": {"value": ""}},
+                "apps/swirl-website/cloudflare": {"purge_token": {"value": ""}, "zone_id": {"value": ""}},
+            })
             self.assertNotIn("apps/swirl-website/database", requests)
         else:
             self.assertEqual(requests["apps/thoughty/database"]["POSTGRES_PASSWORD"], {"generate": 24, "encoding": "hex"})

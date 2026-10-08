@@ -154,6 +154,31 @@ HTML responses use `Cache-Control: no-cache, no-transform` so intermediary
 modifications cannot invalidate the generated hash-based Content Security Policy.
 Cloudflare [honors `no-transform` for JavaScript Detection injection](https://developers.cloudflare.com/cloudflare-challenges/challenge-types/javascript-detections/#if-your-origin-sends-a-no-transform-header).
 
+## Cloudflare edge cache
+
+Every visitor receives the same prebuilt pages (no cookies, hash-based script
+policy), so Cloudflare keeps the whole site at its edge until the next release.
+The zone's `http_request_cache_settings` ruleset holds a rule, described
+`swirl-website: cache the site until the next release`, that caches every path
+on both hosts except `/api/` and `/healthz` for 30 days, whatever the origin's
+`Cache-Control` says. Error responses are never stored, and browsers still follow
+the origin headers: they revalidate pages with the edge on each visit, so a new
+release appears as soon as the edge is purged. Cloudflare serves the cached
+Brotli page to Brotli clients and decompresses it for the others. The platform's
+Smart Tiered Cache applies to the whole zone. Re-create the rule if the zone is
+rebuilt; `swirl-cloud` reconciles only its own rule in that ruleset.
+
+After every successful Argo CD sync, the `swirl-website-cache-purge` PostSync Job
+in `infra/k8s/cache-purge.yaml` purges both hosts, leaving other applications'
+cache in the zone untouched. It runs the release image with outbound HTTPS only,
+reading `purge_token` and `zone_id` from Vault KV v2 path
+`secret/apps/swirl-website/cloudflare`. The token needs only **Zone → Cache Purge
+→ Purge** on the zone. Onboarding seeds both fields empty; until they are set
+the Job skips the purge, so a deployment without them must not enable the cache
+rule. A failed purge marks the Argo CD sync failed and Argo CD retries it; check
+`kubectl logs -n apps job/swirl-website-cache-purge`. To refresh the edge
+without a release, purge both hostnames in Cloudflare.
+
 ## Contact email credentials
 
 Production uses Resend to notify `contact@swirlit.dev` from

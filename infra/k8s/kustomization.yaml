@@ -10,6 +10,7 @@ resources:
   - ingress.yaml
   - network-policy.yaml
   - observability.yaml
+  - cache-purge.yaml
 images:
   - name: registry.swirlit.dev/swirlit/swirl-website/site
     digest: sha256:3170c31b07575343b1f84598aed8311737906ef31be974866296902edee7609d

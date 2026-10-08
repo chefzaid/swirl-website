@@ -33,6 +33,7 @@
     "infra/k8s/swirl-website.yaml",
     "infra/k8s/ingress.yaml",
     "infra/k8s/observability.yaml",
+    "infra/k8s/cache-purge.yaml",
     "infra/overlays/ha/database-setup.yaml"
   ],
   "replacements": [
@@ -105,6 +106,17 @@
       "path": "apps/swirl-website/contact",
       "fields": {
         "RESEND_API_KEY": {
+          "value": ""
+        }
+      }
+    },
+    {
+      "path": "apps/swirl-website/cloudflare",
+      "fields": {
+        "purge_token": {
+          "value": ""
+        },
+        "zone_id": {
           "value": ""
         }
       }

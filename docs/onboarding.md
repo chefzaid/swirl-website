@@ -37,6 +37,9 @@ The platform initializes the optional `apps/swirl-website/contact` Vault contrac
 with an empty `RESEND_API_KEY` if missing, preserving any existing value. Contact
 storage works without email. Configure sender, recipient and company contact details separately using the
 [deployment guide](deployment.md#contact-email-credentials).
+It also initializes `apps/swirl-website/cloudflare` with empty `purge_token` and
+`zone_id` fields; the post-release cache purge skips until both are set (see
+[Cloudflare edge cache](deployment.md#cloudflare-edge-cache)).
 
 Onboarding pins the requested revision with `APP_ONBOARDING=true` and
 `ONBOARDING_EXPECTED_SHA`. An outdated revision fails rather than replacing newer
