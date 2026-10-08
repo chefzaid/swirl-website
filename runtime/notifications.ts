@@ -6,6 +6,7 @@ import {
   type ContactEnv,
 } from '../server/contact.ts';
 import type { PostgresContactDatabase } from './postgres.ts';
+import { poll } from './poll.ts';
 
 const LEASE_MS = 120_000;
 // Resend retains keys for 24 hours. Stop well before expiry; neither provider
@@ -153,21 +154,10 @@ export class NotificationDispatcher {
   }
 
   start(): () => Promise<void> {
-    let active: Promise<unknown> | undefined;
-    const tick = () => {
-      if (active) return;
-      active = this.deliver()
-        .catch(() => console.error('Contact notification queue unavailable'))
-        .finally(() => {
-          active = undefined;
-        });
-    };
-    const timer = setInterval(tick, 5000);
-    timer.unref();
-    tick();
-    return async () => {
-      clearInterval(timer);
-      await active;
-    };
+    return poll(
+      () => this.deliver(),
+      5000,
+      'Contact notification queue unavailable',
+    );
   }
 }

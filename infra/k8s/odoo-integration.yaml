@@ -1,4 +1,4 @@
-# Odoo CRM lead intake key, issued by swirl-cloud's configure-odoo-intake.py
+# Odoo CRM lead intake key, issued by swirl-cloud's configure-odoo-website.py
 # (docs/deployment.md#odoo-crm-and-live-chat).
 apiVersion: external-secrets.io/v1
 kind: ExternalSecret

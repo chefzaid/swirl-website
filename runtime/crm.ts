@@ -1,5 +1,6 @@
 import type { ContactDatabase } from '../db/index.ts';
 import { submitLead, type OdooEnv } from '../server/odoo.ts';
+import { poll } from './poll.ts';
 
 // The stored inquiry is the source of truth; Odoo receives a copy. Delivery is
 // retried until Odoo accepts it, so an Odoo outage delays leads but never loses
@@ -105,24 +106,12 @@ export class CrmDispatcher {
 
   // Drains due inquiries every few seconds; returns a function that stops it.
   start(): () => Promise<void> {
-    let active: Promise<unknown> | undefined;
-    const drain = async () => {
-      while (await this.deliver());
-    };
-    const tick = () => {
-      if (active) return;
-      active = drain()
-        .catch(() => console.error('Odoo CRM queue unavailable'))
-        .finally(() => {
-          active = undefined;
-        });
-    };
-    const timer = setInterval(tick, POLL_MS);
-    timer.unref();
-    tick();
-    return async () => {
-      clearInterval(timer);
-      await active;
-    };
+    return poll(
+      async () => {
+        while (await this.deliver());
+      },
+      POLL_MS,
+      'Odoo CRM queue unavailable',
+    );
   }
 }

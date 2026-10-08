@@ -221,7 +221,7 @@ receives every inquiry as a CRM lead and hosts the site's live chat. Provision
 the integration once from the platform host:
 
 ```sh
-python3 scripts/configure-odoo-intake.py --application swirl-website \
+python3 scripts/configure-odoo-website.py --application swirl-website \
   --website-origin https://swirlit.dev
 ```
 
@@ -267,7 +267,7 @@ to the visitor if they have left the site, so they can reply in turn. Apply the
 persona and the email settings from the platform host:
 
 ```sh
-python3 scripts/configure-odoo-intake.py --application swirl-website \
+python3 scripts/configure-odoo-website.py --application swirl-website \
   --website-origin https://swirlit.dev \
   --notify zaid@swirlit.dev --reply-sender zaid@swirlit.dev --reply-sender <mailbox you reply from> \
   --timezone Europe/Paris --chat-persona ../swirl-website/infra/odoo/chat-persona.json \
