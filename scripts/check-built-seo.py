@@ -115,8 +115,9 @@ for path, page in pages.items():
         hrefs = {a.get('href') for tag, a in page.links if tag == 'a'}
         details = {p for p in pages if p.startswith(path) and p != path}
         assert details and details <= hrefs, ('Product detail pages not linked', path)
-    # Every page offers the live chat.
+    # Every page offers the live chat and the light/dark theme switch.
     assert 'ChatLauncher' in raw[path], ('Chat missing', path)
+    assert 'data-theme-toggle' in raw[path] and "localStorage.getItem('theme')" in raw[path], ('Theme switch missing', path)
     # Every page shares the homepage menu, whose phone version is a native popover.
     assert re.search(r'<nav class="mobile-nav" id="mobile-nav" popover="auto"', raw[path]), path
     assert re.search(r'popovertarget="mobile-nav"', raw[path], re.I), path

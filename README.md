@@ -44,6 +44,15 @@ See [Kubernetes deployment](docs/deployment.md) for delivery, persistent storage
 [Cloudflare edge cache](docs/deployment.md#cloudflare-edge-cache),
 and [repository onboarding](docs/onboarding.md) for a new cluster or import.
 
+## Light and dark themes
+
+The site is dark by default. The header's theme button (`components/SiteHeader.tsx`)
+switches to the light theme; a script at the start of `<body>`
+(`src/layouts/Layout.astro`) applies the saved choice before the page paints and
+is allowed by its hash in the Content Security Policy. Colours are
+`light-dark(<light>, <dark>)` pairs in `app/*.css`, resolved by the page's
+`color-scheme`; give every new colour both values.
+
 ## Contact storage
 
 The default deployment (`infra/k8s`) runs one replica with **SQLite**, using
@@ -131,7 +140,9 @@ requires Docker and creates an isolated local database.
 
 ## Privacy maintenance
 
-The site uses no analytics, advertising trackers or browser storage. Review
+The site uses no analytics or advertising trackers. Browser storage holds only
+the visitor's light or dark theme choice (`localStorage`) and, once they open the
+chat, a marker for the current tab (`sessionStorage`). Review
 consent requirements before introducing third-party scripts or embeds, and keep
 the bilingual notice in `src/layouts/Privacy.astro` aligned with data handling.
 See [CNIL guidance](https://www.cnil.fr/fr/cookies-et-autres-traceurs/que-dit-la-loi).

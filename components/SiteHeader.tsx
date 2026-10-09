@@ -1,5 +1,5 @@
 import type { MouseEvent } from 'react';
-import { ArrowUpRight, LockKeyhole, Menu, X } from 'lucide-react';
+import { ArrowUpRight, LockKeyhole, Menu, Moon, Sun, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type { Lang } from '@/data/portfolio';
 
@@ -47,6 +47,19 @@ export default function SiteHeader({
           ))}
         </nav>
         <div className="header-actions">
+          {/* Handled by the page's theme script (src/layouts/Layout.astro),
+              so it works on pages that load no JavaScript of their own. */}
+          <button
+            type="button"
+            className="theme-toggle"
+            data-theme-toggle=""
+            aria-pressed="false"
+            aria-label={t('Mode clair', 'Light mode')}
+            title={t('Mode clair ou sombre', 'Light or dark mode')}
+          >
+            <Sun className="theme-icon-light" size={16} aria-hidden="true" />
+            <Moon className="theme-icon-dark" size={16} aria-hidden="true" />
+          </button>
           <div className="language" aria-label={t('Langue', 'Language')}>
             <a
               href={alternates.fr}

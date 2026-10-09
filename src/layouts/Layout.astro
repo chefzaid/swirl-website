@@ -1,4 +1,5 @@
 ---
+import { createHash } from 'node:crypto';
 import '../../app/globals.css';
 import '../styles/fonts.css';
 import headingFont from '@fontsource-variable/manrope/files/manrope-latin-wght-normal.woff2?url';
@@ -56,6 +57,30 @@ if (path === homePath(lang)) {
     name: applicationService.name[lang], description: applicationService.description[lang],
     provider: { '@id': organizationId }, url: canonical + '#home' });
 }
+// Dark by default. Applies the visitor's light or dark choice before the page
+// paints, and handles every [data-theme-toggle] button (components/SiteHeader).
+// It runs at the start of <body>, after the policy Astro adds at the end of
+// <head>, which allows it by its hash.
+const themeScript = `(() => {
+  const root = document.documentElement;
+  const apply = (light) => {
+    root.dataset.theme = light ? 'light' : 'dark';
+    root.classList.toggle('dark', !light);
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', light ? '#f6f7f2' : '#101211');
+    for (const button of document.querySelectorAll('[data-theme-toggle]')) button.setAttribute('aria-pressed', String(light));
+  };
+  let stored = null;
+  try { stored = localStorage.getItem('theme'); } catch {}
+  apply(stored === 'light');
+  document.addEventListener('DOMContentLoaded', () => apply(root.dataset.theme === 'light'));
+  document.addEventListener('click', (event) => {
+    if (!event.target.closest?.('[data-theme-toggle]')) return;
+    const light = root.dataset.theme !== 'light';
+    apply(light);
+    try { localStorage.setItem('theme', light ? 'light' : 'dark'); } catch {}
+  });
+})();`;
+Astro.csp?.insertScriptHash(`sha256-${createHash('sha256').update(themeScript).digest('base64')}`);
 // Escape '<' so content cannot terminate the JSON-LD script element.
 const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': [...graph, ...structuredData] }).replace(/</g, '\\u003c');
 ---
@@ -97,5 +122,8 @@ const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': [...
       <script is:inline type="application/ld+json" set:html={jsonLd} />
     </>}
   </head>
-  <body id="top"><slot /></body>
+  <body id="top">
+    <script is:inline set:html={themeScript} />
+    <slot />
+  </body>
 </html>
