@@ -115,9 +115,9 @@ for path, page in pages.items():
         hrefs = {a.get('href') for tag, a in page.links if tag == 'a'}
         details = {p for p in pages if p.startswith(path) and p != path}
         assert details and details <= hrefs, ('Product detail pages not linked', path)
-    # The header links every page to the Swirl Cloud product page.
-    product = '/en/swirl-cloud/' if page.lang == 'en' else '/swirl-cloud/'
-    assert product in {a.get('href') for tag, a in page.links if tag == 'a'}, ('Product page not linked', path)
+    # Every page shares the homepage menu, whose phone version is a native popover.
+    assert re.search(r'<nav class="mobile-nav" id="mobile-nav" popover="auto"', raw[path]), path
+    assert re.search(r'popovertarget="mobile-nav"', raw[path], re.I), path
     if re.match(r'/(?:en/resources|ressources)/[^/]+/$', path):
         article = page.entities('Article')
         assert len(article) == 1 and article[0]['headline'] == page.h1s[0], path
@@ -146,6 +146,8 @@ for home, hub, prefix in [('/', '/projets/', '/projets/'), ('/en/', '/en/project
     assert projects <= hrefs, 'All projects must be crawlable without JS'
     lang_services = {path for path in services if pages[path].lang == page.lang}
     assert lang_services | {hub} <= hrefs, 'Services and the hub must be linked from the homepage'
+    product = '/en/swirl-cloud/' if home == '/en/' else '/swirl-cloud/'
+    assert product in hrefs, 'The Swirl Cloud presentation must link the product page'
     assert {e['url'] for e in page.entities('Service')} >= {origin + path for path in lang_services}
     listed = pages[hub].entities('ItemList')[0]['itemListElement']
     assert {item['url'] for item in listed} == {origin + path for path in projects}

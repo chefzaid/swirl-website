@@ -28,7 +28,17 @@ export const product = {
     fr: 'Swirl Cloud installe sur des serveurs dédiés, loués ou à vous, ce qu’une entreprise assemble sinon chez un hyperscaler et plusieurs éditeurs SaaS : déploiement des applications, authentification unique, bases de données, supervision, sécurité et l’ERP Odoo. Les preuves de conformité sont produites par la plateforme en fonctionnement, et l’infrastructure coûte le prix mensuel fixe de vos serveurs, sans facturation à l’usage.',
     en: 'Swirl Cloud installs what a company otherwise assembles from a hyperscaler and several SaaS vendors on rented or owned bare-metal servers: application delivery, single sign-on, databases, monitoring, security and the Odoo ERP. Compliance evidence comes from the running platform, and the infrastructure costs the fixed monthly price of your servers, not usage billing.',
   },
-  tags: ['Bare metal · K3s', 'GitLab · Argo CD', 'Keycloak · Vault', 'Odoo'],
+  // Homepage presentation, before the client logos.
+  teaser: {
+    fr: 'Déploiement des applications, authentification unique, données, supervision, sécurité, Odoo et preuves de conformité, installés ensemble sur vos serveurs, à coût fixe.',
+    en: 'Application delivery, single sign-on, data, monitoring, security, Odoo and compliance evidence, installed together on your servers at a fixed cost.',
+  },
+  tags: [
+    'Bare metal · Kubernetes',
+    'GitLab · Argo CD',
+    'Keycloak · Vault',
+    'Odoo',
+  ],
   audienceIntro: {
     fr: 'Les entreprises de 20 à 500 personnes qui ont besoin d’une plateforme, d’une facture prévisible et de preuves d’audit, sans équipe plateforme dédiée.',
     en: 'Companies of 20 to 500 people that need a platform, a predictable bill and audit evidence, without a platform team of their own.',
@@ -83,8 +93,8 @@ export const product = {
     {
       title: { fr: 'Serveurs et stockage', en: 'Servers and storage' },
       text: {
-        fr: 'Kubernetes (K3s) sur un ou plusieurs serveurs Ubuntu LTS, loués ou à vous, reliés par un réseau privé. Stockage répliqué Longhorn avec volumes chiffrés au choix, et une archive de restauration quotidienne, chiffrable et copiable hors site.',
-        en: 'Kubernetes (K3s) on one or more Ubuntu LTS servers, rented or owned, joined by a private network. Replicated Longhorn storage with optional encrypted volumes, and a daily recovery archive that can be encrypted and copied off site.',
+        fr: 'Kubernetes sur un ou plusieurs serveurs Ubuntu LTS, loués ou à vous, reliés par un réseau privé. Stockage répliqué Longhorn avec volumes chiffrés au choix, et une archive de restauration quotidienne, chiffrable et copiable hors site.',
+        en: 'Kubernetes on one or more Ubuntu LTS servers, rented or owned, joined by a private network. Replicated Longhorn storage with optional encrypted volumes, and a daily recovery archive that can be encrypted and copied off site.',
       },
     },
     {

@@ -27,7 +27,7 @@ export const howItWorks = {
     fr: 'Un hub d’installation prépare vos serveurs, installe chaque couche de la plateforme et vérifie le résultat. Ensuite, Git décrit l’état voulu : la plateforme et vos applications s’y alignent en continu.',
     en: 'A setup hub prepares your servers, installs every layer of the platform and verifies the result. From then on, Git describes the desired state, and the platform and your applications continuously converge on it.',
   },
-  tags: ['Ubuntu LTS · K3s', 'GitOps', 'Longhorn', 'Vault'],
+  tags: ['Ubuntu LTS · Kubernetes', 'GitOps', 'Longhorn', 'Vault'],
   // Architecture diagram, from the visitor down to the servers.
   architecture: [
     {
@@ -100,10 +100,10 @@ export const howItWorks = {
       layer: { fr: 'Socle', en: 'Foundation' },
       boxes: [
         {
-          name: same('K3s'),
+          name: same('Kubernetes'),
           detail: {
-            fr: 'Kubernetes sur Ubuntu LTS',
-            en: 'Kubernetes on Ubuntu LTS',
+            fr: 'Sur des serveurs Ubuntu LTS',
+            en: 'On Ubuntu LTS servers',
           },
         },
         {

@@ -1,7 +1,7 @@
 # Swirl portfolio
 
 Swirl's bilingual company website uses Astro 7 and React 19, served by a
-Node 24 application on the bare-metal K3s cluster at `https://swirlit.dev`.
+Node 24 application on the bare-metal Kubernetes cluster at `https://swirlit.dev`.
 Pages are rendered at build time; the header, project gallery and contact form
 hydrate independently. Contact inquiries are stored privately on the server.
 
@@ -40,7 +40,7 @@ HTML documents. `security.txt` (RFC 9116) names the security contact and links
 the disclosure policy on the Swirl Cloud security page; each build renews its
 180-day expiry, so release at least every few months.
 
-See [K3s deployment](docs/deployment.md) for delivery, persistent storage and the
+See [Kubernetes deployment](docs/deployment.md) for delivery, persistent storage and the
 [Cloudflare edge cache](docs/deployment.md#cloudflare-edge-cache),
 and [repository onboarding](docs/onboarding.md) for a new cluster or import.
 

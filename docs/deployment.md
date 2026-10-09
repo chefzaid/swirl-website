@@ -1,4 +1,4 @@
-# K3s deployment
+# Kubernetes deployment
 
 The production website is `https://swirlit.dev`, with French at `/` and English
 at `/en/`. `https://www.swirlit.dev` redirects to the same apex URL, preserving
@@ -6,7 +6,7 @@ the path and query string. GitHub `chefzaid/swirl-website` and GitLab `swirlit/s
 are private source repositories.
 
 This repository owns its runtime image, resources in the `apps` namespace,
-Argo CD Application, and operator playbook. `swirl-cloud` supplies K3s, the
+Argo CD Application, and operator playbook. `swirl-cloud` supplies Kubernetes, the
 private GitLab Registry, Vault/External Secrets, Longhorn, ingress, Cloudflare,
 and the `apps/swirlit-dev-tls` certificate. Keep website ingress separate from
 the Swirl Cloud portal at `cloud.swirlit.dev`, which the header's Swirl Cloud link opens.
@@ -136,7 +136,7 @@ volume backup. Define retention and deletion for contact inquiries as part of
 normal operations.
 
 The Node adapter accepts `X-Forwarded-For` only from `TRUSTED_PROXY_CIDRS`
-(`10.42.0.0/16`, the current K3s pod network). Cloudflare appends the real visitor
+(`10.42.0.0/16`, the cluster's current pod network). Cloudflare appends the real visitor
 address, then Traefik appends its immediate edge peer or Tunnel loopback address.
 The adapter uses the penultimate address, ignoring any visitor-supplied prefix;
 a single address is accepted for sanitized direct or legacy ingress requests.

@@ -16,6 +16,7 @@ import {
   type Lang,
 } from '@/data/portfolio';
 import { clientRows } from '@/data/client-logos';
+import { product } from '@/data/product';
 import { productPath, servicePath } from '@/data/site';
 import ClientLogo from './ClientLogo';
 import SoftwareLifecycle from './SoftwareLifecycle';
@@ -107,6 +108,22 @@ export default function Portfolio({
           <div className="hero-visual">
             <SoftwareLifecycle lang={lang} />
           </div>
+        </section>
+        <section
+          className="cloud-teaser wrap"
+          aria-labelledby="cloud-teaser-title"
+        >
+          <div>
+            <p className="eyebrow section-kicker">SWIRL CLOUD</p>
+            <h2 id="cloud-teaser-title">
+              {product.heading[lang]} <span>{product.accent[lang]}</span>
+            </h2>
+            <p>{product.teaser[lang]}</p>
+          </div>
+          <a className="text-link" href={productPath(lang)}>
+            {t('Découvrir Swirl Cloud', 'Discover Swirl Cloud')}
+            <ArrowUpRight size={16} aria-hidden="true" />
+          </a>
         </section>
         <section
           className="trust wrap"

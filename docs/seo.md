@@ -28,8 +28,8 @@ Resource articles are Markdown in `src/content/articles/<lang>/<id>.md`
 | Privacy | `/confidentialite/` | `/en/privacy/` |
 
 Service URLs sit at the root and carry the main search terms. The product page
-keeps the product name in both languages and is linked from every header and
-the home "Cloud & AI" card; its detail pages sit below it (`productPages` in
+keeps the product name in both languages and is linked from the homepage
+presentation before the client logos and from the "Cloud & AI" card; its detail pages sit below it (`productPages` in
 `data/site.ts`) and are linked from it. Inner pages use
 `src/layouts/Subpage.astro` for the shared header, visible breadcrumbs and
 `BreadcrumbList`. Home service cards, case studies and service pages link to
@@ -40,7 +40,9 @@ Each page needs a unique title (brand first: `Swirl | …`) and description, one
 H1, a self-canonical and reciprocal language links. `/sitemap.xml` is generated
 from the route map; `/robots.txt` excludes the contact API. Keep project links
 in the rendered HTML so they remain crawlable without JavaScript; inner pages
-hydrate nothing except the chat launcher.
+hydrate nothing except the chat launcher. Every page uses the same header,
+`components/SiteHeader.tsx`: its phone menu is a native popover, so it works
+on inner pages without JavaScript, and only the homepage hydrates it.
 
 ## Structured data
 

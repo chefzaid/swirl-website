@@ -1,6 +1,7 @@
 ---
 import Layout from './Layout.astro';
 import SiteFooter from '../../components/SiteFooter';
+import SiteHeader from '../../components/SiteHeader';
 import { services, type Lang } from '../../data/portfolio';
 import { homePath, projectsPath, servicePath, siteConfig } from '../../data/site';
 interface Props { lang: Lang; }
@@ -16,10 +17,7 @@ const links = [
 ---
 <Layout lang={lang} noindex title={`${siteConfig.name} | ${en ? 'Page not found' : 'Page introuvable'}`}
   description={en ? 'This page does not exist or has moved.' : 'Cette page n’existe pas ou a été déplacée.'}>
-  <header class="header wrap case-header">
-    <a class="brand" href={home} aria-label="Swirl"><img src="/assets/mark.svg" alt="" width="40" height="38" />Swirl<i>.</i></a>
-    <a class="button small" href={`${home}#contact`}>Contact <span aria-hidden="true">↗</span></a>
-  </header>
+  <SiteHeader lang={lang} home={home} alternates={{ fr: homePath('fr'), en: homePath('en') }} />
   <main id="main" class="case-page wrap not-found">
     <p class="eyebrow section-kicker">404</p>
     <h1>{en ? 'This page could not be found.' : 'Cette page est introuvable.'}</h1>

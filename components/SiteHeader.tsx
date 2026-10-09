@@ -1,25 +1,37 @@
-import { useState } from 'react';
+import type { MouseEvent } from 'react';
 import { ArrowUpRight, LockKeyhole, Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type { Lang } from '@/data/portfolio';
+
+// The header of every page. The phone menu is a native popover, so it opens
+// without JavaScript: other pages render this as static HTML. The homepage
+// hydrates it on narrow screens only to close the menu after an in-page link.
 export default function SiteHeader({
   lang,
-  productHref,
-}: Readonly<{ lang: Lang; productHref: string }>) {
+  home,
+  alternates,
+}: Readonly<{
+  lang: Lang;
+  // The homepage path; omitted on the homepage, whose links stay in the page.
+  home?: string;
+  // This page in each language, for the language switch.
+  alternates: Record<Lang, string>;
+}>) {
   const en = lang === 'en';
   const t = (fr: string, eng: string) => (en ? eng : fr);
-  const [menu, setMenu] = useState(false);
+  const section = (id: string) => `${home ?? ''}#${id}`;
   const nav = [
-    ['#home', t('Accueil', 'Home')],
-    ['#expertises', t('Expertises', 'Expertise')],
-    [productHref, 'Swirl Cloud'],
-    ['#projects', t('Références', 'Projects')],
-    ['#about', t('L’entreprise', 'Company')],
+    [home ?? '#home', t('Accueil', 'Home')],
+    [section('expertises'), t('Expertises', 'Expertise')],
+    [section('projects'), t('Références', 'Projects')],
+    [section('about'), t('L’entreprise', 'Company')],
   ];
+  const close = (event: MouseEvent<HTMLAnchorElement>) =>
+    event.currentTarget.closest<HTMLElement>('[popover]')?.hidePopover();
   return (
     <>
       <header className="header wrap">
-        <a className="brand" href="#home" aria-label="Swirl">
+        <a className="brand" href={home ?? '#home'} aria-label="Swirl">
           <img src="/assets/mark.svg" alt="" width="40" height="38" /> Swirl
           <i>.</i>
         </a>
@@ -27,7 +39,7 @@ export default function SiteHeader({
           {nav.map(([href, label]) => (
             <a
               key={href}
-              className={href === '#home' ? 'active' : ''}
+              className={href === '#home' ? 'active' : undefined}
               href={href}
             >
               {label}
@@ -37,7 +49,7 @@ export default function SiteHeader({
         <div className="header-actions">
           <div className="language" aria-label={t('Langue', 'Language')}>
             <a
-              href="/"
+              href={alternates.fr}
               lang="fr"
               aria-label="Français"
               aria-current={!en ? 'page' : undefined}
@@ -46,7 +58,7 @@ export default function SiteHeader({
             </a>
             <span aria-hidden="true">/</span>
             <a
-              href="/en/"
+              href={alternates.en}
               lang="en"
               aria-label="English"
               aria-current={en ? 'page' : undefined}
@@ -70,33 +82,29 @@ export default function SiteHeader({
             className="menu-toggle"
             variant="ghost"
             size="icon"
-            aria-label={
-              menu
-                ? t('Fermer le menu', 'Close menu')
-                : t('Ouvrir le menu', 'Open menu')
-            }
-            aria-expanded={menu}
-            aria-controls="mobile-nav"
-            onClick={() => setMenu(!menu)}
+            aria-label="Menu"
+            popoverTarget="mobile-nav"
           >
-            {menu ? <X /> : <Menu />}
+            <Menu className="menu-open" aria-hidden="true" />
+            <X className="menu-close" aria-hidden="true" />
           </Button>
         </div>
       </header>
-      {menu && (
-        <nav
-          className="mobile-nav wrap"
-          id="mobile-nav"
-          aria-label={t('Navigation mobile', 'Mobile navigation')}
-        >
-          {[...nav, ['#contact', 'Contact']].map(([href, label]) => (
-            <a key={href} href={href} onClick={() => setMenu(false)}>
+      <nav
+        className="mobile-nav"
+        id="mobile-nav"
+        popover="auto"
+        aria-label={t('Navigation mobile', 'Mobile navigation')}
+      >
+        <div className="wrap">
+          {[...nav, [section('contact'), 'Contact']].map(([href, label]) => (
+            <a key={href} href={href} onClick={close}>
               {label}
-              <ArrowUpRight size={16} />
+              <ArrowUpRight size={16} aria-hidden="true" />
             </a>
           ))}
-        </nav>
-      )}
+        </div>
+      </nav>
     </>
   );
 }
