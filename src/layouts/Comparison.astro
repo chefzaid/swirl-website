@@ -1,0 +1,65 @@
+---
+import Subpage from './Subpage.astro';
+import '../../app/swirl-cloud.css';
+import type { Lang } from '../../data/portfolio';
+import { product } from '../../data/product';
+import { sovereignty } from '../../data/sovereignty';
+import { comparison as page, optionNames, options } from '../../data/comparison';
+import { absoluteUrl, homePath, productPagePath, productPath, siteConfig } from '../../data/site';
+interface Props { lang: Lang; }
+const { lang } = Astro.props;
+const en = lang === 'en';
+const path = productPagePath('comparison', lang);
+const overview = productPath(lang);
+const demo = `${homePath(lang)}?topic=demo#contact`;
+---
+<Subpage lang={lang} path={path} title={`${siteConfig.name} | ${page.title[lang]}`} description={page.description[lang]}
+  breadcrumbs={[{ name: product.name, path: overview }, { name: en ? 'Comparison' : 'Comparatif', path }]}
+  webPage={{ about: { '@id': absoluteUrl(overview) + '#product' } }}>
+  <article class="service-page product-page">
+    <header class="case-intro">
+      <p class="eyebrow section-kicker">{product.name.toLocaleUpperCase(lang)}</p>
+      <h1>{page.heading[lang]} <span>{page.accent[lang]}</span></h1>
+      <p class="case-lead">{page.lead[lang]}</p>
+      <div class="hero-actions">
+        <a class="button" href={demo}>{en ? 'Request a demo' : 'Demander une démo'} <span aria-hidden="true">↗</span></a>
+        <a class="text-link" href="#choose">{en ? 'When to choose which' : 'Quand choisir quoi'} <span aria-hidden="true">↓</span></a>
+      </div>
+      <ul class="tags case-tags" aria-label="Options">{page.tags.map(tag => <li>{tag}</li>)}</ul>
+    </header>
+    <section class="service-section" aria-labelledby="table-heading">
+      <h2 id="table-heading">{en ? 'Side by side' : 'Côte à côte'}</h2>
+      <table class="comparison">
+        <thead>
+          <tr><th scope="col">{en ? 'Criterion' : 'Critère'}</th>{options.map(option => <th scope="col" class:list={{ ours: option === 'swirl' }}>{optionNames[option][lang]}</th>)}</tr>
+        </thead>
+        <tbody>
+          {page.criteria.map(criterion => <tr>
+            <th scope="row">{criterion.name[lang]}</th>
+            {options.map(option => <td class:list={{ ours: option === 'swirl' }} data-label={optionNames[option][lang]}>{criterion.values[option][lang]}</td>)}
+          </tr>)}
+        </tbody>
+      </table>
+    </section>
+    <section class="service-section" id="choose" aria-labelledby="choose-heading">
+      <h2 id="choose-heading">{en ? 'When to choose which' : 'Quand choisir quoi'}</h2>
+      <div class="service-capabilities">
+        {page.choose.map(item => <section class="service-card"><h3>{optionNames[item.option][lang]}</h3><p>{item.text[lang]}</p></section>)}
+      </div>
+    </section>
+    <aside class="case-contact">
+      <h2>{en ? 'Compare with your own figures' : 'Comparez avec vos propres chiffres'}</h2>
+      <p>{en
+        ? 'Tell us what you run today: we size a Swirl Cloud installation for it and show you the platform running.'
+        : 'Dites-nous ce que vous faites tourner aujourd’hui : nous dimensionnons une installation Swirl Cloud et vous montrons la plateforme en fonctionnement.'}</p>
+      <a class="button" href={demo}>{en ? 'Request a demo' : 'Demander une démo'} <span aria-hidden="true">↗</span></a>
+    </aside>
+    <section class="service-others" aria-labelledby="others-heading">
+      <h2 id="others-heading">{product.name}</h2>
+      <div class="case-related-grid">
+        <a href={overview}><span class="eyebrow">{en ? 'Overview' : 'Présentation'}</span><p>{product.description[lang]}</p><span class="text-link">{en ? 'Discover Swirl Cloud' : 'Découvrir Swirl Cloud'} ↗</span></a>
+        <a href={productPagePath('sovereignty', lang)}><span class="eyebrow">{en ? 'Sovereignty' : 'Souveraineté'}</span><p>{sovereignty.description[lang]}</p><span class="text-link">{en ? 'See where your data goes' : 'Voir où vont vos données'} ↗</span></a>
+      </div>
+    </section>
+  </article>
+</Subpage>

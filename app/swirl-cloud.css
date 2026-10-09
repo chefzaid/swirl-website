@@ -246,6 +246,78 @@
   line-height: 1.6;
   color: #b1beac;
 }
+/* Comparison table; one card per criterion on narrow screens. */
+.comparison {
+  width: 100%;
+  margin-top: 28px;
+  border-collapse: collapse;
+  font-size: 13px;
+  line-height: 1.7;
+}
+.comparison th,
+.comparison td {
+  padding: 16px 14px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  vertical-align: top;
+}
+.comparison thead th {
+  font-size: 11px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: #9cab90;
+  font-weight: 500;
+}
+.comparison tbody th {
+  width: 15%;
+  font-weight: 500;
+  color: var(--foreground);
+}
+.comparison td {
+  color: #b1beac;
+}
+.comparison .ours {
+  background: #192017;
+  color: #e4ecdc;
+}
+.comparison thead .ours {
+  color: var(--primary);
+}
+@media (max-width: 900px) {
+  .comparison thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+  .comparison tr {
+    display: block;
+    margin-bottom: 16px;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+  }
+  .comparison th,
+  .comparison td {
+    display: block;
+    width: auto;
+  }
+  .comparison tbody th {
+    width: auto;
+    font-size: 16px;
+  }
+  .comparison td::before {
+    content: attr(data-label);
+    display: block;
+    font-size: 10px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: #8b9a7f;
+  }
+  .comparison tr > :last-child {
+    border-bottom: 0;
+  }
+}
 /* Card lists with a badge: security controls, outside services. */
 .control-group {
   margin-top: 40px;

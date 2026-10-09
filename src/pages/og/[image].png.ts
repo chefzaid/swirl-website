@@ -5,6 +5,7 @@ import { product } from '../../../data/product';
 import { howItWorks } from '../../../data/how-it-works';
 import { security } from '../../../data/security';
 import { sovereignty } from '../../../data/sovereignty';
+import { comparison } from '../../../data/comparison';
 import {
   documentRoutes,
   socialImagePath,
@@ -51,9 +52,12 @@ function card({ page, lang }: DocumentRoute): SocialCard {
         tags: product.tags,
       };
     case 'product-page': {
-      const detail = { 'how-it-works': howItWorks, security, sovereignty }[
-        page.id
-      ];
+      const detail = {
+        'how-it-works': howItWorks,
+        security,
+        sovereignty,
+        comparison,
+      }[page.id];
       return {
         eyebrow: upper(product.name),
         title: detail.heading[lang],

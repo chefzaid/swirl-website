@@ -4,6 +4,7 @@ import { product } from '../../data/product';
 import { howItWorks } from '../../data/how-it-works';
 import { security } from '../../data/security';
 import { sovereignty } from '../../data/sovereignty';
+import { comparison } from '../../data/comparison';
 import {
   absoluteUrl,
   homePath,
@@ -55,6 +56,11 @@ export function GET() {
       'Swirl Cloud sovereignty',
       productPagePath('sovereignty', 'en'),
       sovereignty.description.en,
+    ),
+    link(
+      'Swirl Cloud compared',
+      productPagePath('comparison', 'en'),
+      comparison.description.en,
     ),
     '',
     '## Case studies',
