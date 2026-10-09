@@ -1,9 +1,11 @@
 import { projects, services } from '../../data/portfolio';
 import { servicePages } from '../../data/expertise';
+import { product } from '../../data/product';
 import {
   absoluteUrl,
   homePath,
   privacyPath,
+  productPath,
   projectPath,
   projectsPath,
   servicePath,
@@ -32,6 +34,10 @@ export function GET() {
       ),
     ),
     '',
+    '## Product',
+    '',
+    link(product.name, productPath('en'), product.description.en),
+    '',
     '## Case studies',
     '',
     link('All case studies', projectsPath('en')),
@@ -50,6 +56,7 @@ export function GET() {
     ...services.map((service) =>
       link(service.title.fr, servicePath(service.id, 'fr')),
     ),
+    link(`${product.name} (français)`, productPath('fr')),
     link('Références (français)', projectsPath('fr')),
     link('Privacy', privacyPath('en')),
     '',

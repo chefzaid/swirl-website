@@ -2,7 +2,7 @@
 import Layout from './Layout.astro';
 import SiteFooter from '../../components/SiteFooter';
 import type { Lang } from '../../data/portfolio';
-import { documentRoutes, homePath, projectsPath } from '../../data/site';
+import { documentRoutes, homePath, productPath, projectsPath } from '../../data/site';
 interface Props {
   lang: Lang; path: string; title: string; description: string;
   // Trail after the homepage; the last item is the current page.
@@ -16,6 +16,7 @@ const home = homePath(lang);
 const alternates = documentRoutes.find(route => route.path === path)!.alternates;
 const nav = [
   [`${home}#expertises`, en ? 'Expertise' : 'Expertises'],
+  [productPath(lang), 'Swirl Cloud'],
   [projectsPath(lang), en ? 'Projects' : 'Références'],
   [`${home}#about`, en ? 'Company' : 'L’entreprise'],
 ];

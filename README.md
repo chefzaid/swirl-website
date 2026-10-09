@@ -62,7 +62,7 @@ migration/import commands are in `runtime/postgres.ts` and
 
 | Area | Files |
 | --- | --- |
-| French and US English content | `data/portfolio.ts`, `data/expertise.ts`, `data/site.ts` |
+| French and US English content | `data/portfolio.ts`, `data/expertise.ts`, `data/product.ts`, `data/site.ts` |
 | Pages and metadata | `src/layouts/` |
 | Social cards and icons | `lib/social-image.tsx`, `src/pages/og/` |
 | UI and shared project content | `components/`, `data/project-view.ts` |

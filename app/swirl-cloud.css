@@ -1,0 +1,89 @@
+/* Swirl Cloud product page, and its link beside "Explore this expertise" on
+   the homepage service cards. Builds on the service styles in globals.css. */
+.service-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 28px;
+  margin-top: auto;
+  padding-top: 24px;
+}
+.service-links > .service-link {
+  margin-top: 0;
+  padding-top: 0;
+}
+.product-intro {
+  margin-top: 16px;
+  max-width: 760px;
+  font-size: 15px;
+  line-height: 1.9;
+  color: #b1beac;
+}
+.product-layers {
+  list-style: none;
+  padding: 0;
+  margin: 28px 0 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+.product-layers .service-card > span {
+  font-family: monospace;
+  font-size: 11px;
+  color: var(--primary);
+}
+.product-layers .service-card h3 {
+  margin-block: 14px 12px;
+}
+.product-layers .service-card > p {
+  min-height: 0;
+  font-size: 14px;
+}
+.service-steps.product-delivery {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.service-steps .product-status {
+  display: inline-block;
+  margin-left: 12px;
+  vertical-align: middle;
+  padding: 3px 8px;
+  border: 1px solid #4c5c3c;
+  border-radius: 4px;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--primary);
+}
+.service-steps .product-status.roadmap {
+  border-style: dashed;
+  border-color: var(--input);
+  color: var(--muted-foreground);
+}
+.product-roadmap {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0 0;
+  max-width: 860px;
+}
+.product-roadmap li {
+  display: flex;
+  gap: 14px;
+  padding-block: 16px;
+  border-bottom: 1px solid var(--border);
+  font-size: 15px;
+  line-height: 1.8;
+  color: #b1beac;
+}
+.product-roadmap li::before {
+  content: '→';
+  color: var(--primary);
+}
+@media (max-width: 1100px) {
+  .service-steps.product-delivery {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 760px) {
+  .product-layers {
+    grid-template-columns: 1fr;
+  }
+}

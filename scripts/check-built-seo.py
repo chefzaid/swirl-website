@@ -53,7 +53,7 @@ def png_size(path):
 manifest = json.loads(Path('dist/runtime/page-manifest.json').read_text())
 raw = manifest['documents']
 pages = {path: Page(html) for path, html in raw.items()}
-assert len(pages) == 32
+assert len(pages) == 34
 origin = pages['/'].canonical().rstrip('/')
 titles = set(); descriptions = set()
 for path, page in pages.items():
@@ -104,6 +104,16 @@ for path, page in pages.items():
     if project:
         assert len(page.entities('CreativeWork')) == 1
         assert not re.search(r'\b(?:équipes?|teams?)\b', raw[path], re.I), path
+    if re.match(r'/(?:en/)?swirl-cloud/$', path):
+        apps = page.entities('SoftwareApplication')
+        assert len(apps) == 1 and apps[0]['url'] == page.canonical(), path
+        assert webpages[0]['mainEntity']['@id'] == apps[0]['@id']
+        faq = page.entities('FAQPage')
+        assert len(faq) == 1 and all(q['acceptedAnswer']['text'] for q in faq[0]['mainEntity']), path
+        assert not page.entities('Service'), path
+    # The header links every page to the Swirl Cloud product page.
+    product = '/en/swirl-cloud/' if page.lang == 'en' else '/swirl-cloud/'
+    assert product in {a.get('href') for tag, a in page.links if tag == 'a'}, ('Product page not linked', path)
     if page.entities('Service') and not home:
         assert len(page.entities('Service')) == 1 and len(page.entities('FAQPage')) == 1, path
         assert page.entities('Service')[0]['url'] == page.canonical()

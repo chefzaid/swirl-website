@@ -3,7 +3,8 @@
 `src/layouts/Layout.astro` generates page titles, descriptions, canonical URLs,
 language alternates, social cards and JSON-LD. Routes and site identity are
 defined in `data/site.ts`; service and project content lives in
-`data/portfolio.ts`, and the service landing pages in `data/expertise.ts`.
+`data/portfolio.ts`, the service landing pages in `data/expertise.ts` and the
+Swirl Cloud product page in `data/product.ts`.
 The public site name and organization name are separate configuration fields.
 
 ## Site structure
@@ -12,11 +13,14 @@ The public site name and organization name are separate configuration fields.
 | --- | --- | --- |
 | Home | `/` | `/en/` |
 | Services (3) | `/developpement-applications-sur-mesure/`, `/logiciel-embarque-iot/`, `/cloud-prive-souverain-ia/` | `/en/custom-software-development/`, `/en/embedded-software-iot/`, `/en/sovereign-private-cloud-ai/` |
+| Swirl Cloud product | `/swirl-cloud/` | `/en/swirl-cloud/` |
 | Case-study hub | `/projets/` | `/en/projects/` |
 | Case studies (10) | `/projets/<slug>/` | `/en/projects/<slug>/` |
 | Privacy | `/confidentialite/` | `/en/privacy/` |
 
-Service URLs sit at the root and carry the main search terms. Inner pages use
+Service URLs sit at the root and carry the main search terms. The product page
+keeps the product name in both languages and is linked from every header and
+the home "Cloud & AI" card. Inner pages use
 `src/layouts/Subpage.astro` for the shared header, visible breadcrumbs and
 `BreadcrumbList`. Home service cards, case studies and service pages link to
 each other: keep `projects` in `data/expertise.ts` covering every case study.
@@ -32,13 +36,16 @@ hydrate nothing except the chat launcher.
 
 Every page carries `Organization` (with the raster `/logo.png` and founder),
 `WebSite`, the CEO `Person` and its `WebPage`. Service pages add `Service` with
-an `OfferCatalog` and `FAQPage`; the hub is a `CollectionPage` with an
+an `OfferCatalog` and `FAQPage`; the product page adds `SoftwareApplication`
+and `FAQPage`; the hub is a `CollectionPage` with an
 `ItemList`; case studies add `CreativeWork`. Homepage `Service` entities share
 the `@id` of their landing page. JSON-LD must escape `<`, and executable inline
 scripts and styles must match the generated CSP. FAQ answers must match the
 visible text and stay factual: Google shows FAQ rich results only for
 authoritative government and health sites, but the markup still describes the
-page to other search and answer engines.
+page to other search and answer engines. The same holds for
+`SoftwareApplication`: it has no `offers` until pricing is published, so Google
+treats it as ineligible for software rich results.
 
 ## Social cards, icons and llms.txt
 
@@ -68,7 +75,7 @@ python3 scripts/check-built-security.py
 python3 scripts/check-built-seo.py
 ```
 
-The checks cover all 32 pages and both 404 pages: metadata, social cards,
+The checks cover all 34 pages and both 404 pages: metadata, social cards,
 internal links and fragments, language alternates, structured data, sitemap
 entries, `llms.txt`, icons and CSP hashes.
 

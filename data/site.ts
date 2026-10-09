@@ -77,6 +77,9 @@ export const privacyPath = (lang: Lang) =>
   lang === 'fr' ? '/confidentialite/' : '/en/privacy/';
 export const projectsPath = (lang: Lang) =>
   lang === 'fr' ? '/projets/' : '/en/projects/';
+// The Swirl Cloud product page keeps the product name in both languages.
+export const productPath = (lang: Lang) =>
+  lang === 'fr' ? '/swirl-cloud/' : '/en/swirl-cloud/';
 export const projectSlug = (id: Project['id'], lang: Lang) => slugs[id][lang];
 export const projectPath = (id: Project['id'], lang: Lang) =>
   `${projectsPath(lang)}${projectSlug(id, lang)}/`;
@@ -86,7 +89,7 @@ export const servicePath = (id: Service['id'], lang: Lang) =>
   `${homePath(lang)}${serviceSlug(id, lang)}/`;
 
 export type PageRef =
-  | { kind: 'home' | 'privacy' | 'projects' }
+  | { kind: 'home' | 'privacy' | 'projects' | 'product' }
   | { kind: 'service'; id: Service['id'] }
   | { kind: 'project'; id: Project['id'] };
 const pairs: (Bilingual & { page: PageRef })[] = [
@@ -96,6 +99,7 @@ const pairs: (Bilingual & { page: PageRef })[] = [
     en: servicePath(s.id, 'en'),
     page: { kind: 'service', id: s.id } as const,
   })),
+  { fr: productPath('fr'), en: productPath('en'), page: { kind: 'product' } },
   {
     fr: projectsPath('fr'),
     en: projectsPath('en'),

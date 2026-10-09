@@ -31,7 +31,7 @@ companies, which they own like on-premises, run like SaaS and can leave at any
 time. Publish a claim only once the platform demonstrates it (measured install
 time, sovereignty mode, compliance evidence); mark the rest as roadmap.
 
-- [ ] Product landing page (FR and EN): value proposition, target customers (20–500 employees, NIS2, DORA ICT suppliers, customer security questionnaires), what one installation includes by layer, how it is delivered (self-run or managed with customer-held keys) and a call to action, linked from the header and the "Cloud & AI" card.
+- [x] Product landing page (FR and EN) at `/swirl-cloud/` and `/en/swirl-cloud/`: value proposition, target customers (20–500 employees, NIS2, DORA ICT suppliers, customer security questionnaires), what one installation includes by layer, how it is delivered (installed and run by the customer today; managed with customer-held keys shown as roadmap), roadmap, FAQ and a demo call to action, linked from every header and the "Cloud & AI" card. *(2026-10-09)*
 - [ ] "How it works" page: install on rented or owned servers, architecture diagram, environments and delivery flow, high availability and recovery, with measured figures only.
 - [ ] Sovereignty page: hosting locations, jurisdiction, the published list of external services and subprocessors, the strict sovereignty mode and the exit commitment (open components, standard formats, self-operation runbook).
 - [ ] Security and compliance page: controls mapped to NIS2, ISO/IEC 27001, DORA and GDPR, a sample evidence pack, the vulnerability disclosure policy and penetration-test status.

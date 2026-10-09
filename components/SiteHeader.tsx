@@ -2,15 +2,19 @@ import { useState } from 'react';
 import { ArrowUpRight, LockKeyhole, Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type { Lang } from '@/data/portfolio';
-export default function SiteHeader({ lang }: Readonly<{ lang: Lang }>) {
+export default function SiteHeader({
+  lang,
+  productHref,
+}: Readonly<{ lang: Lang; productHref: string }>) {
   const en = lang === 'en';
   const t = (fr: string, eng: string) => (en ? eng : fr);
   const [menu, setMenu] = useState(false);
   const nav = [
-    ['home', t('Accueil', 'Home')],
-    ['expertises', t('Expertises', 'Expertise')],
-    ['projects', t('Références', 'Projects')],
-    ['about', t('L’entreprise', 'Company')],
+    ['#home', t('Accueil', 'Home')],
+    ['#expertises', t('Expertises', 'Expertise')],
+    [productHref, 'Swirl Cloud'],
+    ['#projects', t('Références', 'Projects')],
+    ['#about', t('L’entreprise', 'Company')],
   ];
   return (
     <>
@@ -20,11 +24,11 @@ export default function SiteHeader({ lang }: Readonly<{ lang: Lang }>) {
           <i>.</i>
         </a>
         <nav aria-label={t('Navigation principale', 'Main navigation')}>
-          {nav.map(([id, label]) => (
+          {nav.map(([href, label]) => (
             <a
-              key={id}
-              className={id === 'home' ? 'active' : ''}
-              href={`#${id}`}
+              key={href}
+              className={href === '#home' ? 'active' : ''}
+              href={href}
             >
               {label}
             </a>
@@ -85,8 +89,8 @@ export default function SiteHeader({ lang }: Readonly<{ lang: Lang }>) {
           id="mobile-nav"
           aria-label={t('Navigation mobile', 'Mobile navigation')}
         >
-          {[...nav, ['contact', 'Contact']].map(([id, label]) => (
-            <a key={id} href={`#${id}`} onClick={() => setMenu(false)}>
+          {[...nav, ['#contact', 'Contact']].map(([href, label]) => (
+            <a key={href} href={href} onClick={() => setMenu(false)}>
               {label}
               <ArrowUpRight size={16} />
             </a>

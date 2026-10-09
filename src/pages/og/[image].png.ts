@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
 import { projects, sectors, services } from '../../../data/portfolio';
 import { servicePages } from '../../../data/expertise';
+import { product } from '../../../data/product';
 import {
   documentRoutes,
   socialImagePath,
@@ -39,6 +40,13 @@ function card({ page, lang }: DocumentRoute): SocialCard {
         tags: service.tags,
       };
     }
+    case 'product':
+      return {
+        eyebrow: upper(product.name),
+        title: product.heading[lang],
+        accent: product.accent[lang],
+        tags: product.tags,
+      };
     case 'projects':
       return {
         eyebrow: en ? 'SELECTED WORK' : 'RÉFÉRENCES',
