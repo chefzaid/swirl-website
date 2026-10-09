@@ -2,6 +2,7 @@ import type { APIRoute } from 'astro';
 import { projects, sectors, services } from '../../../data/portfolio';
 import { servicePages } from '../../../data/expertise';
 import { product } from '../../../data/product';
+import { howItWorks } from '../../../data/how-it-works';
 import {
   documentRoutes,
   socialImagePath,
@@ -47,6 +48,15 @@ function card({ page, lang }: DocumentRoute): SocialCard {
         accent: product.accent[lang],
         tags: product.tags,
       };
+    case 'product-page': {
+      const detail = { 'how-it-works': howItWorks }[page.id];
+      return {
+        eyebrow: upper(product.name),
+        title: detail.heading[lang],
+        accent: detail.accent[lang],
+        tags: detail.tags,
+      };
+    }
     case 'projects':
       return {
         eyebrow: en ? 'SELECTED WORK' : 'RÉFÉRENCES',

@@ -4,7 +4,7 @@
 language alternates, social cards and JSON-LD. Routes and site identity are
 defined in `data/site.ts`; service and project content lives in
 `data/portfolio.ts`, the service landing pages in `data/expertise.ts` and the
-Swirl Cloud product page in `data/product.ts`.
+Swirl Cloud product pages in `data/product.ts` and `data/how-it-works.ts`.
 
 ## Site structure
 
@@ -13,13 +13,15 @@ Swirl Cloud product page in `data/product.ts`.
 | Home | `/` | `/en/` |
 | Services (3) | `/developpement-applications-sur-mesure/`, `/logiciel-embarque-iot/`, `/cloud-prive-souverain-ia/` | `/en/custom-software-development/`, `/en/embedded-software-iot/`, `/en/sovereign-private-cloud-ai/` |
 | Swirl Cloud product | `/swirl-cloud/` | `/en/swirl-cloud/` |
+| Swirl Cloud: how it works | `/swirl-cloud/fonctionnement/` | `/en/swirl-cloud/how-it-works/` |
 | Case-study hub | `/projets/` | `/en/projects/` |
 | Case studies (10) | `/projets/<slug>/` | `/en/projects/<slug>/` |
 | Privacy | `/confidentialite/` | `/en/privacy/` |
 
 Service URLs sit at the root and carry the main search terms. The product page
 keeps the product name in both languages and is linked from every header and
-the home "Cloud & AI" card. Inner pages use
+the home "Cloud & AI" card; its detail pages sit below it (`productPages` in
+`data/site.ts`) and are linked from it. Inner pages use
 `src/layouts/Subpage.astro` for the shared header, visible breadcrumbs and
 `BreadcrumbList`. Home service cards, case studies and service pages link to
 each other: keep `projects` in `data/expertise.ts` covering every case study.
@@ -74,7 +76,7 @@ python3 scripts/check-built-security.py
 python3 scripts/check-built-seo.py
 ```
 
-The checks cover all 34 pages and both 404 pages: metadata, social cards,
+The checks cover all 36 pages and both 404 pages: metadata, social cards,
 internal links and fragments, language alternates, structured data, sitemap
 entries, `llms.txt`, icons and CSP hashes.
 

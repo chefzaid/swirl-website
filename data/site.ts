@@ -76,9 +76,17 @@ export const privacyPath = (lang: Lang) =>
   lang === 'fr' ? '/confidentialite/' : '/en/privacy/';
 export const projectsPath = (lang: Lang) =>
   lang === 'fr' ? '/projets/' : '/en/projects/';
-// The Swirl Cloud product page keeps the product name in both languages.
+// The Swirl Cloud product page keeps the product name in both languages;
+// its detail pages sit below it.
 export const productPath = (lang: Lang) =>
   lang === 'fr' ? '/swirl-cloud/' : '/en/swirl-cloud/';
+const productPageSlugs = {
+  'how-it-works': { fr: 'fonctionnement', en: 'how-it-works' },
+} satisfies Record<string, Bilingual>;
+export type ProductPage = keyof typeof productPageSlugs;
+export const productPages = Object.keys(productPageSlugs) as ProductPage[];
+export const productPagePath = (id: ProductPage, lang: Lang) =>
+  `${productPath(lang)}${productPageSlugs[id][lang]}/`;
 export const projectSlug = (id: Project['id'], lang: Lang) => slugs[id][lang];
 export const projectPath = (id: Project['id'], lang: Lang) =>
   `${projectsPath(lang)}${projectSlug(id, lang)}/`;
@@ -90,6 +98,7 @@ export const servicePath = (id: Service['id'], lang: Lang) =>
 export type PageRef =
   | { kind: 'home' | 'privacy' | 'projects' | 'product' }
   | { kind: 'service'; id: Service['id'] }
+  | { kind: 'product-page'; id: ProductPage }
   | { kind: 'project'; id: Project['id'] };
 const pairs: (Bilingual & { page: PageRef })[] = [
   { fr: '/', en: '/en/', page: { kind: 'home' } },
@@ -99,6 +108,11 @@ const pairs: (Bilingual & { page: PageRef })[] = [
     page: { kind: 'service', id: s.id } as const,
   })),
   { fr: productPath('fr'), en: productPath('en'), page: { kind: 'product' } },
+  ...productPages.map((id) => ({
+    fr: productPagePath(id, 'fr'),
+    en: productPagePath(id, 'en'),
+    page: { kind: 'product-page', id } as const,
+  })),
   {
     fr: projectsPath('fr'),
     en: projectsPath('en'),

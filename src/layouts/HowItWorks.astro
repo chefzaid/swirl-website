@@ -1,0 +1,81 @@
+---
+import Subpage from './Subpage.astro';
+import '../../app/swirl-cloud.css';
+import type { Lang } from '../../data/portfolio';
+import { product } from '../../data/product';
+import { howItWorks as page } from '../../data/how-it-works';
+import { absoluteUrl, homePath, productPagePath, productPath, siteConfig } from '../../data/site';
+interface Props { lang: Lang; }
+const { lang } = Astro.props;
+const en = lang === 'en';
+const path = productPagePath('how-it-works', lang);
+const overview = productPath(lang);
+const demo = `${homePath(lang)}?topic=demo#contact`;
+const number = (index: number) => String(index + 1).padStart(2, '0');
+---
+<Subpage lang={lang} path={path} title={`${siteConfig.name} | ${page.title[lang]}`} description={page.description[lang]}
+  breadcrumbs={[{ name: product.name, path: overview }, { name: en ? 'How it works' : 'Fonctionnement', path }]}
+  webPage={{ about: { '@id': absoluteUrl(overview) + '#product' } }}>
+  <article class="service-page product-page">
+    <header class="case-intro">
+      <p class="eyebrow section-kicker">{product.name.toLocaleUpperCase(lang)}</p>
+      <h1>{page.heading[lang]} <span>{page.accent[lang]}</span></h1>
+      <p class="case-lead">{page.lead[lang]}</p>
+      <div class="hero-actions">
+        <a class="button" href={demo}>{en ? 'Request a demo' : 'Demander une démo'} <span aria-hidden="true">↗</span></a>
+        <a class="text-link" href="#architecture">{en ? 'See the architecture' : 'Voir l’architecture'} <span aria-hidden="true">↓</span></a>
+      </div>
+      <ul class="tags case-tags" aria-label="Technologies">{page.tags.map(tag => <li>{tag}</li>)}</ul>
+    </header>
+    <section class="service-section" aria-labelledby="install-heading">
+      <h2 id="install-heading">{en ? 'Installation' : 'L’installation'}</h2>
+      <ol class="service-steps">
+        {page.install.map((step, index) => <li><span aria-hidden="true">{number(index)}</span><h3>{step.title[lang]}</h3><p>{step.text[lang]}</p></li>)}
+      </ol>
+    </section>
+    <section class="service-section" id="architecture" aria-labelledby="architecture-heading">
+      <h2 id="architecture-heading">{en ? 'Architecture' : 'L’architecture'}</h2>
+      <figure class="architecture">
+        <ol>
+          {page.architecture.map(row => <li>
+            <span class="architecture-layer">{row.layer[lang]}</span>
+            <ul>{row.boxes.map(box => <li><strong>{box.name[lang]}</strong><span>{box.detail[lang]}</span></li>)}</ul>
+          </li>)}
+        </ol>
+        <figcaption>{en
+          ? 'Requests go down the layers; Git describes every layer, and Argo CD keeps the running platform aligned with it.'
+          : 'Les requêtes traversent les couches de haut en bas ; Git décrit chaque couche, et Argo CD y aligne en continu la plateforme.'}</figcaption>
+      </figure>
+    </section>
+    <section class="service-section" aria-labelledby="delivery-heading">
+      <h2 id="delivery-heading">{en ? 'From commit to production' : 'Du commit à la production'}</h2>
+      <ol class="service-steps">
+        {page.delivery.map((step, index) => <li><span aria-hidden="true">{number(index)}</span><h3>{step.title[lang]}</h3><p>{step.text[lang]}</p></li>)}
+      </ol>
+    </section>
+    <section class="service-section" aria-labelledby="resilience-heading">
+      <h2 id="resilience-heading">{en ? 'High availability and recovery' : 'Haute disponibilité et reprise'}</h2>
+      <div class="service-capabilities">
+        {page.resilience.map(card => <section class="service-card"><h3>{card.title[lang]}</h3><p>{card.text[lang]}</p></section>)}
+      </div>
+    </section>
+    <section class="service-section" aria-labelledby="measured-heading">
+      <h2 id="measured-heading">{en ? 'Measured, not promised' : 'Mesuré, pas promis'}</h2>
+      <p class="product-intro">{page.measuredIntro[lang]}</p>
+      <dl class="product-figures">
+        {page.measured.map(figure => <div><dt>{figure.label[lang]}</dt><dd>{figure.value[lang]}</dd></div>)}
+      </dl>
+    </section>
+    <aside class="case-contact">
+      <h2>{en ? 'See it running' : 'Voyez-la fonctionner'}</h2>
+      <p>{en
+        ? 'We walk you through the installation that runs our own website and applications, then size one for your servers.'
+        : 'Nous vous présentons l’installation qui fait tourner notre propre site et nos applications, puis nous en dimensionnons une pour vos serveurs.'}</p>
+      <a class="button" href={demo}>{en ? 'Request a demo' : 'Demander une démo'} <span aria-hidden="true">↗</span></a>
+    </aside>
+    <section class="service-others" aria-labelledby="others-heading">
+      <h2 id="others-heading">{product.name}</h2>
+      <div class="case-related-grid"><a href={overview}><span class="eyebrow">{en ? 'Overview' : 'Présentation'}</span><p>{product.description[lang]}</p><span class="text-link">{en ? 'Discover Swirl Cloud' : 'Découvrir Swirl Cloud'} ↗</span></a></div>
+    </section>
+  </article>
+</Subpage>

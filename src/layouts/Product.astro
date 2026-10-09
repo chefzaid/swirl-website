@@ -4,7 +4,7 @@ import '../../app/swirl-cloud.css';
 import { services, type Lang } from '../../data/portfolio';
 import { servicePages } from '../../data/expertise';
 import { product } from '../../data/product';
-import { absoluteUrl, homePath, productPath, servicePath, siteConfig } from '../../data/site';
+import { absoluteUrl, homePath, productPagePath, productPath, servicePath, siteConfig } from '../../data/site';
 interface Props { lang: Lang; }
 const { lang } = Astro.props;
 const en = lang === 'en';
@@ -50,6 +50,7 @@ const demo = `${homePath(lang)}?topic=demo#contact`;
       <ol class="product-layers">
         {product.layers.map((layer, index) => <li class="service-card"><span aria-hidden="true">{String(index + 1).padStart(2, '0')}</span><h3>{layer.title[lang]}</h3><p>{layer.text[lang]}</p></li>)}
       </ol>
+      <p class="product-more"><a class="text-link" href={productPagePath('how-it-works', lang)}>{en ? 'How it works: installation, architecture and recovery' : 'Comment elle fonctionne : installation, architecture et reprise'} <span aria-hidden="true">↗</span></a></p>
     </section>
     <section class="service-section" aria-labelledby="delivery-heading">
       <h2 id="delivery-heading">{en ? 'How it is delivered' : 'Comment elle est livrée'}</h2>

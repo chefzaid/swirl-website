@@ -53,7 +53,7 @@ def png_size(path):
 manifest = json.loads(Path('dist/runtime/page-manifest.json').read_text())
 raw = manifest['documents']
 pages = {path: Page(html) for path, html in raw.items()}
-assert len(pages) == 34
+assert len(pages) == 36
 origin = pages['/'].canonical().rstrip('/')
 titles = set(); descriptions = set()
 for path, page in pages.items():
@@ -111,6 +111,10 @@ for path, page in pages.items():
         faq = page.entities('FAQPage')
         assert len(faq) == 1 and all(q['acceptedAnswer']['text'] for q in faq[0]['mainEntity']), path
         assert not page.entities('Service'), path
+        # The overview links to every product detail page in its language.
+        hrefs = {a.get('href') for tag, a in page.links if tag == 'a'}
+        details = {p for p in pages if p.startswith(path) and p != path}
+        assert details and details <= hrefs, ('Product detail pages not linked', path)
     # The header links every page to the Swirl Cloud product page.
     product = '/en/swirl-cloud/' if page.lang == 'en' else '/swirl-cloud/'
     assert product in {a.get('href') for tag, a in page.links if tag == 'a'}, ('Product page not linked', path)
