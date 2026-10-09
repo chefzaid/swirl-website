@@ -165,7 +165,11 @@ export default function Portfolio({
                     <Icon size={28} strokeWidth={1.3} />
                     <span>0{i + 1}</span>
                   </div>
-                  <h3>{s.title[lang]}</h3>
+                  <h3>
+                    <a className="card-link" href={servicePath(s.id, lang)}>
+                      {s.title[lang]}
+                    </a>
+                  </h3>
                   <p>{s.text[lang]}</p>
                   <div className="tags">
                     {s.tags.map((tag) => (
@@ -178,25 +182,15 @@ export default function Portfolio({
                       </span>
                     ))}
                   </div>
-                  <div className="service-links">
+                  {s.id === 'cloud-ai' && (
                     <a
                       className="text-link service-link"
-                      href={servicePath(s.id, lang)}
+                      href={productPath(lang)}
                     >
-                      {t('Découvrir l’expertise', 'Explore this expertise')}
-                      <span className="sr-only"> : {s.title[lang]}</span>
+                      {t('Découvrir Swirl Cloud', 'Discover Swirl Cloud')}
                       <ArrowUpRight size={16} aria-hidden="true" />
                     </a>
-                    {s.id === 'cloud-ai' && (
-                      <a
-                        className="text-link service-link"
-                        href={productPath(lang)}
-                      >
-                        {t('Découvrir Swirl Cloud', 'Discover Swirl Cloud')}
-                        <ArrowUpRight size={16} aria-hidden="true" />
-                      </a>
-                    )}
-                  </div>
+                  )}
                 </article>
               );
             })}

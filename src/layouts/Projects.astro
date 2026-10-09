@@ -32,8 +32,7 @@ const list = {
     <h2 id={`${sector.anchor[lang]}-heading`}>{sector.label[lang]}</h2>
     <div class="case-related-grid">{projects.filter(p => p.sector === sector.id).map(p => <a href={projectPath(p.id, lang)}>
       <ClientLogo id={p.id} />
-      <span class="eyebrow">{p.client} · {p.date}</span><h3>{p.title[lang]}</h3><p>{p.text[lang]}</p>
-      <span class="text-link">{en ? 'Explore the project' : 'Découvrir le projet'} ↗</span></a>)}</div>
+      <span class="eyebrow">{p.client} · {p.date}</span><h3>{p.title[lang]}</h3><p>{p.text[lang]}</p></a>)}</div>
   </section>)}
   <p class="case-attribution">{en ? 'Projects delivered directly or through consulting partnerships.' : 'Projets réalisés directement ou dans le cadre de partenariats de conseil.'}</p>
   <aside class="case-contact">

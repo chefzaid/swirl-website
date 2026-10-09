@@ -1,17 +1,5 @@
-/* Swirl Cloud product page, its link beside "Explore this expertise" on the
-   homepage service cards, and the demo choice in the contact form. Builds on
-   the service and form styles in globals.css. */
-.service-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px 28px;
-  margin-top: auto;
-  padding-top: 24px;
-}
-.service-links > .service-link {
-  margin-top: 0;
-  padding-top: 0;
-}
+/* Swirl Cloud product pages and the demo choice in the contact form. Builds
+   on the service and form styles in globals.css. */
 .product-intro {
   margin-top: 16px;
   max-width: 760px;

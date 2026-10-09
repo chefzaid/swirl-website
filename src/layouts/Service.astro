@@ -54,7 +54,7 @@ const structuredData = [
     </section>
     <section class="service-section case-related" id="references" aria-labelledby="references-heading">
       <h2 id="references-heading">{en ? 'Related case studies' : 'Projets de référence'}</h2>
-      <div class="case-related-grid">{references.map(p => <a href={projectPath(p.id, lang)}><span class="eyebrow">{p.client} · {p.date}</span><h3>{p.title[lang]}</h3><p>{p.text[lang]}</p><span class="text-link">{en ? 'Explore the project' : 'Découvrir le projet'} ↗</span></a>)}</div>
+      <div class="case-related-grid">{references.map(p => <a href={projectPath(p.id, lang)}><span class="eyebrow">{p.client} · {p.date}</span><h3>{p.title[lang]}</h3><p>{p.text[lang]}</p></a>)}</div>
       <p class="case-attribution">{en ? 'Projects delivered directly or through consulting partnerships.' : 'Projets réalisés directement ou dans le cadre de partenariats de conseil.'} <a class="text-link" href={projectsPath(lang)}>{en ? 'All case studies' : 'Toutes les références'} ↗</a></p>
     </section>
     <section class="service-section" aria-labelledby="faq-heading">
@@ -70,7 +70,7 @@ const structuredData = [
     </aside>
     <section class="service-others" aria-labelledby="others-heading">
       <h2 id="others-heading">{en ? 'Other expertise' : 'Nos autres expertises'}</h2>
-      <div class="case-related-grid">{others.map(s => <a href={servicePath(s.id, lang)}><span class="eyebrow">{s.title[lang]}</span><p>{servicePages[s.id].description[lang]}</p><span class="text-link">{en ? 'Explore this expertise' : 'Découvrir l’expertise'} ↗</span></a>)}</div>
+      <div class="case-related-grid">{others.map(s => <a href={servicePath(s.id, lang)}><span class="eyebrow">{s.title[lang]}</span><p>{servicePages[s.id].description[lang]}</p></a>)}</div>
     </section>
   </article>
 </Subpage>

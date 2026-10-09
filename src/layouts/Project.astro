@@ -52,7 +52,7 @@ const caseStudy = {
   </article>
   {related.length > 0 && <section class="case-related" aria-labelledby="related-heading">
     <h2 id="related-heading">{en ? 'Explore more projects' : 'Découvrez aussi'}</h2>
-    <div class="case-related-grid">{related.map(p => <a href={projectPath(p.id, lang)}><span class="eyebrow">{p.client}</span><h3>{p.title[lang]}</h3><p>{p.text[lang]}</p><span class="text-link">{en ? 'Explore the project' : 'Découvrir le projet'} ↗</span></a>)}</div>
+    <div class="case-related-grid">{related.map(p => <a href={projectPath(p.id, lang)}><span class="eyebrow">{p.client}</span><h3>{p.title[lang]}</h3><p>{p.text[lang]}</p></a>)}</div>
   </section>}
   <a class="text-link" href={projectsPath(lang)}>← {en ? 'All projects' : 'Tous les projets'}</a>
 </Subpage>

@@ -88,7 +88,7 @@ const demo = `${homePath(lang)}?topic=demo#contact`;
     </aside>
     <section class="service-others" aria-labelledby="others-heading">
       <h2 id="others-heading">{en ? 'Related expertise' : 'Expertise associée'}</h2>
-      <div class="case-related-grid"><a href={servicePath(cloud.id, lang)}><span class="eyebrow">{cloud.title[lang]}</span><p>{servicePages[cloud.id].description[lang]}</p><span class="text-link">{en ? 'Explore this expertise' : 'Découvrir l’expertise'} ↗</span></a></div>
+      <div class="case-related-grid"><a href={servicePath(cloud.id, lang)}><span class="eyebrow">{cloud.title[lang]}</span><p>{servicePages[cloud.id].description[lang]}</p></a></div>
     </section>
   </article>
 </Subpage>

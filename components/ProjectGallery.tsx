@@ -45,34 +45,34 @@ export default function ProjectGallery({
         <ClientLogo id={p.id} />
       </div>
       <div className="project-info">
-        <h3>{p.title}</h3>
+        <h3>
+          <a
+            className="card-link"
+            href={p.path}
+            onClick={(event) => {
+              // A plain click opens the details here; modified clicks and
+              // crawlers follow the link to the case-study page.
+              if (
+                event.button !== 0 ||
+                event.metaKey ||
+                event.ctrlKey ||
+                event.shiftKey ||
+                event.altKey
+              )
+                return;
+              event.preventDefault();
+              setSelected(p);
+            }}
+          >
+            {p.title}
+          </a>
+        </h3>
         <p>{p.text}</p>
         <div className="tags">
           {p.tags.map((tag) => (
             <span key={tag}>{tag}</span>
           ))}
         </div>
-        <a
-          className="project-link"
-          data-slot="button"
-          href={p.path}
-          aria-label={`${t('Découvrir le projet', 'Explore the project')} — ${p.client}`}
-          onClick={(event) => {
-            if (
-              event.button !== 0 ||
-              event.metaKey ||
-              event.ctrlKey ||
-              event.shiftKey ||
-              event.altKey
-            )
-              return;
-            event.preventDefault();
-            setSelected(p);
-          }}
-        >
-          {t('Découvrir le projet', 'Explore the project')}
-          <ArrowUpRight size={17} />
-        </a>
       </div>
     </article>
   );
