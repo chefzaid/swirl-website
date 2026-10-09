@@ -3,6 +3,7 @@ import { servicePages } from '../../data/expertise';
 import { product } from '../../data/product';
 import { howItWorks } from '../../data/how-it-works';
 import { security } from '../../data/security';
+import { sovereignty } from '../../data/sovereignty';
 import {
   absoluteUrl,
   homePath,
@@ -49,6 +50,11 @@ export function GET() {
       'Swirl Cloud security and compliance',
       productPagePath('security', 'en'),
       security.description.en,
+    ),
+    link(
+      'Swirl Cloud sovereignty',
+      productPagePath('sovereignty', 'en'),
+      sovereignty.description.en,
     ),
     '',
     '## Case studies',

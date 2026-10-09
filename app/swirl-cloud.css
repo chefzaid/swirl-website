@@ -246,7 +246,7 @@
   line-height: 1.6;
   color: #b1beac;
 }
-/* Security page: control catalog by theme. */
+/* Card lists with a badge: security controls, outside services. */
 .control-group {
   margin-top: 40px;
 }
@@ -255,7 +255,7 @@
   font-weight: 500;
   letter-spacing: -0.4px;
 }
-.control-list {
+.card-list {
   list-style: none;
   margin: 18px 0 0;
   padding: 0;
@@ -263,35 +263,36 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
 }
-.control-list .service-card {
+.card-list .service-card {
   display: flex;
   flex-direction: column;
   gap: 10px;
   padding: 22px;
 }
-.control-list h4 {
+.card-list h3,
+.card-list h4 {
   font-size: 16px;
   font-weight: 500;
 }
-.control-list .service-card > p {
+.card-list .service-card > p {
   min-height: 0;
   font-size: 13px;
 }
-.control-list .control-refs {
+.card-list .card-refs {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
   margin-top: auto;
   padding-top: 6px;
 }
-.control-refs span {
+.card-refs span {
   padding: 4px 7px;
   border: 1px solid #354037;
   border-radius: 4px;
   font-size: 10px;
   color: #aab5aa;
 }
-.control-kind {
+.card-badge {
   align-self: flex-start;
   padding: 3px 8px;
   border: 1px solid #4c5c3c;
@@ -301,13 +302,30 @@
   text-transform: uppercase;
   color: var(--primary);
 }
-.control-kind.manual {
+.card-badge.manual {
   border-style: dashed;
   border-color: var(--input);
   color: var(--muted-foreground);
 }
+.service-facts {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+}
+.service-facts dt {
+  font-size: 10px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: #8b9a7f;
+}
+.service-facts dd {
+  margin: 2px 0 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #d1ddc7;
+}
 @media (max-width: 760px) {
-  .control-list {
+  .card-list {
     grid-template-columns: 1fr;
   }
   .architecture > ol > li {

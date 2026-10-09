@@ -51,12 +51,12 @@ const structuredData = [
         : `${controls.length} contrôles : ${automated} sont vérifiés en continu sur la plateforme en fonctionnement, ${controls.length - automated} se prouvent par vos documents. Chaque fiche indique ce que vérifie le contrôle et les exigences qu’il couvre.`}</p>
       {controlGroups.map((group, index) => <section class="control-group" aria-labelledby={`theme-${index}`}>
         <h3 id={`theme-${index}`}>{group.theme[lang]}</h3>
-        <ul class="control-list">
+        <ul class="card-list">
           {group.controls.map(control => <li class="service-card">
-            <span class:list={['control-kind', { manual: !control.automated }]}>{control.automated ? (en ? 'Automated' : 'Automatique') : 'Documents'}</span>
+            <span class:list={['card-badge', { manual: !control.automated }]}>{control.automated ? (en ? 'Automated' : 'Automatique') : 'Documents'}</span>
             <h4>{control.title[lang]}</h4>
             <p>{control.objective[lang]}</p>
-            <p class="control-refs">{(Object.entries(control.refs) as [Framework, string[]][]).map(([framework, refs]) =>
+            <p class="card-refs">{(Object.entries(control.refs) as [Framework, string[]][]).map(([framework, refs]) =>
               <span>{frameworkNames[framework][lang]} {refs.map(ref => referenceLabel(framework, ref, lang)).join(', ')}</span>)}</p>
           </li>)}
         </ul>

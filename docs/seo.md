@@ -5,7 +5,7 @@ language alternates, social cards and JSON-LD. Routes and site identity are
 defined in `data/site.ts`; service and project content lives in
 `data/portfolio.ts`, the service landing pages in `data/expertise.ts` and the
 Swirl Cloud product pages in `data/product.ts`, `data/how-it-works.ts`,
-`data/security.ts` and `data/compliance-controls.ts`.
+`data/security.ts`, `data/compliance-controls.ts` and `data/sovereignty.ts`.
 
 ## Site structure
 
@@ -16,6 +16,7 @@ Swirl Cloud product pages in `data/product.ts`, `data/how-it-works.ts`,
 | Swirl Cloud product | `/swirl-cloud/` | `/en/swirl-cloud/` |
 | Swirl Cloud: how it works | `/swirl-cloud/fonctionnement/` | `/en/swirl-cloud/how-it-works/` |
 | Swirl Cloud: security and compliance | `/swirl-cloud/securite-conformite/` | `/en/swirl-cloud/security-compliance/` |
+| Swirl Cloud: sovereignty | `/swirl-cloud/souverainete/` | `/en/swirl-cloud/sovereignty/` |
 | Case-study hub | `/projets/` | `/en/projects/` |
 | Case studies (10) | `/projets/<slug>/` | `/en/projects/<slug>/` |
 | Privacy | `/confidentialite/` | `/en/privacy/` |
@@ -40,7 +41,7 @@ hydrate nothing except the chat launcher.
 Every page carries `Organization` (with the raster `/logo.png` and founder),
 `WebSite`, the CEO `Person` and its `WebPage`. Service pages add `Service` with
 an `OfferCatalog` and `FAQPage`; the product page adds `SoftwareApplication`
-and `FAQPage`, and its security page a `FAQPage`; the hub is a `CollectionPage` with an
+and `FAQPage`, and its security and sovereignty pages a `FAQPage`; the hub is a `CollectionPage` with an
 `ItemList`; case studies add `CreativeWork`. Homepage `Service` entities share
 the `@id` of their landing page. JSON-LD must escape `<`, and executable inline
 scripts and styles must match the generated CSP. FAQ answers must match the
@@ -78,7 +79,7 @@ python3 scripts/check-built-security.py
 python3 scripts/check-built-seo.py
 ```
 
-The checks cover all 38 pages and both 404 pages: metadata, social cards,
+The checks cover all 40 pages and both 404 pages: metadata, social cards,
 internal links and fragments, language alternates, structured data, sitemap
 entries, `llms.txt`, icons and CSP hashes.
 

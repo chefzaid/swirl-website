@@ -83,6 +83,7 @@ export const productPath = (lang: Lang) =>
 const productPageSlugs = {
   'how-it-works': { fr: 'fonctionnement', en: 'how-it-works' },
   security: { fr: 'securite-conformite', en: 'security-compliance' },
+  sovereignty: { fr: 'souverainete', en: 'sovereignty' },
 } satisfies Record<string, Bilingual>;
 export type ProductPage = keyof typeof productPageSlugs;
 export const productPages = Object.keys(productPageSlugs) as ProductPage[];
