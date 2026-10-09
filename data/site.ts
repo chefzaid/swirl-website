@@ -103,6 +103,10 @@ const articleSlugs = {
     fr: 'quitter-un-hyperscaler',
     en: 'leaving-a-hyperscaler',
   },
+  'french-e-invoicing': {
+    fr: 'facturation-electronique-2026',
+    en: 'french-e-invoicing',
+  },
 } satisfies Record<string, Bilingual>;
 export type Article = keyof typeof articleSlugs;
 export const articles = Object.keys(articleSlugs) as Article[];

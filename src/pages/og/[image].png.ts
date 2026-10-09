@@ -82,7 +82,7 @@ function card({ page, lang }: DocumentRoute, heading = ''): SocialCard {
         accent: en
           ? 'Rules and practice, checked.'
           : 'Les règles et la pratique, vérifiées.',
-        tags: ['NIS2', 'DORA', 'Cloud'],
+        tags: ['NIS2', 'DORA', 'Data Act', 'Factur-X'],
       };
     case 'article':
       return {
