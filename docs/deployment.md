@@ -251,9 +251,12 @@ UPDATE contact_crm_queue SET status = 'queued', run_at = 0 WHERE status = 'manua
 ```
 
 Every page shows the **Chat with us** button (`src/components/SiteChat.astro`),
-with Chloé marked online. Hovering or focusing it only opens a connection to
-Odoo; nothing is requested or stored until the visitor selects it. It then
-shows a chat window of its own at once (Chloé, online, typing) while it frames
+with Chloé marked online. It hydrates as the page loads, and a tap that comes
+earlier is kept by the page script and honoured once it is ready. Hovering or
+focusing it only opens a connection to Odoo; nothing is requested or stored
+until the visitor selects it. It then shows, at once, a window laid out like
+Odoo's chat (same font, header, buttons and message box, with Chloé typing)
+while it frames
 `https://odoo.swirlit.dev/platform_crm_intake/chat/1?lang=<fr|en>&open=1`, which
 runs Odoo's widget on Odoo's origin, so the page's Content Security Policy only
 adds `frame-src https://odoo.swirlit.dev`. Odoo's widget takes a moment to start

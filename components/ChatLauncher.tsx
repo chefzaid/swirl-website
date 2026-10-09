@@ -1,5 +1,11 @@
-import { MessageCircle, X } from 'lucide-react';
-import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
+import { MessageCircle, Minus, Send, Smile, X } from 'lucide-react';
+import {
+  useEffect,
+  useEffectEvent,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from 'react';
 import type { Lang } from '@/data/portfolio';
 
 // Odoo Live Chat runs in a frame on Odoo's own origin, so this page keeps its
@@ -100,6 +106,12 @@ export default function ChatLauncher({
     document.head.append(link);
   };
 
+  // Closing our window before Odoo's chat is ready keeps that chat hidden.
+  const dismiss = () => {
+    dismissed.current = true;
+    setState('closed');
+  };
+
   const start = () => {
     dismissed.current = false;
     setState('loading');
@@ -111,6 +123,18 @@ export default function ChatLauncher({
       );
     else setRequested(`${chatUrl}&open=1`);
   };
+
+  // A tap before this button was ready is kept by the page script
+  // (src/layouts/Layout.astro): honour it once the button is interactive.
+  const startPending = useEffectEvent(start);
+  useEffect(() => {
+    const root = document.documentElement;
+    root.dataset.chatReady = '1';
+    if (!root.dataset.chatPending) return;
+    delete root.dataset.chatPending;
+    const timer = setTimeout(startPending);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <>
@@ -125,26 +149,32 @@ export default function ChatLauncher({
         />
       )}
       {state === 'loading' && (
+        // Laid out like Odoo's chat window, which replaces it once ready.
         <section
           className="chat-shell"
           aria-label={en ? 'Live chat' : 'Chat en direct'}
         >
           <header>
-            <img src="/assets/chloe.svg" alt="" width="36" height="36" />
-            <div>
+            <img src="/assets/chloe.svg" alt="" width="24" height="24" />
+            <div className="chat-shell-title">
               <strong>{agent}</strong>
               <Online en={en} />
             </div>
             <button
               type="button"
-              className="chat-shell-close"
-              onClick={() => {
-                dismissed.current = true;
-                setState('closed');
-              }}
+              className="chat-shell-action"
+              onClick={dismiss}
+              aria-label={en ? 'Minimize' : 'Réduire'}
+            >
+              <Minus size={14} strokeWidth={2.5} aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              className="chat-shell-action"
+              onClick={dismiss}
               aria-label={en ? 'Close' : 'Fermer'}
             >
-              <X size={18} aria-hidden="true" />
+              <X size={14} strokeWidth={2.5} aria-hidden="true" />
             </button>
           </header>
           <output className="chat-shell-body">
@@ -153,12 +183,24 @@ export default function ChatLauncher({
                 ? `${agent} is joining the chat…`
                 : `${agent} rejoint la discussion…`}
             </span>
-            <span className="chat-typing" aria-hidden="true">
-              <i />
-              <i />
-              <i />
+            <span className="chat-shell-message" aria-hidden="true">
+              <img src="/assets/chloe.svg" alt="" width="24" height="24" />
+              <span className="chat-typing">
+                <i />
+                <i />
+                <i />
+              </span>
             </span>
           </output>
+          <div className="chat-shell-composer" aria-hidden="true">
+            <svg viewBox="0 0 16 16" width="14" height="14">
+              <circle cx="8" cy="8" r="8" fill="currentColor" />
+              <path d="M8 4.5v7M4.5 8h7" stroke="#fff" strokeWidth="1.8" />
+            </svg>
+            <span>{en ? 'Say something...' : 'Dites quelque chose...'}</span>
+            <Smile size={14} />
+            <Send size={14} />
+          </div>
         </section>
       )}
       {state === 'failed' ? (

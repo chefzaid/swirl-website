@@ -58,10 +58,11 @@ if (path === homePath(lang)) {
     provider: { '@id': organizationId }, url: canonical + '#home' });
 }
 // Dark by default. Applies the visitor's light or dark choice before the page
-// paints, and handles every [data-theme-toggle] button (components/SiteHeader).
-// It runs at the start of <body>, after the policy Astro adds at the end of
-// <head>, which allows it by its hash.
-const themeScript = `(() => {
+// paints, handles every [data-theme-toggle] button (components/SiteHeader), and
+// keeps a tap on the chat button that comes before the button is ready
+// (components/ChatLauncher). It runs at the start of <body>, after the policy
+// Astro adds at the end of <head>, which allows it by its hash.
+const pageScript = `(() => {
   const root = document.documentElement;
   const apply = (light) => {
     root.dataset.theme = light ? 'light' : 'dark';
@@ -74,13 +75,14 @@ const themeScript = `(() => {
   apply(stored === 'light');
   document.addEventListener('DOMContentLoaded', () => apply(root.dataset.theme === 'light'));
   document.addEventListener('click', (event) => {
+    if (event.target.closest?.('.chat-launcher') && !root.dataset.chatReady) root.dataset.chatPending = '1';
     if (!event.target.closest?.('[data-theme-toggle]')) return;
     const light = root.dataset.theme !== 'light';
     apply(light);
     try { localStorage.setItem('theme', light ? 'light' : 'dark'); } catch {}
   });
 })();`;
-Astro.csp?.insertScriptHash(`sha256-${createHash('sha256').update(themeScript).digest('base64')}`);
+Astro.csp?.insertScriptHash(`sha256-${createHash('sha256').update(pageScript).digest('base64')}`);
 // Escape '<' so content cannot terminate the JSON-LD script element.
 const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': [...graph, ...structuredData] }).replace(/</g, '\\u003c');
 ---
@@ -123,7 +125,7 @@ const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': [...
     </>}
   </head>
   <body id="top">
-    <script is:inline set:html={themeScript} />
+    <script is:inline set:html={pageScript} />
     <slot />
   </body>
 </html>

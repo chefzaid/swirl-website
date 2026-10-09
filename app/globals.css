@@ -360,6 +360,7 @@ h1 > span {
   filter: brightness(0);
   opacity: 0.72;
 }
+:root[data-theme='light'] .client-logo--sg img,
 :root[data-theme='light'] .client-logo--bpce img,
 :root[data-theme='light'] .client-logo--bouygues img {
   filter: grayscale(1);
@@ -522,7 +523,8 @@ button.chat-launcher:hover {
   background: #22c55e;
   box-shadow: 0 0 0 2px rgb(23 28 17 / 15%);
 }
-/* Shown from the click until Odoo's chat is ready; matches its header. */
+/* Shown from the click until Odoo's chat is ready: same font, header, message
+   and composer positions as Odoo's chat window, which then replaces it. */
 .chat-shell {
   position: fixed;
   right: 24px;
@@ -537,41 +539,98 @@ button.chat-launcher:hover {
   border-radius: 12px;
   background: #f8f9fa;
   color: #171c11;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
+    Ubuntu, 'Noto Sans', Arial, sans-serif;
   box-shadow: 0 16px 48px rgb(0 0 0 / 45%);
 }
 .chat-shell header {
   display: flex;
+  flex-shrink: 0;
   align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
+  gap: 6px;
+  height: 41px;
+  padding-left: 12px;
+  border-bottom: 1px solid #dee2e6;
   /* Odoo's chat header colours, in both themes. */
   background: #d7ee92;
   color: #171c11;
 }
-.chat-shell header img {
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-}
-.chat-shell header strong {
-  display: block;
-  font-size: 15px;
-}
-.chat-shell-close {
-  display: inline-flex;
-  margin-left: auto;
-  padding: 6px;
+.chat-shell img {
+  width: 24px;
+  height: 24px;
   border-radius: 6px;
-  color: inherit;
+}
+.chat-shell-title {
+  display: flex;
+  flex-direction: column;
+  margin-right: auto;
+}
+.chat-shell-title strong {
+  font-size: 16.8px;
+  font-weight: 500;
+  line-height: 20.16px;
+  border-block: 1px solid transparent;
+}
+.chat-shell .chat-status {
+  gap: 5.6px;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 14.4px;
+}
+.chat-shell .chat-online {
+  box-shadow: 0 0 0 2px rgb(34 197 94 / 30%);
+}
+.chat-shell-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 25px;
+  margin-right: 17px;
+  color: #171c11;
+  opacity: 0.5;
   cursor: pointer;
 }
-.chat-shell-close:hover {
-  background: rgb(23 28 17 / 10%);
+.chat-shell-action:last-child {
+  margin-right: 4px;
+}
+.chat-shell-action:hover {
+  opacity: 0.9;
 }
 .chat-shell-body {
-  display: block;
+  display: flex;
   flex: 1;
-  padding: 18px 16px;
+  align-items: flex-end;
+  padding: 0 12px 12px;
+}
+.chat-shell-message {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+.chat-shell-composer {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  height: 46px;
+  margin: 0 8px 8px;
+  padding-right: 2px;
+  border: 1px solid #a399c0;
+  border-radius: 7.5px;
+  background: #fff;
+  color: #212529;
+  font-size: 14px;
+}
+.chat-shell-composer > svg {
+  flex-shrink: 0;
+  box-sizing: content-box;
+  padding: 8px;
+}
+.chat-shell-composer > span {
+  flex: 1;
+  padding-left: 8px;
+  color: #bec5cc;
 }
 .chat-typing {
   display: inline-flex;

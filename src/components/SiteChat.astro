@@ -8,4 +8,4 @@ interface Props { lang: Lang; }
 const { lang } = Astro.props;
 ---
 <ChatLauncher lang={lang} agent={persona.name} odooOrigin={siteConfig.odooOrigin} channelId={siteConfig.chatChannelId}
-  contactHref={`${homePath(lang)}#contact`} client:idle />
+  contactHref={`${homePath(lang)}#contact`} client:load />

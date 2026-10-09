@@ -30,8 +30,8 @@ export const product = {
   },
   // Homepage presentation, before the client logos.
   teaser: {
-    fr: 'Déploiement des applications, authentification unique, données, supervision, sécurité, Odoo et preuves de conformité, installés ensemble sur vos serveurs, à coût fixe.',
-    en: 'Application delivery, single sign-on, data, monitoring, security, Odoo and compliance evidence, installed together on your servers at a fixed cost.',
+    fr: 'Déploiement des applications, authentification unique, données, supervision, sécurité, ERP et preuves de conformité, installés ensemble sur vos serveurs, à coût fixe.',
+    en: 'Application delivery, single sign-on, data, monitoring, security, ERP and compliance evidence, installed together on your servers at a fixed cost.',
   },
   tags: [
     'Bare metal · Kubernetes',
