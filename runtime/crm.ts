@@ -16,6 +16,7 @@ interface Due {
 }
 interface Inquiry {
   id: string;
+  company: string | null;
   name: string;
   email: string;
   service: string;
@@ -66,14 +67,14 @@ export class CrmDispatcher {
     if (!claim) return false;
     const inquiry = await this.database
       .prepare(
-        'SELECT id,name,email,service,message,lang FROM contact_messages WHERE id = ?',
+        'SELECT id,company,name,email,service,message,lang FROM contact_messages WHERE id = ?',
       )
       .bind(claim.contact_id)
       .first<Inquiry>();
     if (!inquiry) throw new Error('CRM queue contact is missing');
     const outcome = await submitLead(
       this.env,
-      { ...inquiry, subject: inquiry.service },
+      { ...inquiry, company: inquiry.company ?? '', subject: inquiry.service },
       this.send,
     );
     const now = Date.now();

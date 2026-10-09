@@ -15,6 +15,7 @@ const odoo = {
 };
 const inquiry = {
   id: '11111111-1111-4111-8111-111111111111',
+  company: '',
   name: 'Ada Lovelace',
   email: 'ada@example.test',
   subject: 'Audit NIS2',
@@ -87,6 +88,8 @@ function stored() {
   const DB = new SqliteContactDatabase(':memory:', 'db/migrations');
   const contact: ContactData = {
     id: crypto.randomUUID(),
+    topic: 'project',
+    company: '',
     name: 'Test visitor',
     email: 'visitor@example.test',
     subject: 'Private cloud',

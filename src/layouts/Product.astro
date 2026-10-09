@@ -20,7 +20,8 @@ const structuredData = [
     mainEntity: product.faq.map(item => ({ '@type': 'Question', name: item.question[lang],
       acceptedAnswer: { '@type': 'Answer', text: item.answer[lang] } })) },
 ];
-const demo = `${homePath(lang)}#contact`;
+// Opens the contact form with the Swirl Cloud demo request selected.
+const demo = `${homePath(lang)}?topic=demo#contact`;
 ---
 <Subpage lang={lang} path={path} title={`${siteConfig.name} | ${product.title[lang]}`} description={product.description[lang]}
   breadcrumbs={[{ name: product.name, path }]} structuredData={structuredData}

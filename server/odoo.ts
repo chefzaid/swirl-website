@@ -8,6 +8,8 @@ export interface OdooEnv {
 }
 export interface LeadInquiry {
   id: string;
+  // Empty unless the visitor named a company (Swirl Cloud demo requests).
+  company: string;
   name: string;
   email: string;
   subject: string;
@@ -48,6 +50,7 @@ export async function submitLead(
           values: {
             name: inquiry.subject,
             contact_name: inquiry.name,
+            ...(inquiry.company ? { partner_name: inquiry.company } : {}),
             email_from: inquiry.email,
             description: inquiry.message,
             lang: inquiry.lang === 'en' ? 'en_US' : 'fr_FR',

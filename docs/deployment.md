@@ -235,6 +235,12 @@ inquiries; they wait in `contact_crm_queue` and are sent once Odoo is
 configured. The SQLite migration and PostgreSQL schema version 2 also queue
 inquiries stored before the integration existed.
 
+A lead carries the inquiry's subject as its name, the visitor's name, email,
+message and language. A Swirl Cloud demo request (`topic = 'demo'` in
+`contact_messages`, added by SQLite migration `0002` and PostgreSQL schema
+version 3) has no visitor subject: its lead is named
+`Démo Swirl Cloud — <company>` and the company is sent as `partner_name`.
+
 Each queue row records `status` (`queued`, `sent` or `manual`), `attempts`,
 `lead_id` and `last_error`. Odoo outages and unexpected replies are retried with
 backoff up to hourly; a rejected key or request (`401`, `403`, `422`) is set to

@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtemp, rm } from 'node:fs/promises';
+import { copyFile, mkdir, mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { once } from 'node:events';
@@ -28,6 +28,8 @@ if (
   );
 const fixture = (): ContactData => ({
   id: crypto.randomUUID(),
+  topic: 'project',
+  company: '',
   name: 'Test visitor',
   email: 'visitor@example.test',
   subject: 'Architecture',
@@ -51,6 +53,14 @@ void test('PostgreSQL shared storage, delivery ownership and snapshot migration'
   const crmRow = async (columns: string) => {
     const [row] = await db.sql.unsafe(
       `SELECT ${columns} FROM contact_crm_queue`,
+    );
+    return Object.fromEntries(
+      columns.split(',').map((column) => [column, row?.[column]]),
+    );
+  };
+  const contactRow = async (columns: string) => {
+    const [row] = await db.sql.unsafe(
+      `SELECT ${columns} FROM contact_messages`,
     );
     return Object.fromEntries(
       columns.split(',').map((column) => [column, row?.[column]]),
@@ -252,7 +262,7 @@ void test('PostgreSQL shared storage, delivery ownership and snapshot migration'
       try {
         const path = join(directory, 'contact.sqlite');
         const sqlite = new SqliteContactDatabase(path, 'db/migrations');
-        const row = fixture();
+        const row = { ...fixture(), topic: 'demo' as const, company: 'Acme' };
         await insertWithinLimits(
           sqlite,
           row,
@@ -271,13 +281,9 @@ void test('PostgreSQL shared storage, delivery ownership and snapshot migration'
         const result = await importSqliteSnapshot(db, path);
         assert.deepEqual(result, { imported: true, contacts: 1, counters: 4 });
         assert.equal((await importSqliteSnapshot(db, path)).imported, false);
-        assert.equal(
-          (
-            await db.sql.unsafe(
-              'SELECT notification_status FROM contact_messages',
-            )
-          )[0].notification_status,
-          'failed',
+        assert.deepEqual(
+          await contactRow('notification_status,topic,company'),
+          { notification_status: 'failed', topic: 'demo', company: 'Acme' },
         );
         assert.equal(
           (
@@ -350,6 +356,9 @@ void test('PostgreSQL shared storage, delivery ownership and snapshot migration'
     async () => {
       const row = fixture();
       await db.sql.unsafe('DROP TABLE contact_crm_queue');
+      await db.sql.unsafe(
+        'ALTER TABLE contact_messages DROP COLUMN topic, DROP COLUMN company',
+      );
       await db.sql.unsafe('UPDATE swirl_website_schema SET version = 1');
       await db.sql.unsafe(
         "INSERT INTO contact_messages (id,name,email,service,message,lang,created_at) VALUES ($1,'A','a@example.test','S','A long enough message.','fr',123)",
@@ -363,6 +372,62 @@ void test('PostgreSQL shared storage, delivery ownership and snapshot migration'
         status: 'queued',
         run_at: 123,
       });
+    },
+  );
+  await reset();
+  await t.test(
+    'schema version 2 upgrades earlier inquiries to projects',
+    async () => {
+      const row = fixture();
+      await db.sql.unsafe(
+        'ALTER TABLE contact_messages DROP COLUMN topic, DROP COLUMN company',
+      );
+      await db.sql.unsafe('UPDATE swirl_website_schema SET version = 2');
+      await db.sql.unsafe(
+        "INSERT INTO contact_messages (id,name,email,service,message,lang,created_at) VALUES ($1,'A','a@example.test','S','A long enough message.','fr',123)",
+        [row.id],
+      );
+      assert.equal(await db.healthy(), false);
+      await initializePostgres(db);
+      assert.equal(await db.healthy(), true);
+      assert.deepEqual(await contactRow('topic,company'), {
+        topic: 'project',
+        company: null,
+      });
+      await assert.rejects(
+        db.sql.unsafe("UPDATE contact_messages SET topic = 'other'"),
+      );
+    },
+  );
+  await reset();
+  await t.test(
+    'snapshots taken before the topic migration import as projects',
+    async () => {
+      const directory = await mkdtemp(join(tmpdir(), 'swirl-website-pg-old-'));
+      try {
+        const migrations = join(directory, 'migrations');
+        await mkdir(migrations);
+        for (const name of [
+          '0000_abnormal_king_bedlam.sql',
+          '0001_odoo_crm_outbox.sql',
+        ])
+          await copyFile(join('db/migrations', name), join(migrations, name));
+        const path = join(directory, 'contact.sqlite');
+        const sqlite = new SqliteContactDatabase(path, migrations);
+        sqlite.sqlite
+          .prepare(
+            "INSERT INTO contact_messages (id,name,email,service,message,lang,created_at) VALUES ('old-1','A','a@example.test','S','A long enough message.','fr',123)",
+          )
+          .run();
+        sqlite.close();
+        assert.equal((await importSqliteSnapshot(db, path)).contacts, 1);
+        assert.deepEqual(await contactRow('topic,company'), {
+          topic: 'project',
+          company: null,
+        });
+      } finally {
+        await rm(directory, { recursive: true, force: true });
+      }
     },
   );
   await t.test(

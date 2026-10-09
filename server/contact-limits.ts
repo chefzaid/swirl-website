@@ -94,6 +94,8 @@ export async function insertWithinLimits(
   db: ContactDatabase,
   row: {
     id: string;
+    topic: string;
+    company: string;
     name: string;
     email: string;
     subject: string;
@@ -149,12 +151,14 @@ export async function insertWithinLimits(
   statements.push(
     db
       .prepare(`
-    INSERT INTO contact_messages (id,name,email,service,message,lang,created_at,notification_status)
-    SELECT ?,?,?,?,?,?,?,? WHERE EXISTS (SELECT 1 FROM contact_rate_limits WHERE key = ?)
+    INSERT INTO contact_messages (id,topic,company,name,email,service,message,lang,created_at,notification_status)
+    SELECT ?,?,?,?,?,?,?,?,?,? WHERE EXISTS (SELECT 1 FROM contact_rate_limits WHERE key = ?)
     ON CONFLICT(id) DO NOTHING
   `)
       .bind(
         row.id,
+        row.topic,
+        row.company || null,
         row.name,
         row.email,
         row.subject,

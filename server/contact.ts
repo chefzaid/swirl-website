@@ -15,8 +15,12 @@ export interface ContactEnv {
   MS_CLIENT_SECRET?: string;
   CONTACT_SENDER?: string;
 }
+export type ContactTopic = 'project' | 'demo';
 export interface ContactData {
   id: string;
+  // A project inquiry, or a Swirl Cloud demo request naming the company.
+  topic: ContactTopic;
+  company: string;
   name: string;
   email: string;
   subject: string;
@@ -49,11 +53,20 @@ function validEmail(email: string): boolean {
   return dot > 0 && dot < domain.length - 1;
 }
 
+// Demo requests carry no visitor subject; the company names the inquiry, its
+// notification and its CRM lead.
+export const demoSubject = (company: string) => `Démo Swirl Cloud — ${company}`;
+
 export function validateContact(value: unknown): ContactData | null {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
   const v = value as Record<string, unknown>;
+  // Forms opened before the topic choice existed send project inquiries.
+  const topic = v.topic ?? 'project';
+  if (topic !== 'project' && topic !== 'demo') return null;
+  const company = v.company ?? '';
+  if (typeof company !== 'string') return null;
   // Accept the previous field name while already-open forms finish submitting.
-  const subject = v.subject ?? v.service;
+  const subject = topic === 'demo' ? '' : (v.subject ?? v.service);
   if (typeof subject !== 'string') return null;
   if (
     !['id', 'name', 'email', 'message', 'website'].every(
@@ -63,7 +76,9 @@ export function validateContact(value: unknown): ContactData | null {
     return null;
   const data = {
     ...v,
-    subject: subject.trim(),
+    topic,
+    company: company.trim(),
+    subject: topic === 'demo' ? demoSubject(company.trim()) : subject.trim(),
     name: (v.name as string).trim(),
     email: (v.email as string).trim().toLowerCase(),
     message: (v.message as string).trim(),
@@ -86,6 +101,11 @@ export function validateContact(value: unknown): ContactData | null {
     data.subject.length > 160 ||
     // oxlint-disable-next-line no-control-regex -- Subjects must not contain ASCII control bytes.
     /[\x00-\x1f\x7f]/.test(data.subject) ||
+    // 140 keeps a demo subject (prefix and company) within the 160 above.
+    data.company.length > 140 ||
+    (data.topic === 'demo' && data.company.length < 2) ||
+    // oxlint-disable-next-line no-control-regex -- Company names are single-line text.
+    /[\x00-\x1f\x7f]/.test(data.company) ||
     !['fr', 'en'].includes(data.lang) ||
     data.consent !== true ||
     !Number.isFinite(data.startedAt) ||
@@ -131,6 +151,20 @@ async function readLimited(request: Request) {
 }
 type NotificationStatus = 'unconfigured' | 'sent' | 'failed';
 
+const notificationSubject = (data: ContactData) =>
+  `Swirl IT — ${data.subject} — ${data.name}`;
+const notificationText = (data: ContactData) =>
+  [
+    `Nom : ${data.name}`,
+    `E-mail : ${data.email}`,
+    ...(data.company ? [`Entreprise : ${data.company}`] : []),
+    `Sujet : ${data.subject}`,
+    '',
+    data.message,
+    '',
+    `Référence : ${data.id}`,
+  ].join('\n');
+
 export async function notifyContact(
   env: ContactEnv,
   data: ContactData,
@@ -160,8 +194,8 @@ export async function notifyResend(
         from: `Swirl IT <${env.CONTACT_SENDER}>`,
         to: ['contact@swirlit.dev'],
         reply_to: data.email,
-        subject: `Swirl IT — ${data.subject} — ${data.name}`,
-        text: `Nom : ${data.name}\nE-mail : ${data.email}\nSujet : ${data.subject}\n\n${data.message}\n\nRéférence : ${data.id}`,
+        subject: notificationSubject(data),
+        text: notificationText(data),
       }),
       signal: AbortSignal.timeout(6000),
     });
@@ -219,11 +253,8 @@ export async function notifyExchange(
         },
         body: JSON.stringify({
           message: {
-            subject: `Swirl IT — ${data.subject} — ${data.name}`,
-            body: {
-              contentType: 'Text',
-              content: `Nom : ${data.name}\nE-mail : ${data.email}\nSujet : ${data.subject}\n\n${data.message}\n\nRéférence : ${data.id}`,
-            },
+            subject: notificationSubject(data),
+            body: { contentType: 'Text', content: notificationText(data) },
             toRecipients: [
               { emailAddress: { address: 'contact@swirlit.dev' } },
             ],
@@ -304,13 +335,15 @@ interface StoredContact {
   name: string;
   message: string;
   service: string;
+  topic: string;
+  company: string | null;
   notification_status: string;
 }
 
 function findContact(db: ContactDatabase, id: string) {
   return db
     .prepare(
-      'SELECT email,name,message,service,notification_status FROM contact_messages WHERE id = ?',
+      'SELECT email,name,message,service,topic,company,notification_status FROM contact_messages WHERE id = ?',
     )
     .bind(id)
     .first<StoredContact>();
@@ -324,7 +357,9 @@ function duplicateResponse(
     existing.email !== data.email ||
     existing.name !== data.name ||
     existing.message !== data.message ||
-    existing.service !== data.subject
+    existing.service !== data.subject ||
+    existing.topic !== data.topic ||
+    (existing.company ?? '') !== data.company
   )
     return json({ error: 'conflict' }, 409);
   return json({ ok: true, notified: existing.notification_status === 'sent' });

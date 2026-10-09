@@ -39,7 +39,7 @@ time, sovereignty mode, compliance evidence); mark the rest as roadmap.
 - [ ] Cost calculator (React island): server count and size, users and applications in; fixed monthly cost and an equivalent hyperscaler estimate out, with every assumption and price source shown and dated.
 - [ ] Comparison page against a hyperscaler, a do-it-yourself Kubernetes distribution and a stack of separate SaaS subscriptions, with factual criteria only.
 - [ ] Case study of the company's own installation: what runs on it, deployment frequency, recovery drills and availability, from real measurements.
-- [ ] Demo request path: a "Swirl Cloud demo" choice in the contact form, stored like other inquiries (and sent to the CRM once the Odoo integration above exists).
+- [x] Demo request path: a "Swirl Cloud demo" choice in the contact form (preselected from the product page's demo links), naming the company instead of a subject, stored like other inquiries and sent to the CRM as a lead named after the company with the company as partner. *(2026-10-09)*
 - [ ] Guided product tour (screenshots or short videos of the setup hub, portal, deployment and compliance views) without requiring a live account.
 - [ ] Trust center page: data location, subprocessors, data processing agreement template, certification status, status page link and security contact.
 - [ ] Serve `/.well-known/security.txt` with the security contact, policy link and expiry, and keep it in the built-security check.

@@ -1,10 +1,25 @@
-import { useEffect, useRef, useState, type SubmitEvent } from 'react';
+import {
+  useEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+  type SubmitEvent,
+} from 'react';
 import { ArrowUpRight, CheckCircle2, Loader2, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import type { Lang } from '@/data/portfolio';
+type Topic = 'project' | 'demo';
+// The Swirl Cloud page's "Request a demo" links open the form with ?topic=demo.
+// The address does not change while the page is open, so nothing to observe.
+const unobserved = () => () => {};
+const linkedTopic = (): Topic =>
+  new URLSearchParams(window.location.search).get('topic') === 'demo'
+    ? 'demo'
+    : 'project';
+const serverTopic = (): Topic => 'project';
 export default function ContactForm({ lang }: Readonly<{ lang: Lang }>) {
   const t = (fr: string, en: string) => (lang === 'en' ? en : fr);
   const [state, setState] = useState<'idle' | 'sending' | 'success' | 'error'>(
@@ -12,6 +27,10 @@ export default function ContactForm({ lang }: Readonly<{ lang: Lang }>) {
   );
   const [error, setError] = useState('');
   const [notification, setNotification] = useState(false);
+  const linked = useSyncExternalStore(unobserved, linkedTopic, serverTopic);
+  const [chosen, setTopic] = useState<Topic>();
+  const topic = chosen ?? linked;
+  const demo = topic === 'demo';
   const started = useRef(0);
   useEffect(() => {
     started.current = Date.now();
@@ -172,26 +191,70 @@ export default function ContactForm({ lang }: Readonly<{ lang: Lang }>) {
               />
             </div>
           </div>
-          <div className="form-field">
-            <Label htmlFor="subject">
-              {t('Sujet', 'Subject')} <span>*</span>
-            </Label>
-            <Input
-              id="subject"
-              name="subject"
-              type="text"
-              placeholder={t(
-                'De quoi souhaitez-vous parler ?',
-                'What would you like to discuss?',
-              )}
-              required
-              minLength={1}
-              maxLength={160}
-            />
-          </div>
+          <fieldset className="topic-choice">
+            <legend>{t('Votre demande', 'Your request')}</legend>
+            <div className="topic-options">
+              {(['project', 'demo'] as const).map((value) => (
+                <label key={value}>
+                  <input
+                    type="radio"
+                    name="topic"
+                    value={value}
+                    checked={topic === value}
+                    onChange={() => setTopic(value)}
+                  />
+                  {value === 'demo'
+                    ? t('Une démo Swirl Cloud', 'A Swirl Cloud demo')
+                    : t('Un projet', 'A project')}
+                </label>
+              ))}
+            </div>
+          </fieldset>
+          {demo ? (
+            <div className="form-field">
+              <Label htmlFor="company">
+                {t('Votre entreprise', 'Your company')} <span>*</span>
+              </Label>
+              <Input
+                id="company"
+                name="company"
+                autoComplete="organization"
+                placeholder={t('Nom de l’entreprise', 'Company name')}
+                required
+                minLength={2}
+                maxLength={140}
+              />
+            </div>
+          ) : (
+            <div className="form-field">
+              <Label htmlFor="subject">
+                {t('Sujet', 'Subject')} <span>*</span>
+              </Label>
+              <Input
+                id="subject"
+                name="subject"
+                type="text"
+                placeholder={t(
+                  'De quoi souhaitez-vous parler ?',
+                  'What would you like to discuss?',
+                )}
+                required
+                minLength={1}
+                maxLength={160}
+              />
+            </div>
+          )}
           <div className="form-field">
             <Label htmlFor="message">
-              {t('Parlez-nous de votre projet', 'Tell us about your project')}{' '}
+              {demo
+                ? t(
+                    'Parlez-nous de votre contexte',
+                    'Tell us about your context',
+                  )
+                : t(
+                    'Parlez-nous de votre projet',
+                    'Tell us about your project',
+                  )}{' '}
               <span>*</span>
             </Label>
             <Textarea
@@ -200,10 +263,17 @@ export default function ContactForm({ lang }: Readonly<{ lang: Lang }>) {
               rows={5}
               minLength={20}
               maxLength={5000}
-              placeholder={t(
-                'Votre contexte, vos enjeux, vos idées…',
-                'Your context, your challenges, your ideas…',
-              )}
+              placeholder={
+                demo
+                  ? t(
+                      'Effectif, applications à héberger, exigences (NIS2, DORA…)',
+                      'Headcount, applications to host, requirements (NIS2, DORA…)',
+                    )
+                  : t(
+                      'Votre contexte, vos enjeux, vos idées…',
+                      'Your context, your challenges, your ideas…',
+                    )
+              }
               required
             />
           </div>
@@ -249,7 +319,9 @@ export default function ContactForm({ lang }: Readonly<{ lang: Lang }>) {
               </>
             ) : (
               <>
-                {t('Envoyer le message', 'Send message')}
+                {demo
+                  ? t('Demander une démo', 'Request a demo')
+                  : t('Envoyer le message', 'Send message')}
                 <ArrowUpRight size={18} />
               </>
             )}

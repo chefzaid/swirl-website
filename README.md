@@ -77,7 +77,7 @@ See [SEO maintenance](docs/seo.md) for route and metadata changes, and
 
 ## Contact inquiries
 
-The form stores inquiries in the private `contact_messages` table and confirms **storage**, not email delivery. It uses origin checks, strict field validation (including a free-text subject of 1–160 characters), bounded request bodies, a honeypot, timing checks, atomic rate counters and idempotency keys. There is no public endpoint to list messages.
+The form stores inquiries in the private `contact_messages` table and confirms **storage**, not email delivery. Visitors choose a project inquiry or a **Swirl Cloud demo** request (`topic`); a demo request names the company instead of a subject, and the Swirl Cloud page's demo links open the form with `?topic=demo`. It uses origin checks, strict field validation (including a free-text subject of 1–160 characters), bounded request bodies, a honeypot, timing checks, atomic rate counters and idempotency keys. There is no public endpoint to list messages.
 
 Inspect production inquiries through an authenticated operator session against
 the selected database. To inspect a local SQLite database without modifying it:
@@ -87,7 +87,7 @@ node --input-type=module <<'JS'
 import { DatabaseSync } from 'node:sqlite';
 const db = new DatabaseSync('.data/contact.sqlite', { readOnly: true });
 try {
-  console.table(db.prepare('SELECT id, name, email, service, created_at, notification_status FROM contact_messages ORDER BY created_at DESC').all());
+  console.table(db.prepare('SELECT id, topic, company, name, email, service, created_at, notification_status FROM contact_messages ORDER BY created_at DESC').all());
 } finally {
   db.close();
 }

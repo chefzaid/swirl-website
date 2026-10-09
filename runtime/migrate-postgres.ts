@@ -54,11 +54,18 @@ export async function importSqliteSnapshot(
           )
           .iterate())
           crm.set(String(state.contact_id), state);
+      // Snapshots taken before the demo request existed hold project inquiries.
+      const topic = snapshot
+        .prepare('SELECT name FROM pragma_table_info(?)')
+        .all('contact_messages')
+        .some((column) => column.name === 'topic')
+        ? 'topic,company'
+        : "'project' AS topic,NULL AS company";
       // No historical record is enqueued for delivery. Existing sent, failed,
       // unconfigured and pending statuses survive exactly as saved in SQLite.
       for (const row of snapshot
         .prepare(
-          'SELECT id,name,email,service,message,lang,created_at,notification_status FROM contact_messages',
+          `SELECT id,${topic},name,email,service,message,lang,created_at,notification_status FROM contact_messages`,
         )
         .iterate()) {
         const old = await sql.unsafe(
@@ -72,9 +79,11 @@ export async function importSqliteSnapshot(
             );
         } else {
           await sql.unsafe(
-            'INSERT INTO contact_messages (id,name,email,service,message,lang,created_at,notification_status) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)',
+            'INSERT INTO contact_messages (id,topic,company,name,email,service,message,lang,created_at,notification_status) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)',
             [
               String(row.id),
+              String(row.topic),
+              row.company == null ? null : String(row.company),
               String(row.name),
               String(row.email),
               String(row.service),

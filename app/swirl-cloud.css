@@ -1,5 +1,6 @@
-/* Swirl Cloud product page, and its link beside "Explore this expertise" on
-   the homepage service cards. Builds on the service styles in globals.css. */
+/* Swirl Cloud product page, its link beside "Explore this expertise" on the
+   homepage service cards, and the demo choice in the contact form. Builds on
+   the service and form styles in globals.css. */
 .service-links {
   display: flex;
   flex-wrap: wrap;
@@ -84,6 +85,56 @@
 }
 @media (max-width: 760px) {
   .product-layers {
+    grid-template-columns: 1fr;
+  }
+}
+/* Contact form: a project or a Swirl Cloud demo request. */
+.topic-choice {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+.topic-choice legend {
+  padding: 0;
+  margin-bottom: 11px;
+  font-size: 11px;
+  color: #d1ddc7;
+}
+.topic-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.topic-options label {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 12px 13px;
+  border: 1px solid #414d38;
+  border-radius: 4px;
+  background: #20291d;
+  font-size: 12px;
+  color: #d1ddc7;
+  cursor: pointer;
+}
+.topic-options label:has(input:checked) {
+  border-color: var(--primary);
+  color: #edf3e8;
+}
+.topic-options label:has(input:focus-visible) {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+.topic-options input {
+  width: 14px;
+  height: 14px;
+  margin: 0;
+  flex-shrink: 0;
+  accent-color: var(--primary);
+}
+@media (max-width: 420px) {
+  .topic-options {
     grid-template-columns: 1fr;
   }
 }

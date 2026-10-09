@@ -5,7 +5,7 @@ import type {
   DatabaseStatement,
 } from '../db/index.ts';
 
-export const SCHEMA_VERSION = 2;
+export const SCHEMA_VERSION = 3;
 export const CONTACT_LOCK = 193720;
 type Connection = Pick<postgres.Sql, 'unsafe'>;
 type Binding = string | number | null;
@@ -134,15 +134,15 @@ export async function initializePostgres(
       'SELECT version FROM swirl_website_schema',
     );
     if (previous.length) {
-      if (previous[0].version === 1) {
-        await createCrmQueue(sql);
-        await sql.unsafe('UPDATE swirl_website_schema SET version = $1', [
-          SCHEMA_VERSION,
-        ]);
-        return;
-      }
-      if (previous[0].version !== SCHEMA_VERSION)
+      const version = previous[0].version;
+      if (version === SCHEMA_VERSION) return;
+      if (!(version >= 1 && version < SCHEMA_VERSION))
         throw new Error('Unsupported Swirl Website schema version');
+      if (version < 2) await createCrmQueue(sql);
+      await addInquiryTopic(sql);
+      await sql.unsafe('UPDATE swirl_website_schema SET version = $1', [
+        SCHEMA_VERSION,
+      ]);
       return;
     }
     await sql.unsafe(`CREATE TABLE contact_messages (
@@ -170,6 +170,7 @@ export async function initializePostgres(
       'CREATE TABLE swirl_website_imports (checksum text PRIMARY KEY, imported_at bigint NOT NULL)',
     );
     await createCrmQueue(sql);
+    await addInquiryTopic(sql);
     await sql.unsafe('INSERT INTO swirl_website_schema (version) VALUES ($1)', [
       SCHEMA_VERSION,
     ]);
@@ -190,4 +191,11 @@ async function createCrmQueue(sql: Connection): Promise<void> {
   await sql.unsafe(
     'INSERT INTO contact_crm_queue (contact_id, run_at) SELECT id, created_at FROM contact_messages',
   );
+}
+
+// Version 3: a project inquiry or a Swirl Cloud demo request with a company.
+async function addInquiryTopic(sql: Connection): Promise<void> {
+  await sql.unsafe(`ALTER TABLE contact_messages
+    ADD COLUMN topic text NOT NULL DEFAULT 'project' CHECK (topic IN ('project','demo')),
+    ADD COLUMN company text`);
 }

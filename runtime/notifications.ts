@@ -137,6 +137,8 @@ export class NotificationDispatcher {
     if (!row) throw new Error('Notification contact is missing');
     const data: ContactData = {
       id: row.id,
+      topic: row.topic,
+      company: row.company ?? '',
       name: row.name,
       email: row.email,
       subject: row.service,
