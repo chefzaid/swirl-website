@@ -100,8 +100,8 @@ export const comparison = {
       name: { fr: 'Qui l’exploite', en: 'Who operates it' },
       values: {
         swirl: {
-          fr: 'Vos équipes, avec le hub d’installation et une procédure par alerte, ou Swirl, chez un opérateur de l’Union européenne',
-          en: 'Your team, with the setup hub and a runbook per alert, or Swirl, at an operator in the European Union',
+          fr: 'Vos équipes, avec le hub d’installation et une procédure par alerte, ou Swirl, sur des serveurs hébergés dans l’UE',
+          en: 'Your team, with the setup hub and a runbook per alert, or Swirl, on servers hosted in the EU',
         },
         hyperscaler: {
           fr: 'Le fournisseur pour l’infrastructure, vous pour votre configuration',

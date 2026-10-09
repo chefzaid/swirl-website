@@ -32,8 +32,8 @@ export const sovereignty = {
     {
       title: { fr: 'Vos serveurs', en: 'Your servers' },
       text: {
-        fr: 'Loués chez l’hébergeur et dans le pays de votre choix, installés dans vos locaux, ou opérés par Swirl chez un opérateur de l’Union européenne. Applications, bases de données et sauvegardes locales y restent.',
-        en: 'Rented from the host and in the country you choose, installed on your premises, or operated by Swirl at an operator in the European Union. Applications, databases and local backups stay there.',
+        fr: 'Loués chez l’hébergeur et dans le pays de votre choix, installés dans vos locaux, ou opérés par Swirl sur des serveurs hébergés dans l’UE. Applications, bases de données et sauvegardes locales y restent.',
+        en: 'Rented from the host and in the country you choose, installed on your premises, or operated by Swirl on servers hosted in the EU. Applications, databases and local backups stay there.',
       },
     },
     {
@@ -216,8 +216,8 @@ export const sovereignty = {
         en: 'Where are the servers when Swirl runs the platform?',
       },
       answer: {
-        fr: 'Chez un opérateur de l’Union européenne. Vous pouvez aussi faire tourner Swirl Cloud sur des serveurs de votre choix, loués ou dans vos locaux.',
-        en: 'With an operator in the European Union. You can also run Swirl Cloud on servers of your choice, rented or on your premises.',
+        fr: 'Sur des serveurs hébergés dans l’UE. Vous pouvez aussi faire tourner Swirl Cloud sur des serveurs de votre choix, loués ou dans vos locaux.',
+        en: 'On servers hosted in the EU. You can also run Swirl Cloud on servers of your choice, rented or on your premises.',
       },
     },
   ],

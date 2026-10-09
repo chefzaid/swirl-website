@@ -169,8 +169,8 @@ export const product = {
     {
       title: { fr: 'Opérée par Swirl', en: 'Operated by Swirl' },
       text: {
-        fr: 'Swirl installe et exploite votre plateforme sur des serveurs hébergés chez un opérateur de l’Union européenne.',
-        en: 'Swirl installs and runs your platform on servers hosted by an operator in the European Union.',
+        fr: 'Swirl installe et exploite votre plateforme sur des serveurs hébergés dans l’UE.',
+        en: 'Swirl installs and runs your platform on servers hosted in the EU.',
       },
     },
   ] satisfies Card[],
@@ -199,8 +199,8 @@ export const product = {
         en: 'Where is our data stored?',
       },
       answer: {
-        fr: 'Sur les serveurs que vous choisissez : loués chez un hébergeur européen, installés dans vos locaux, ou opérés par Swirl chez un opérateur de l’Union européenne. La plateforme tient la liste de chaque service externe qu’elle contacte et des données qu’il reçoit, et la télémétrie des éditeurs est désactivée.',
-        en: 'On the servers you choose: rented from a European host, installed on your premises, or operated by Swirl at an operator in the European Union. The platform keeps a list of every external service it contacts and the data each receives, and vendor telemetry is switched off.',
+        fr: 'Sur les serveurs que vous choisissez : loués chez un hébergeur européen, installés dans vos locaux, ou opérés par Swirl sur des serveurs hébergés dans l’UE. La plateforme tient la liste de chaque service externe qu’elle contacte et des données qu’il reçoit, et la télémétrie des éditeurs est désactivée.',
+        en: 'On the servers you choose: rented from a European host, installed on your premises, or operated by Swirl on servers hosted in the EU. The platform keeps a list of every external service it contacts and the data each receives, and vendor telemetry is switched off.',
       },
     },
     {
