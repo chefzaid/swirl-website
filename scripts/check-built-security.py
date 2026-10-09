@@ -1,5 +1,7 @@
 from pathlib import Path
 from html.parser import HTMLParser
+from datetime import datetime, timedelta, timezone
+from urllib.parse import urlsplit
 import hashlib, base64, json
 
 class Page(HTMLParser):
@@ -50,6 +52,20 @@ for path, html in pages.items():
     # Only the Odoo Live Chat origin may be framed; never a wildcard or http.
     assert len(directives['frame-src']) == 1 and directives['frame-src'][0].startswith('https://odoo.'), path
     print(str(path) + ': CSP hashes match every inline script/style')
+# RFC 9116 contact: required fields, an expiry under a year away, and policy
+# links to the disclosure section of a built page.
+fields = [line.split(': ', 1) for line in (Path('dist/client/.well-known/security.txt').read_text().splitlines())]
+assert all(len(field) == 2 for field in fields), 'Malformed security.txt line'
+names = [name for name, _ in fields]
+assert names.count('Contact') == 1 and names.count('Expires') == 1 and 'Policy' in names
+assert dict(fields)['Contact'].startswith('mailto:')
+expires = datetime.fromisoformat(dict(fields)['Expires'].replace('Z', '+00:00'))
+assert timedelta(days=30) < expires - datetime.now(timezone.utc) < timedelta(days=365), expires
+for name, value in fields:
+    if name == 'Policy':
+        page, fragment = urlsplit(value).path, urlsplit(value).fragment
+        assert page in pages and f'id="{fragment}"' in pages[page], value
+print('security.txt has a contact, a valid expiry and working policy links')
 for path in Path('dist/client').rglob('*'):
     if path.is_file():
         assert path.suffix not in ['.map', '.sqlite', '.db', '.sql', '.ts', '.pem']

@@ -99,14 +99,17 @@ export function assetFetcher(directory: string): Env['ASSETS'] {
       } catch {
         return new Response('Invalid path', { status: 400 });
       }
+      // Hidden and private names stay unreachable, except the top-level
+      // /.well-known/ directory that RFC 8615 reserves (security.txt).
       if (
         path.includes('\\') ||
         path.includes('\0') ||
         path
           .split('/')
           .some(
-            (part) =>
-              part.startsWith('.') ||
+            (part, index) =>
+              (part.startsWith('.') &&
+                !(index === 1 && part === '.well-known')) ||
               (part.startsWith('_') && part !== '_astro'),
           )
       )

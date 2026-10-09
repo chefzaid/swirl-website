@@ -228,6 +228,18 @@ void test('Node serves bundled pages, headers, safe assets, durable contact, ali
   await mkdir(join(directory, 'assets'));
   await writeFile(join(directory, 'assets', 'style.css'), 'body{color:blue}');
   await writeFile(join(directory, 'private.txt'), 'private');
+  for (const hidden of ['.well-known', 'nested/.well-known'])
+    await mkdir(join(directory, 'assets', hidden), { recursive: true });
+  await writeFile(
+    join(directory, 'assets', '.well-known', 'security.txt'),
+    'Contact: mailto:security@example.test\n',
+  );
+  for (const file of [
+    '.env.txt',
+    '.well-known/.hidden.txt',
+    'nested/.well-known/security.txt',
+  ])
+    await writeFile(join(directory, 'assets', file), 'private');
   await symlink(
     join(directory, 'private.txt'),
     join(directory, 'assets', 'escape.txt'),
@@ -271,6 +283,16 @@ void test('Node serves bundled pages, headers, safe assets, durable contact, ali
   assert.equal((await fetch(base + '/healthz')).status, 200);
   assert.equal((await fetch(base + '/escape.txt')).status, 404);
   assert.equal((await fetch(base + '/_headers')).status, 404);
+  const securityTxt = await fetch(base + '/.well-known/security.txt');
+  assert.equal(securityTxt.status, 200);
+  assert.match(securityTxt.headers.get('content-type') ?? '', /^text\/plain/);
+  for (const hidden of [
+    '/.env.txt',
+    '/.well-known/.hidden.txt',
+    '/nested/.well-known/security.txt',
+    '/.well-known/%2e%2e/private.txt',
+  ])
+    assert.equal((await fetch(base + hidden)).status, 404, hidden);
   const malformed = await new Promise<{
     status: number;
     frame: string | string[] | undefined;

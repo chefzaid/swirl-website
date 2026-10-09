@@ -43,7 +43,7 @@ time, sovereignty mode, compliance evidence); mark the rest as roadmap.
 - [x] Demo request path: a "Swirl Cloud demo" choice in the contact form (preselected from the product page's demo links), naming the company instead of a subject, stored like other inquiries and sent to the CRM as a lead named after the company with the company as partner. *(2026-10-09)*
 - [ ] Guided product tour (screenshots or short videos of the setup hub, portal, deployment and compliance views) without requiring a live account.
 - [ ] Trust center page: data location, subprocessors, data processing agreement template, certification status, status page link and security contact.
-- [ ] Serve `/.well-known/security.txt` with the security contact, policy link and expiry, and keep it in the built-security check.
+- [x] Serve `/.well-known/security.txt` with the security contact (contact@swirlit.dev), policy links to the disclosure section and a 180-day expiry renewed by each build, and keep it in the built-security check. *(2026-10-09)*
 - [ ] Legal pages for the offer: terms of service, SLA, data processing agreement and acceptable use (FR and EN), linked from the footer.
 - [ ] Releases page listing platform versions, release channels and changelog highlights, linked to the published product documentation.
 - [ ] Resource articles (FR and EN): NIS2 readiness checklist, DORA obligations for ICT suppliers, leaving a hyperscaler, French electronic invoicing; each ends with the demo call to action.

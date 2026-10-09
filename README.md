@@ -34,8 +34,11 @@ sets `PUBLIC_ORIGIN=http://127.0.0.1:8080`; use the same URL in your browser for
 contact submissions. Production sets `PUBLIC_ORIGIN` and `DATA_DIR=/data`
 through Kubernetes. `npm run build` bundles HTML and the request handler into
 `dist/runtime`; CSS, scripts, fonts, images, social cards, robots.txt,
-llms.txt and the sitemap remain in `dist/client`. The Node server applies
-security headers to every response and compresses HTML documents.
+llms.txt, the sitemap and `.well-known/security.txt` remain in `dist/client`.
+The Node server applies security headers to every response and compresses
+HTML documents. `security.txt` (RFC 9116) names the security contact and links
+the disclosure policy on the Swirl Cloud security page; each build renews its
+180-day expiry, so release at least every few months.
 
 See [K3s deployment](docs/deployment.md) for delivery, persistent storage and the
 [Cloudflare edge cache](docs/deployment.md#cloudflare-edge-cache),

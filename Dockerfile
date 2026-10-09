@@ -20,6 +20,7 @@ COPY --chown=node:node dist/client ./dist/client
 COPY --chown=node:node dist/runtime ./dist/runtime
 # Check runtime readability and parseability as the container's unprivileged user.
 RUN test -r ./dist/runtime/main.js && test -r ./dist/client/robots.txt \
+    && test -r ./dist/client/.well-known/security.txt \
     && node --check ./dist/runtime/main.js
 
 FROM node:24.19.0-alpine@sha256:d32cdf619f63fe0471182d08996dd516c6275bb5fd31ae06e55a570bd9e1ad43 AS build
@@ -33,4 +34,5 @@ FROM runtime-base AS runtime
 COPY --from=build --chown=node:node /app/dist/client ./dist/client
 COPY --from=build --chown=node:node /app/dist/runtime ./dist/runtime
 RUN test -r ./dist/runtime/main.js && test -r ./dist/client/robots.txt \
+    && test -r ./dist/client/.well-known/security.txt \
     && node --check ./dist/runtime/main.js
