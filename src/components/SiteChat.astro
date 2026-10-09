@@ -1,0 +1,11 @@
+---
+// The live chat button of every page, named after the chatbot persona.
+import ChatLauncher from '../../components/ChatLauncher';
+import persona from '../../infra/odoo/chat-persona.json';
+import type { Lang } from '../../data/portfolio';
+import { homePath, siteConfig } from '../../data/site';
+interface Props { lang: Lang; }
+const { lang } = Astro.props;
+---
+<ChatLauncher lang={lang} agent={persona.name} odooOrigin={siteConfig.odooOrigin} channelId={siteConfig.chatChannelId}
+  contactHref={`${homePath(lang)}#contact`} client:idle />

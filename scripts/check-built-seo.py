@@ -115,6 +115,8 @@ for path, page in pages.items():
         hrefs = {a.get('href') for tag, a in page.links if tag == 'a'}
         details = {p for p in pages if p.startswith(path) and p != path}
         assert details and details <= hrefs, ('Product detail pages not linked', path)
+    # Every page offers the live chat.
+    assert 'ChatLauncher' in raw[path], ('Chat missing', path)
     # Every page shares the homepage menu, whose phone version is a native popover.
     assert re.search(r'<nav class="mobile-nav" id="mobile-nav" popover="auto"', raw[path]), path
     assert re.search(r'popovertarget="mobile-nav"', raw[path], re.I), path
@@ -164,7 +166,7 @@ for home, hub, prefix in [('/', '/projets/', '/projets/'), ('/en/', '/en/project
 
 for lang, html in manifest['notFound'].items():
     page = Page(html)
-    assert page.lang == lang and len(page.h1s) == 1
+    assert page.lang == lang and len(page.h1s) == 1 and 'ChatLauncher' in html
     assert page.meta['robots'].startswith('noindex')
     assert not [a for tag, a in page.links if tag == 'link' and a.get('rel') in ('canonical', 'alternate')]
     assert not page.graphs and 'og:url' not in page.meta

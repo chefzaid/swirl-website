@@ -2,6 +2,7 @@
 import Layout from './Layout.astro';
 import SiteFooter from '../../components/SiteFooter';
 import SiteHeader from '../../components/SiteHeader';
+import SiteChat from '../components/SiteChat.astro';
 import { services, type Lang } from '../../data/portfolio';
 import { homePath, projectsPath, servicePath, siteConfig } from '../../data/site';
 interface Props { lang: Lang; }
@@ -25,4 +26,5 @@ const links = [
     <ul>{links.map(([href, label]) => <li><a class="text-link" href={href}>{label} <span aria-hidden="true">↗</span></a></li>)}</ul>
   </main>
   <SiteFooter lang={lang} />
+  <SiteChat lang={lang} />
 </Layout>

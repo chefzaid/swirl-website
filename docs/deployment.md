@@ -250,12 +250,16 @@ backoff up to hourly; a rejected key or request (`401`, `403`, `422`) is set to
 UPDATE contact_crm_queue SET status = 'queued', run_at = 0 WHERE status = 'manual';
 ```
 
-The **Chat with us** button on the home pages loads nothing until the visitor
-selects it. It then frames
+Every page shows the **Chat with us** button (`src/components/SiteChat.astro`),
+with Chloé marked online. Hovering or focusing it only opens a connection to
+Odoo; nothing is requested or stored until the visitor selects it. It then
+shows a chat window of its own at once (Chloé, online, typing) while it frames
 `https://odoo.swirlit.dev/platform_crm_intake/chat/1?lang=<fr|en>&open=1`, which
 runs Odoo's widget on Odoo's origin, so the page's Content Security Policy only
-adds `frame-src https://odoo.swirlit.dev`. The frame reports whether the chat is
-open and the button reappears when the visitor closes it; if the chat cannot
+adds `frame-src https://odoo.swirlit.dev`. Odoo's widget takes a moment to start
+(about 700 KB to download and 3 MB of script to run), so the frame replaces that
+window once it reports the chat open. The button reappears when the visitor
+closes the chat; if the chat cannot
 start within 20 seconds the button offers the contact form instead. The channel
 ID (`chatChannelId`) and Odoo origin are in `data/site.ts`. The channel's
 colours match the site (header and button `#d7ee92`, text `#171c11`) and are set
@@ -267,7 +271,9 @@ and request and creates a lead.
 
 The chatbot appears as **Chloé**, defined in `infra/odoo/chat-persona.json`
 (name, the `chloe.png` avatar drawn from `chloe.svg`, and the English and
-French text of each chatbot step). New visitor messages are emailed to the team;
+French text of each chatbot step); the button's window uses the same name and a
+copy of the avatar in `public/assets/chloe.svg`. Odoo's chat window shows Chloé
+online too. New visitor messages are emailed to the team;
 replying to that email answers in the chat as Chloé, and the answer is emailed
 to the visitor if they have left the site, so they can reply in turn. Apply the
 persona and the email settings from the platform host:

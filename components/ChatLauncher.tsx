@@ -1,11 +1,13 @@
-import { LoaderCircle, MessageCircle, X } from 'lucide-react';
+import { MessageCircle, X } from 'lucide-react';
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import type { Lang } from '@/data/portfolio';
 
 // Odoo Live Chat runs in a frame on Odoo's own origin, so this page keeps its
 // strict Content Security Policy. Nothing loads until the visitor asks to
 // chat; the frame then reports whether its chat window is open
-// (swirl-cloud docs/guides/odoo-website.md).
+// (swirl-cloud docs/guides/odoo-website.md). Odoo's chat takes a moment to
+// start, so a click opens a window of our own at once, replaced by Odoo's
+// chat as soon as it is ready.
 const STARTED = 'swirl-chat-started';
 const TIMEOUT_MS = 20_000;
 
@@ -18,6 +20,17 @@ interface Props {
   odooOrigin: string;
   channelId: number;
   contactHref: string;
+  // The chatbot persona's name (infra/odoo/chat-persona.json).
+  agent: string;
+}
+
+function Online({ en }: Readonly<{ en: boolean }>) {
+  return (
+    <span className="chat-status">
+      <span className="chat-online" aria-hidden="true" />
+      {en ? 'Online' : 'En ligne'}
+    </span>
+  );
 }
 
 function rememberStarted(): void {
@@ -43,6 +56,7 @@ export default function ChatLauncher({
   odooOrigin: odoo,
   channelId,
   contactHref,
+  agent,
 }: Readonly<Props>) {
   const en = lang === 'en';
   const chatUrl = `${odoo}/platform_crm_intake/chat/${channelId}?lang=${lang}`;
@@ -53,12 +67,15 @@ export default function ChatLauncher({
   const resume = useSyncExternalStore(noSubscription, wasStarted, () => false);
   const src = requested ?? (resume ? chatUrl : undefined);
   const frame = useRef<HTMLIFrameElement>(null);
+  // Set when the visitor closes our window before Odoo's chat is ready.
+  const dismissed = useRef(false);
+  const connected = useRef(false);
 
   useEffect(() => {
     const receive = (event: MessageEvent) => {
       if (event.origin !== odoo || event.data?.type !== 'odoo-livechat') return;
       if (event.data.failed) setState('failed');
-      else if (event.data.open) setState('open');
+      else if (event.data.open) setState(dismissed.current ? 'closed' : 'open');
       // The frame reports "closed" before Odoo has opened a requested chat.
       else setState((current) => (current === 'loading' ? current : 'closed'));
     };
@@ -72,7 +89,19 @@ export default function ChatLauncher({
     return () => clearTimeout(timer);
   }, [state]);
 
+  // Open the connection to Odoo as the visitor reaches for the button; no
+  // request is made and nothing is stored until they select it.
+  const connect = () => {
+    if (connected.current) return;
+    connected.current = true;
+    const link = document.createElement('link');
+    link.rel = 'preconnect';
+    link.href = odoo;
+    document.head.append(link);
+  };
+
   const start = () => {
+    dismissed.current = false;
     setState('loading');
     rememberStarted();
     if (src)
@@ -95,6 +124,43 @@ export default function ChatLauncher({
           allow="clipboard-write"
         />
       )}
+      {state === 'loading' && (
+        <section
+          className="chat-shell"
+          aria-label={en ? 'Live chat' : 'Chat en direct'}
+        >
+          <header>
+            <img src="/assets/chloe.svg" alt="" width="36" height="36" />
+            <div>
+              <strong>{agent}</strong>
+              <Online en={en} />
+            </div>
+            <button
+              type="button"
+              className="chat-shell-close"
+              onClick={() => {
+                dismissed.current = true;
+                setState('closed');
+              }}
+              aria-label={en ? 'Close' : 'Fermer'}
+            >
+              <X size={18} aria-hidden="true" />
+            </button>
+          </header>
+          <output className="chat-shell-body">
+            <span className="sr-only">
+              {en
+                ? `${agent} is joining the chat…`
+                : `${agent} rejoint la discussion…`}
+            </span>
+            <span className="chat-typing" aria-hidden="true">
+              <i />
+              <i />
+              <i />
+            </span>
+          </output>
+        </section>
+      )}
       {state === 'failed' ? (
         <output className="chat-launcher chat-failed">
           {en
@@ -113,29 +179,25 @@ export default function ChatLauncher({
           </button>
         </output>
       ) : (
-        state !== 'open' && (
+        (state === 'idle' || state === 'closed') && (
           <button
             type="button"
             className="chat-launcher"
             onClick={start}
-            disabled={state === 'loading'}
-            aria-busy={state === 'loading'}
+            onPointerEnter={connect}
+            onFocus={connect}
+            onTouchStart={connect}
             title={
               en
                 ? 'Opens our live chat, hosted by Swirl'
                 : 'Ouvre notre chat en direct, hébergé par Swirl'
             }
           >
-            {state === 'loading' ? (
-              <LoaderCircle
-                size={18}
-                aria-hidden="true"
-                className="chat-spin"
-              />
-            ) : (
-              <MessageCircle size={18} aria-hidden="true" />
-            )}
-            {en ? 'Chat with us' : 'Discuter avec nous'}
+            <MessageCircle size={20} aria-hidden="true" />
+            <span className="chat-launcher-text">
+              {en ? 'Chat with us' : 'Discuter avec nous'}
+              <Online en={en} />
+            </span>
           </button>
         )
       )}
