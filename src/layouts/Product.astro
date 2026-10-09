@@ -13,7 +13,7 @@ const canonical = absoluteUrl(path);
 const cloud = services.find(s => s.id === 'cloud-ai')!;
 const structuredData = [
   { '@type': 'SoftwareApplication', '@id': canonical + '#product', name: product.name, url: canonical,
-    description: product.lead[lang], applicationCategory: 'BusinessApplication', operatingSystem: 'Ubuntu LTS',
+    description: product.lead[lang], applicationCategory: 'BusinessApplication', operatingSystem: 'Ubuntu',
     featureList: product.layers.map(layer => layer.title[lang]), publisher: { '@id': absoluteUrl('/#organization') },
     audience: { '@type': 'BusinessAudience', audienceType: product.audiences.map(audience => audience.title[lang]).join(', ') } },
   { '@type': 'FAQPage', '@id': canonical + '#faq', inLanguage: lang, isPartOf: { '@id': canonical + '#webpage' },
@@ -63,7 +63,6 @@ const demo = `${homePath(lang)}?topic=demo#contact`;
       <ol class="service-steps product-delivery">
         {product.delivery.map((option, index) => <li>
           <span aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
-          <p class:list={['product-status', { roadmap: !option.available }]}>{option.available ? (en ? 'Available' : 'Disponible') : (en ? 'Roadmap' : 'En préparation')}</p>
           <h3>{option.title[lang]}</h3><p>{option.text[lang]}</p>
         </li>)}
       </ol>

@@ -100,8 +100,8 @@ export const comparison = {
       name: { fr: 'Qui l’exploite', en: 'Who operates it' },
       values: {
         swirl: {
-          fr: 'Vos équipes, avec le hub d’installation et une procédure par alerte ; l’exploitation par Swirl est en préparation',
-          en: 'Your team, with the setup hub and a runbook per alert; operation by Swirl is on the roadmap',
+          fr: 'Vos équipes, avec le hub d’installation et une procédure par alerte, ou Swirl, chez un opérateur de l’Union européenne',
+          en: 'Your team, with the setup hub and a runbook per alert, or Swirl, at an operator in the European Union',
         },
         hyperscaler: {
           fr: 'Le fournisseur pour l’infrastructure, vous pour votre configuration',
@@ -136,8 +136,8 @@ export const comparison = {
       name: { fr: 'Juridiction', en: 'Jurisdiction' },
       values: {
         swirl: {
-          fr: 'Celle de l’hébergeur et du pays que vous choisissez ; le trafic public passe aujourd’hui par Cloudflare',
-          en: 'That of the host and country you choose; public traffic goes through Cloudflare today',
+          fr: 'Celle de l’hébergeur et du pays que vous choisissez',
+          en: 'That of the host and country you choose',
         },
         hyperscaler: {
           fr: 'Celle du fournisseur ; un fournisseur américain reste soumis au droit américain, comme le CLOUD Act',

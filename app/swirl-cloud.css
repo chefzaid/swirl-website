@@ -63,23 +63,6 @@
 .service-steps.product-delivery {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
-.service-steps .product-status {
-  display: inline-block;
-  margin-left: 12px;
-  vertical-align: middle;
-  padding: 3px 8px;
-  border: 1px solid #4c5c3c;
-  border-radius: 4px;
-  font-size: 10px;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  color: var(--primary);
-}
-.service-steps .product-status.roadmap {
-  border-style: dashed;
-  border-color: var(--input);
-  color: var(--muted-foreground);
-}
 .product-roadmap {
   list-style: none;
   padding: 0;

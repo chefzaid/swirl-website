@@ -32,8 +32,8 @@ export const sovereignty = {
     {
       title: { fr: 'Vos serveurs', en: 'Your servers' },
       text: {
-        fr: 'Loués chez l’hébergeur et dans le pays de votre choix, ou installés dans vos locaux. Applications, bases de données et sauvegardes locales y restent.',
-        en: 'Rented from the host and in the country you choose, or installed on your premises. Applications, databases and local backups stay there.',
+        fr: 'Loués chez l’hébergeur et dans le pays de votre choix, installés dans vos locaux, ou opérés par Swirl chez un opérateur de l’Union européenne. Applications, bases de données et sauvegardes locales y restent.',
+        en: 'Rented from the host and in the country you choose, installed on your premises, or operated by Swirl at an operator in the European Union. Applications, databases and local backups stay there.',
       },
     },
     {
@@ -77,8 +77,8 @@ export const sovereignty = {
       },
       optional: false,
       note: {
-        fr: 'Requis pour une exposition publique ; une installation privée s’en passe.',
-        en: 'Required for public exposure; a private installation does without it.',
+        fr: 'Protège les adresses publiques ; une installation privée s’en passe.',
+        en: 'Protects public addresses; a private installation does without it.',
       },
     },
     {
@@ -183,10 +183,6 @@ export const sovereignty = {
       en: 'A strict sovereignty mode that refuses any non-EU or non-self-hosted dependency and reports every remaining external call.',
     },
     {
-      fr: 'Une périphérie sans Cloudflare : DNS chez un hébergeur européen, certificats ACME et pare-feu applicatif dans le cluster.',
-      en: 'An edge without Cloudflare: DNS at a European provider, ACME certificates and a web firewall inside the cluster.',
-    },
-    {
       fr: 'Un réseau privé auto-hébergé (Headscale, NetBird ou WireGuard) à la place de Tailscale.',
       en: 'A self-hosted private network (Headscale, NetBird or WireGuard) in place of Tailscale.',
     },
@@ -210,18 +206,18 @@ export const sovereignty = {
         en: 'Does any data leave our servers?',
       },
       answer: {
-        fr: 'Seulement vers les services listés sur cette page, pour l’usage indiqué. Le trafic web public traverse la périphérie de Cloudflare ; les données des applications, les secrets et les sauvegardes restent sur votre installation, sauf la copie hors site que vous choisissez, chiffrée avant l’envoi.',
-        en: 'Only to the services listed on this page, for the purpose shown. Public web traffic passes through Cloudflare’s edge; application data, secrets and backups stay on your installation, except the off-site copy you choose, which is encrypted before upload.',
+        fr: 'Seulement vers les services listés sur cette page, pour l’usage indiqué. Les données des applications, les secrets et les sauvegardes restent sur votre installation, sauf la copie hors site que vous choisissez, chiffrée avant l’envoi.',
+        en: 'Only to the services listed on this page, for the purpose shown. Application data, secrets and backups stay on your installation, except the off-site copy you choose, which is encrypted before upload.',
       },
     },
     {
       question: {
-        fr: 'Peut-on utiliser Swirl Cloud sans Cloudflare ?',
-        en: 'Can we run Swirl Cloud without Cloudflare?',
+        fr: 'Où sont les serveurs quand Swirl exploite la plateforme ?',
+        en: 'Where are the servers when Swirl runs the platform?',
       },
       answer: {
-        fr: 'Oui pour une installation privée, sans adresse publique. Les adresses publiques passent aujourd’hui par Cloudflare ; une périphérie sans Cloudflare est en préparation.',
-        en: 'Yes for a private installation without public addresses. Public addresses go through Cloudflare today; an edge without Cloudflare is in progress.',
+        fr: 'Chez un opérateur de l’Union européenne. Vous pouvez aussi faire tourner Swirl Cloud sur des serveurs de votre choix, loués ou dans vos locaux.',
+        en: 'With an operator in the European Union. You can also run Swirl Cloud on servers of your choice, rented or on your premises.',
       },
     },
   ],

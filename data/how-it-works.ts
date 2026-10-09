@@ -27,7 +27,7 @@ export const howItWorks = {
     fr: 'Un hub d’installation prépare vos serveurs, installe chaque couche de la plateforme et vérifie le résultat. Ensuite, Git décrit l’état voulu : la plateforme et vos applications s’y alignent en continu.',
     en: 'A setup hub prepares your servers, installs every layer of the platform and verifies the result. From then on, Git describes the desired state, and the platform and your applications continuously converge on it.',
   },
-  tags: ['Ubuntu LTS · Kubernetes', 'GitOps', 'Longhorn', 'Vault'],
+  tags: ['Ubuntu · Kubernetes', 'GitOps', 'Longhorn', 'Vault'],
   // Architecture diagram, from the visitor down to the servers.
   architecture: [
     {
@@ -102,8 +102,8 @@ export const howItWorks = {
         {
           name: same('Kubernetes'),
           detail: {
-            fr: 'Sur des serveurs Ubuntu LTS',
-            en: 'On Ubuntu LTS servers',
+            fr: 'Sur des serveurs Ubuntu',
+            en: 'On Ubuntu servers',
           },
         },
         {
@@ -124,8 +124,8 @@ export const howItWorks = {
     {
       title: { fr: 'Préparer', en: 'Prepare' },
       text: {
-        fr: 'Des serveurs Ubuntu LTS en x86_64, loués ou à vous, et un nom de domaine. Les jetons Cloudflare, GitHub ou Tailscale ne servent que si vous retenez ces options.',
-        en: 'Ubuntu LTS servers on x86_64, rented or owned, and a domain name. Cloudflare, GitHub or Tailscale tokens are only needed if you choose those options.',
+        fr: 'Des serveurs Ubuntu, loués ou à vous, et un nom de domaine. Un premier serveur demande au moins 8 cœurs, 32 Go de mémoire et 500 Go NVMe.',
+        en: 'Ubuntu servers, rented or owned, and a domain name. A first server needs at least 8 cores, 32 GB of memory and 500 GB NVMe.',
       },
     },
     {

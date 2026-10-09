@@ -2,7 +2,7 @@ import type { Bilingual } from './portfolio.ts';
 
 // Swirl Cloud product page. State only what the platform already does (its
 // features guide in the platform repository); anything still being built goes
-// in `roadmap` or carries `available: false`.
+// in `roadmap`.
 type Card = { title: Bilingual; text: Bilingual };
 
 export const product = {
@@ -93,8 +93,8 @@ export const product = {
     {
       title: { fr: 'Serveurs et stockage', en: 'Servers and storage' },
       text: {
-        fr: 'Kubernetes sur un ou plusieurs serveurs Ubuntu LTS, loués ou à vous, reliés par un réseau privé. Stockage répliqué Longhorn avec volumes chiffrés au choix, et une archive de restauration quotidienne, chiffrable et copiable hors site.',
-        en: 'Kubernetes on one or more Ubuntu LTS servers, rented or owned, joined by a private network. Replicated Longhorn storage with optional encrypted volumes, and a daily recovery archive that can be encrypted and copied off site.',
+        fr: 'Kubernetes sur un ou plusieurs serveurs Ubuntu, loués ou à vous, reliés par un réseau privé. Stockage répliqué Longhorn avec volumes chiffrés au choix, et une archive de restauration quotidienne, chiffrable et copiable hors site.',
+        en: 'Kubernetes on one or more Ubuntu servers, rented or owned, joined by a private network. Replicated Longhorn storage with optional encrypted volumes, and a daily recovery archive that can be encrypted and copied off site.',
       },
     },
     {
@@ -148,12 +148,11 @@ export const product = {
     },
   ] satisfies Card[],
   deliveryIntro: {
-    fr: 'Serveurs Ubuntu LTS en x86_64 : à partir de 8 cœurs, 24 Gio de mémoire et 100 Gio de disque libre pour un serveur ; 16 cœurs, 64 Gio et 500 Go NVMe recommandés.',
-    en: 'Ubuntu LTS servers on x86_64: from 8 cores, 24 GiB of memory and 100 GiB of free disk for one server; 16 cores, 64 GiB and 500 GB NVMe recommended.',
+    fr: 'Serveurs Ubuntu : un premier serveur à partir de 8 cœurs, 32 Go de mémoire et 500 Go NVMe ; 16 cœurs et 64 Go recommandés.',
+    en: 'Ubuntu servers: a first server needs at least 8 cores, 32 GB of memory and 500 GB NVMe; 16 cores and 64 GB recommended.',
   },
   delivery: [
     {
-      available: true,
       title: { fr: 'Installée chez vous', en: 'Installed on your servers' },
       text: {
         fr: 'Sur des serveurs loués ou dans vos locaux, par vos équipes ou avec Swirl. Le hub d’installation, en français ou en anglais, vérifie le serveur, ne demande que l’essentiel, installe et contrôle le résultat.',
@@ -161,7 +160,6 @@ export const product = {
       },
     },
     {
-      available: true,
       title: { fr: 'Exploitée par vos équipes', en: 'Run by your team' },
       text: {
         fr: 'Une procédure pour chaque alerte, un rapport mensuel de disponibilité, de coûts et de conformité, et un suivi de capacité qui indique quoi ajouter et quand.',
@@ -169,33 +167,25 @@ export const product = {
       },
     },
     {
-      available: false,
-      title: {
-        fr: 'Opérée par Swirl, vos clés chez vous',
-        en: 'Operated by Swirl, keys kept by you',
-      },
+      title: { fr: 'Opérée par Swirl', en: 'Operated by Swirl' },
       text: {
-        fr: 'Une exploitation à distance par un canal sortant que vos administrateurs approuvent et enregistrent ; vous gardez les clés de récupération.',
-        en: 'Remote operation through an outbound channel that your administrators approve and record, while you keep the recovery keys.',
+        fr: 'Swirl installe et exploite votre plateforme sur des serveurs hébergés chez un opérateur de l’Union européenne.',
+        en: 'Swirl installs and runs your platform on servers hosted by an operator in the European Union.',
       },
     },
-  ] satisfies (Card & { available: boolean })[],
+  ] satisfies Card[],
   roadmapIntro: {
     fr: 'Nous publions une capacité une fois que la plateforme la démontre. En préparation :',
     en: 'We publish a capability once the platform demonstrates it. In progress:',
   },
   roadmap: [
     {
-      fr: 'Un mode souverain strict, sans service hors UE obligatoire : une périphérie réseau sans Cloudflare et un réseau privé auto-hébergé.',
-      en: 'A strict sovereignty mode with no mandatory non-EU service: an edge without Cloudflare and a self-hosted private network.',
+      fr: 'Un mode souverain strict, sans aucun service hors UE obligatoire.',
+      en: 'A strict sovereignty mode with no mandatory non-EU service.',
     },
     {
       fr: 'L’installation hors ligne depuis une archive signée, et les mises à jour de la plateforme en une seule opération.',
       en: 'Offline installation from a signed bundle, and platform upgrades in a single operation.',
-    },
-    {
-      fr: 'Le service opéré, avec accès de support approuvé par vos administrateurs et une console de parc.',
-      en: 'The managed service, with support access approved by your administrators and a fleet console.',
     },
     {
       fr: 'Des projets en libre-service avec leurs quotas, leurs rôles et leurs bases de données.',
@@ -209,8 +199,8 @@ export const product = {
         en: 'Where is our data stored?',
       },
       answer: {
-        fr: 'Sur les serveurs que vous choisissez : loués chez un hébergeur européen ou installés dans vos locaux. La plateforme tient la liste de chaque service externe qu’elle contacte et des données qu’il reçoit, et la télémétrie des éditeurs est désactivée. Tailscale et GitHub sont optionnels ; le trafic public passe aujourd’hui par Cloudflare, et une alternative sans Cloudflare est en préparation.',
-        en: 'On the servers you choose: rented from a European host or installed on your premises. The platform keeps a list of every external service it contacts and the data each receives, and vendor telemetry is switched off. Tailscale and GitHub are optional; public traffic goes through Cloudflare today, and an alternative without it is in progress.',
+        fr: 'Sur les serveurs que vous choisissez : loués chez un hébergeur européen, installés dans vos locaux, ou opérés par Swirl chez un opérateur de l’Union européenne. La plateforme tient la liste de chaque service externe qu’elle contacte et des données qu’il reçoit, et la télémétrie des éditeurs est désactivée.',
+        en: 'On the servers you choose: rented from a European host, installed on your premises, or operated by Swirl at an operator in the European Union. The platform keeps a list of every external service it contacts and the data each receives, and vendor telemetry is switched off.',
       },
     },
     {
@@ -219,8 +209,8 @@ export const product = {
         en: 'Do we need Kubernetes skills?',
       },
       answer: {
-        fr: 'Pas pour l’installer ni pour l’exploiter au quotidien. Le hub d’installation installe la plateforme, ajoute des serveurs et la vérifie ; les applications se déploient depuis Git ; chaque alerte renvoie à sa procédure. Swirl peut aussi l’installer avec vous.',
-        en: 'Not to install it or run it day to day. The setup hub installs the platform, adds servers and verifies it; applications deploy from Git; every alert links to its runbook. Swirl can also install it with you.',
+        fr: 'Pas pour l’installer ni pour l’exploiter au quotidien. Le hub d’installation installe la plateforme, ajoute des serveurs et la vérifie ; les applications se déploient depuis Git ; chaque alerte renvoie à sa procédure. Swirl peut aussi l’installer avec vous, ou l’exploiter pour vous.',
+        en: 'Not to install it or run it day to day. The setup hub installs the platform, adds servers and verifies it; applications deploy from Git; every alert links to its runbook. Swirl can also install it with you, or run it for you.',
       },
     },
     {
@@ -239,8 +229,8 @@ export const product = {
         en: 'What does Swirl Cloud cost?',
       },
       answer: {
-        fr: 'L’infrastructure coûte le prix mensuel fixe de vos serveurs, sans facturation à l’usage, et la plateforme répartit ce coût par environnement et par application. Contactez-nous pour l’installation et l’accompagnement.',
-        en: 'The infrastructure costs the fixed monthly price of your servers, with no usage billing, and the platform shows that cost per environment and application. Contact us for installation and support.',
+        fr: 'L’infrastructure coûte le prix mensuel fixe de vos serveurs, sans facturation à l’usage, et la plateforme répartit ce coût par environnement et par application. Contactez-nous pour l’installation, l’exploitation par Swirl et l’accompagnement.',
+        en: 'The infrastructure costs the fixed monthly price of your servers, with no usage billing, and the platform shows that cost per environment and application. Contact us for installation, operation by Swirl and support.',
       },
     },
     {
