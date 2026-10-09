@@ -39,7 +39,7 @@ time, sovereignty mode, compliance evidence); mark the rest as roadmap.
 - [ ] Editions and pricing page matching the licensing decision (self-hosted community, managed, enterprise/LTS): what each includes, support hours and the SLA.
 - [ ] Cost calculator (React island): server count and size, users and applications in; fixed monthly cost and an equivalent hyperscaler estimate out, with every assumption and price source shown and dated.
 - [x] Comparison page (`/swirl-cloud/comparatif/`, `/en/swirl-cloud/comparison/`) against a hyperscaler, a do-it-yourself Kubernetes distribution and a stack of separate SaaS subscriptions on seven factual criteria, with when to choose each. *(2026-10-09)*
-- [ ] Case study of the company's own installation: what runs on it, deployment frequency, recovery drills and availability, from real measurements.
+- [ ] Case study of the company's own installation: what runs on it, deployment frequency, recovery drills and availability, from real measurements. **Blocked:** needs a full month of availability measurements (recorded since 2026-10-05) and a measured restore drill.
 - [x] Demo request path: a "Swirl Cloud demo" choice in the contact form (preselected from the product page's demo links), naming the company instead of a subject, stored like other inquiries and sent to the CRM as a lead named after the company with the company as partner. *(2026-10-09)*
 - [ ] Guided product tour (screenshots or short videos of the setup hub, portal, deployment and compliance views) without requiring a live account.
 - [ ] Trust center page: data location, subprocessors, data processing agreement template, certification status, status page link and security contact.
