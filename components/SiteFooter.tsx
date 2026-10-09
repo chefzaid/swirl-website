@@ -34,7 +34,7 @@ export default function SiteFooter({
         </a>
       </div>
       <p className="footer-copyright">
-        © 2013–2026 Swirl IT.{' '}
+        © 2013–2026 Swirl.{' '}
         {en ? 'All rights reserved.' : 'Tous droits réservés.'}
       </p>
       <div className="footer-links">

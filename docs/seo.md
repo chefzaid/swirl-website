@@ -5,7 +5,6 @@ language alternates, social cards and JSON-LD. Routes and site identity are
 defined in `data/site.ts`; service and project content lives in
 `data/portfolio.ts`, the service landing pages in `data/expertise.ts` and the
 Swirl Cloud product page in `data/product.ts`.
-The public site name and organization name are separate configuration fields.
 
 ## Site structure
 

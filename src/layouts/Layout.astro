@@ -32,13 +32,13 @@ const websiteId = absoluteUrl('/#website');
 const ceoId = absoluteUrl('/#ceo');
 const logoId = absoluteUrl('/#logo');
 const graph: Record<string, unknown>[] = [
-  { '@type': 'Organization', '@id': organizationId, name: siteConfig.organizationName, alternateName: siteConfig.name,
+  { '@type': 'Organization', '@id': organizationId, name: siteConfig.name,
     url: absoluteUrl('/'), email: siteConfig.email,
-    logo: { '@type': 'ImageObject', '@id': logoId, url: absoluteUrl('/logo.png'), contentUrl: absoluteUrl('/logo.png'), width: 512, height: 512, caption: siteConfig.organizationName },
+    logo: { '@type': 'ImageObject', '@id': logoId, url: absoluteUrl('/logo.png'), contentUrl: absoluteUrl('/logo.png'), width: 512, height: 512, caption: siteConfig.name },
     image: { '@id': logoId }, founder: { '@id': ceoId },
     knowsAbout: services.map(service => service.title[lang]),
     contactPoint: { '@type': 'ContactPoint', email: siteConfig.email, contactType: 'customer service', availableLanguage: ['French', 'English'] } },
-  { '@type': 'WebSite', '@id': websiteId, name: siteConfig.name, alternateName: siteConfig.organizationName, url: absoluteUrl('/'), inLanguage: ['fr', 'en'], publisher: { '@id': organizationId } },
+  { '@type': 'WebSite', '@id': websiteId, name: siteConfig.name, url: absoluteUrl('/'), inLanguage: ['fr', 'en'], publisher: { '@id': organizationId } },
   { '@type': 'Person', '@id': ceoId, name: siteConfig.ceo, jobTitle: 'CEO',
     worksFor: { '@id': organizationId }, sameAs: [siteConfig.linkedin], image: absoluteUrl('/assets/portrait.webp') },
   { '@type': 'WebPage', '@id': canonical + '#webpage', url: canonical, name: title, description, inLanguage: lang,

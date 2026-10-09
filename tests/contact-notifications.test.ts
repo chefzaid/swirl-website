@@ -36,10 +36,7 @@ void test('Exchange adapter uses the fixed recipient, visitor reply-to, and only
     'contact@swirlit.dev',
   );
   assert.equal(body.message.replyTo[0].emailAddress.address, data.email);
-  assert.equal(
-    body.message.subject,
-    `Swirl IT — ${data.subject} — ${data.name}`,
-  );
+  assert.equal(body.message.subject, `Swirl — ${data.subject} — ${data.name}`);
   assert.equal(await notifyExchange({}, data, send), 'unconfigured');
   assert.equal(
     await notifyExchange(
@@ -83,10 +80,10 @@ void test('Resend sends one plain-text notification with a fixed recipient and v
   assert.equal(headers.get('Content-Type'), 'application/json');
   assert.equal(typeof options.body, 'string');
   assert.deepEqual(JSON.parse(options.body as string), {
-    from: 'Swirl IT <noreply@swirlit.dev>',
+    from: 'Swirl <noreply@swirlit.dev>',
     to: ['contact@swirlit.dev'],
     reply_to: data.email,
-    subject: `Swirl IT — ${data.subject} — ${data.name}`,
+    subject: `Swirl — ${data.subject} — ${data.name}`,
     text: `Nom : ${data.name}\nE-mail : ${data.email}\nSujet : ${data.subject}\n\n${data.message}\n\nRéférence : ${data.id}`,
   });
 });

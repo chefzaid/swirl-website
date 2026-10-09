@@ -12,7 +12,6 @@ import {
 export const siteConfig = {
   origin: 'https://swirlit.dev',
   name: 'Swirl',
-  organizationName: 'Swirl IT',
   email: 'contact@swirlit.dev',
   ceo: 'Zaïd Chefchaouni',
   linkedin: 'https://www.linkedin.com/in/chefzaid/',

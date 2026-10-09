@@ -1,6 +1,6 @@
-# Swirl IT portfolio
+# Swirl portfolio
 
-Swirl IT's bilingual company website uses Astro 7 and React 19, served by a
+Swirl's bilingual company website uses Astro 7 and React 19, served by a
 Node 24 application on the bare-metal K3s cluster at `https://swirlit.dev`.
 Pages are rendered at build time; the header, project gallery and contact form
 hydrate independently. Contact inquiries are stored privately on the server.

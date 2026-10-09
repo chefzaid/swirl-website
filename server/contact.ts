@@ -152,7 +152,7 @@ async function readLimited(request: Request) {
 type NotificationStatus = 'unconfigured' | 'sent' | 'failed';
 
 const notificationSubject = (data: ContactData) =>
-  `Swirl IT — ${data.subject} — ${data.name}`;
+  `Swirl — ${data.subject} — ${data.name}`;
 const notificationText = (data: ContactData) =>
   [
     `Nom : ${data.name}`,
@@ -191,7 +191,7 @@ export async function notifyResend(
         'Idempotency-Key': `contact/${data.id}`,
       },
       body: JSON.stringify({
-        from: `Swirl IT <${env.CONTACT_SENDER}>`,
+        from: `Swirl <${env.CONTACT_SENDER}>`,
         to: ['contact@swirlit.dev'],
         reply_to: data.email,
         subject: notificationSubject(data),

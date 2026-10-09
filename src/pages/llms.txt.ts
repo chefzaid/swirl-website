@@ -18,9 +18,9 @@ export function GET() {
   const link = (name: string, path: string, note?: string) =>
     `- [${name}](${absoluteUrl(path)})${note ? `: ${note}` : ''}`;
   const body = [
-    `# ${siteConfig.organizationName}`,
+    `# ${siteConfig.name}`,
     '',
-    `> ${siteConfig.name} (${siteConfig.organizationName}) designs, builds and hosts tailored software: web and mobile applications, embedded systems and IoT, and a sovereign private cloud with AI integration. Experience since 2013 across banking, insurance, energy, industry and services, present in Paris, New York and Casablanca. The site is published in French (default) and English.`,
+    `> ${siteConfig.name} designs, builds and hosts tailored software: web and mobile applications, embedded systems and IoT, and a sovereign private cloud with AI integration. Experience since 2013 across banking, insurance, energy, industry and services, present in Paris, New York and Casablanca. The site is published in French (default) and English.`,
     '',
     `Contact: ${siteConfig.email} or the form at ${absoluteUrl(`${homePath('en')}#contact`)}.`,
     '',
