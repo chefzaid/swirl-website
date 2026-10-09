@@ -1,7 +1,6 @@
 import { LoaderCircle, MessageCircle, X } from 'lucide-react';
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import type { Lang } from '@/data/portfolio';
-import { homePath, siteConfig } from '@/data/site';
 
 // Odoo Live Chat runs in a frame on Odoo's own origin, so this page keeps its
 // strict Content Security Policy. Nothing loads until the visitor asks to
@@ -12,8 +11,14 @@ const TIMEOUT_MS = 20_000;
 
 type State = 'idle' | 'loading' | 'open' | 'closed' | 'failed';
 
-const chatUrl = (lang: Lang) =>
-  `${siteConfig.odooOrigin}/platform_crm_intake/chat/${siteConfig.chatChannelId}?lang=${lang}`;
+// Values come from the page as props: importing the site data here would
+// bundle all of its portfolio content into this island.
+interface Props {
+  lang: Lang;
+  odooOrigin: string;
+  channelId: number;
+  contactHref: string;
+}
 
 function rememberStarted(): void {
   try {
@@ -33,16 +38,21 @@ function wasStarted(): boolean {
   }
 }
 
-export default function ChatLauncher({ lang }: Readonly<{ lang: Lang }>) {
+export default function ChatLauncher({
+  lang,
+  odooOrigin: odoo,
+  channelId,
+  contactHref,
+}: Readonly<Props>) {
   const en = lang === 'en';
+  const chatUrl = `${odoo}/platform_crm_intake/chat/${channelId}?lang=${lang}`;
   const [state, setState] = useState<State>('idle');
   const [requested, setRequested] = useState<string>();
   // On later pages of the same tab, restore a conversation the visitor left
   // open; Odoo reopens it only if it was open. Pages render without it.
   const resume = useSyncExternalStore(noSubscription, wasStarted, () => false);
-  const src = requested ?? (resume ? chatUrl(lang) : undefined);
+  const src = requested ?? (resume ? chatUrl : undefined);
   const frame = useRef<HTMLIFrameElement>(null);
-  const odoo = siteConfig.odooOrigin;
 
   useEffect(() => {
     const receive = (event: MessageEvent) => {
@@ -70,7 +80,7 @@ export default function ChatLauncher({ lang }: Readonly<{ lang: Lang }>) {
         { type: 'odoo-livechat-open' },
         odoo,
       );
-    else setRequested(`${chatUrl(lang)}&open=1`);
+    else setRequested(`${chatUrl}&open=1`);
   };
 
   return (
@@ -90,7 +100,7 @@ export default function ChatLauncher({ lang }: Readonly<{ lang: Lang }>) {
           {en
             ? 'Chat is unavailable right now. '
             : 'Le chat est indisponible pour le moment. '}
-          <a href={`${homePath(lang)}#contact`}>
+          <a href={contactHref}>
             {en ? 'Write to us instead.' : 'Écrivez-nous plutôt.'}
           </a>
           <button

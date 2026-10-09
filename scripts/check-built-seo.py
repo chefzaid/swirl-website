@@ -149,6 +149,12 @@ for home, hub, prefix in [('/', '/projets/', '/projets/'), ('/en/', '/en/project
     assert {e['url'] for e in page.entities('Service')} >= {origin + path for path in lang_services}
     listed = pages[hub].entities('ItemList')[0]['itemListElement']
     assert {item['url'] for item in listed} == {origin + path for path in projects}
+    # The resources hub lists every article of its language, crawlably.
+    resources = '/en/resources/' if home == '/en/' else '/ressources/'
+    guides = {path for path in pages if path.startswith(resources) and path != resources}
+    listed = pages[resources].entities('ItemList')[0]['itemListElement']
+    assert guides and {item['url'] for item in listed} == {origin + path for path in guides}
+    assert guides <= {a.get('href') for tag, a in pages[resources].links if tag == 'a'}
     social = [a for tag, a in page.links if tag == 'a' and a.get('href') == 'https://www.linkedin.com/in/chefzaid/']
     assert len(social) == 1 and social[0].get('aria-label')
     people = page.entities('Person')

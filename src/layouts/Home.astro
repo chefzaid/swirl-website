@@ -8,7 +8,7 @@ import ContactForm from '../../components/ContactForm';
 import ChatLauncher from '../../components/ChatLauncher';
 import type { Lang } from '../../data/portfolio';
 import { projectViews } from '../../data/project-view';
-import { productPath, projectsPath } from '../../data/site';
+import { homePath, productPath, projectsPath, siteConfig } from '../../data/site';
 interface Props { lang: Lang; }
 const { lang } = Astro.props;
 ---
@@ -18,5 +18,5 @@ const { lang } = Astro.props;
     <ProjectGallery slot="projects-content" lang={lang} projects={projectViews(lang)} projectsHref={projectsPath(lang)} client:visible={{ rootMargin: '300px' }} />
     <ContactForm slot="contact-form" lang={lang} client:visible={{ rootMargin: '300px' }} />
   </Portfolio>
-  <ChatLauncher lang={lang} client:idle />
+  <ChatLauncher lang={lang} odooOrigin={siteConfig.odooOrigin} channelId={siteConfig.chatChannelId} contactHref={`${homePath(lang)}#contact`} client:idle />
 </Layout>

@@ -51,7 +51,7 @@ time, sovereignty mode, compliance evidence); mark the rest as roadmap.
   - [x] DORA obligations for ICT suppliers: register, contract clauses, incident support, subcontracting, audits, exit and critical providers. *(2026-10-09)*
   - [x] Leaving a hyperscaler: Data Act switching rights, inventory, portable equivalents, sizing, data move, cutover and records. *(2026-10-09)*
   - [x] French electronic invoicing: the 2026–2027 calendar, approved platforms, formats, the four new mentions, e-reporting and sanctions. *(2026-10-09)*
-- [ ] Structured data (`SoftwareApplication`/`Product`, `Organization`, `FAQPage`), sitemap entries, hreflang pairs and Open Graph images for every new page; extend `check-built-seo.py` to cover them.
+- [x] Structured data (`SoftwareApplication` and `FAQPage` on the product page, `FAQPage` on the security and sovereignty pages, `Article` on guides, `CollectionPage` hubs), sitemap entries, hreflang pairs and Open Graph images for every new page, all covered by `check-built-seo.py`. *(2026-10-09)*
 - [ ] Customer links in the header once they exist: status page, support and fleet console sign-in.
 
 ## Domains
@@ -77,4 +77,4 @@ unmeasured; competitive terms need the items below, plus the legal notice
 - [ ] Expand each case study to 600–1,000 words with measured outcomes, constraints and technology, and a subtitle or H2 carrying its search terms; verifiable facts only.
 - [ ] Add the company LinkedIn page and directory profiles (Clutch, Malt, Sortlist) to the `Organization` `sameAs` once they exist.
 - [ ] Create a Google Business Profile once the headquarters address is published.
-- [ ] Trim the chat launcher bundle on the home pages: its `data/site.ts` import pulls all portfolio content into a 21 KB chunk (7 KB gzipped); pass the values it needs as props instead.
+- [x] Trim the chat launcher bundle on the home pages: the Odoo origin, chat channel and contact link now come as props, so the island no longer bundles the site data (22 KB to 2.3 KB, 7.7 KB to 1.3 KB gzipped). *(2026-10-09)*
