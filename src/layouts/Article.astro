@@ -4,7 +4,7 @@ import Subpage from './Subpage.astro';
 import '../../app/swirl-cloud.css';
 import '../../app/articles.css';
 import type { Lang } from '../../data/portfolio';
-import { absoluteUrl, articlePath, homePath, productPagePath, resourcesPath, siteConfig, socialImagePath, type Article } from '../../data/site';
+import { absoluteUrl, articlePath, homePath, productPath, resourcesPath, siteConfig, socialImagePath, type Article } from '../../data/site';
 interface Props { id: Article; lang: Lang; }
 const { id, lang } = Astro.props;
 const en = lang === 'en';
@@ -45,10 +45,10 @@ const structuredData = [
     <aside class="case-contact">
       <h2>{en ? 'See Swirl Cloud on a real installation' : 'Voir Swirl Cloud sur une vraie installation'}</h2>
       <p>{en
-        ? 'We show you the controls, reports and evidence pack on our own installation, then size one for your company.'
-        : 'Nous vous montrons les contrôles, les rapports et le dossier de preuves sur notre propre installation, puis nous en dimensionnons une pour votre entreprise.'}</p>
+        ? 'We show you the platform that runs our own website and applications, then size an installation for your company.'
+        : 'Nous vous montrons la plateforme qui fait tourner notre propre site et nos applications, puis nous dimensionnons une installation pour votre entreprise.'}</p>
       <a class="button" href={demo}>{en ? 'Request a demo' : 'Demander une démo'} <span aria-hidden="true">↗</span></a>
     </aside>
-    <p class="product-more"><a class="text-link" href={productPagePath('security', lang)}>{en ? 'Swirl Cloud security and compliance' : 'Sécurité et conformité de Swirl Cloud'} <span aria-hidden="true">↗</span></a></p>
+    <p class="product-more"><a class="text-link" href={productPath(lang)}>{en ? 'Discover Swirl Cloud' : 'Découvrir Swirl Cloud'} <span aria-hidden="true">↗</span></a></p>
   </article>
 </Subpage>

@@ -49,7 +49,7 @@ time, sovereignty mode, compliance evidence); mark the rest as roadmap.
 - Resource articles (FR and EN) under `/ressources/` and `/en/resources/`, each with its sources, last-checked date and the demo call to action:
   - [x] NIS2 readiness checklist, with the French transposition status as of 2026-10-09. *(2026-10-09)*
   - [x] DORA obligations for ICT suppliers: register, contract clauses, incident support, subcontracting, audits, exit and critical providers. *(2026-10-09)*
-  - [ ] Leaving a hyperscaler.
+  - [x] Leaving a hyperscaler: Data Act switching rights, inventory, portable equivalents, sizing, data move, cutover and records. *(2026-10-09)*
   - [ ] French electronic invoicing.
 - [ ] Structured data (`SoftwareApplication`/`Product`, `Organization`, `FAQPage`), sitemap entries, hreflang pairs and Open Graph images for every new page; extend `check-built-seo.py` to cover them.
 - [ ] Customer links in the header once they exist: status page, support and fleet console sign-in.

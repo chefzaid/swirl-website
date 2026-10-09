@@ -86,7 +86,7 @@ python3 scripts/check-built-security.py
 python3 scripts/check-built-seo.py
 ```
 
-The checks cover all 48 pages and both 404 pages: metadata, social cards,
+The checks cover all 50 pages and both 404 pages: metadata, social cards,
 internal links and fragments, language alternates, structured data, sitemap
 entries, `llms.txt`, icons and CSP hashes.
 

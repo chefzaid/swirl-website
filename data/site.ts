@@ -99,6 +99,10 @@ const articleSlugs = {
     fr: 'dora-prestataires-tic',
     en: 'dora-ict-suppliers',
   },
+  'leaving-a-hyperscaler': {
+    fr: 'quitter-un-hyperscaler',
+    en: 'leaving-a-hyperscaler',
+  },
 } satisfies Record<string, Bilingual>;
 export type Article = keyof typeof articleSlugs;
 export const articles = Object.keys(articleSlugs) as Article[];
