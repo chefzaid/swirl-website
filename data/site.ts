@@ -95,6 +95,10 @@ export const resourcesPath = (lang: Lang) =>
   lang === 'fr' ? '/ressources/' : '/en/resources/';
 const articleSlugs = {
   'nis2-checklist': { fr: 'checklist-nis2', en: 'nis2-checklist' },
+  'dora-ict-suppliers': {
+    fr: 'dora-prestataires-tic',
+    en: 'dora-ict-suppliers',
+  },
 } satisfies Record<string, Bilingual>;
 export type Article = keyof typeof articleSlugs;
 export const articles = Object.keys(articleSlugs) as Article[];
