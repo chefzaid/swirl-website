@@ -3,6 +3,7 @@ import { projects, sectors, services } from '../../../data/portfolio';
 import { servicePages } from '../../../data/expertise';
 import { product } from '../../../data/product';
 import { howItWorks } from '../../../data/how-it-works';
+import { security } from '../../../data/security';
 import {
   documentRoutes,
   socialImagePath,
@@ -49,7 +50,7 @@ function card({ page, lang }: DocumentRoute): SocialCard {
         tags: product.tags,
       };
     case 'product-page': {
-      const detail = { 'how-it-works': howItWorks }[page.id];
+      const detail = { 'how-it-works': howItWorks, security }[page.id];
       return {
         eyebrow: upper(product.name),
         title: detail.heading[lang],

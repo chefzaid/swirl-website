@@ -1,0 +1,100 @@
+---
+import Subpage from './Subpage.astro';
+import '../../app/swirl-cloud.css';
+import type { Lang } from '../../data/portfolio';
+import { product } from '../../data/product';
+import { howItWorks } from '../../data/how-it-works';
+import { security as page } from '../../data/security';
+import { controlGroups } from '../../data/compliance-controls';
+import { frameworkNames, referenceLabel, type Framework } from '../../data/compliance-frameworks';
+import { absoluteUrl, homePath, productPagePath, productPath, siteConfig } from '../../data/site';
+interface Props { lang: Lang; }
+const { lang } = Astro.props;
+const en = lang === 'en';
+const path = productPagePath('security', lang);
+const canonical = absoluteUrl(path);
+const overview = productPath(lang);
+const demo = `${homePath(lang)}?topic=demo#contact`;
+const controls = controlGroups.flatMap(group => group.controls);
+const automated = controls.filter(control => control.automated).length;
+const number = (index: number) => String(index + 1).padStart(2, '0');
+const structuredData = [
+  { '@type': 'FAQPage', '@id': canonical + '#faq', inLanguage: lang, isPartOf: { '@id': canonical + '#webpage' },
+    mainEntity: page.faq.map(item => ({ '@type': 'Question', name: item.question[lang],
+      acceptedAnswer: { '@type': 'Answer', text: item.answer[lang] } })) },
+];
+---
+<Subpage lang={lang} path={path} title={`${siteConfig.name} | ${page.title[lang]}`} description={page.description[lang]}
+  breadcrumbs={[{ name: product.name, path: overview }, { name: en ? 'Security and compliance' : 'Sécurité et conformité', path }]}
+  structuredData={structuredData} webPage={{ about: { '@id': absoluteUrl(overview) + '#product' } }}>
+  <article class="service-page product-page">
+    <header class="case-intro">
+      <p class="eyebrow section-kicker">{product.name.toLocaleUpperCase(lang)}</p>
+      <h1>{page.heading[lang]} <span>{page.accent[lang]}</span></h1>
+      <p class="case-lead">{page.lead[lang]}</p>
+      <div class="hero-actions">
+        <a class="button" href={demo}>{en ? 'Request a demo' : 'Demander une démo'} <span aria-hidden="true">↗</span></a>
+        <a class="text-link" href="#controls">{en ? 'See the controls' : 'Voir les contrôles'} <span aria-hidden="true">↓</span></a>
+      </div>
+      <ul class="tags case-tags" aria-label={en ? 'Frameworks' : 'Référentiels'}>{page.tags.map(tag => <li>{tag}</li>)}</ul>
+    </header>
+    <section class="service-section" aria-labelledby="evidence-heading">
+      <h2 id="evidence-heading">{en ? 'How the evidence is produced' : 'Comment les preuves sont produites'}</h2>
+      <ol class="service-steps">
+        {page.evidence.map((step, index) => <li><span aria-hidden="true">{number(index)}</span><h3>{step.title[lang]}</h3><p>{step.text[lang]}</p></li>)}
+      </ol>
+    </section>
+    <section class="service-section" id="controls" aria-labelledby="controls-heading">
+      <h2 id="controls-heading">{en ? 'The controls, by theme' : 'Les contrôles, par thème'}</h2>
+      <p class="product-intro">{en
+        ? `${controls.length} controls: ${automated} are checked continuously from the running platform, ${controls.length - automated} are proven by your documents. Each card states what the control checks and the requirements it supports.`
+        : `${controls.length} contrôles : ${automated} sont vérifiés en continu sur la plateforme en fonctionnement, ${controls.length - automated} se prouvent par vos documents. Chaque fiche indique ce que vérifie le contrôle et les exigences qu’il couvre.`}</p>
+      {controlGroups.map((group, index) => <section class="control-group" aria-labelledby={`theme-${index}`}>
+        <h3 id={`theme-${index}`}>{group.theme[lang]}</h3>
+        <ul class="control-list">
+          {group.controls.map(control => <li class="service-card">
+            <span class:list={['control-kind', { manual: !control.automated }]}>{control.automated ? (en ? 'Automated' : 'Automatique') : 'Documents'}</span>
+            <h4>{control.title[lang]}</h4>
+            <p>{control.objective[lang]}</p>
+            <p class="control-refs">{(Object.entries(control.refs) as [Framework, string[]][]).map(([framework, refs]) =>
+              <span>{frameworkNames[framework][lang]} {refs.map(ref => referenceLabel(framework, ref, lang)).join(', ')}</span>)}</p>
+          </li>)}
+        </ul>
+      </section>)}
+    </section>
+    <section class="service-section" aria-labelledby="reports-heading">
+      <h2 id="reports-heading">{en ? 'Reports for audits and questionnaires' : 'Des rapports pour vos audits et questionnaires'}</h2>
+      <div class="service-capabilities">
+        {page.reports.map(card => <section class="service-card"><h3>{card.title[lang]}</h3><p>{card.text[lang]}</p></section>)}
+      </div>
+    </section>
+    <section class="service-section" id="disclosure" aria-labelledby="disclosure-heading">
+      <h2 id="disclosure-heading">{en ? 'Testing and vulnerability disclosure' : 'Tests et divulgation des vulnérabilités'}</h2>
+      <div class="service-capabilities">
+        <section class="service-card"><h3>{en ? 'Penetration testing' : 'Tests d’intrusion'}</h3><p>{page.pentest[lang]}</p></section>
+        <section class="service-card"><h3>{en ? 'Report a vulnerability' : 'Signaler une vulnérabilité'}</h3><p>{page.disclosure[lang]}</p>
+          <a class="text-link service-link" href={`mailto:${siteConfig.email}?subject=${encodeURIComponent(en ? 'Security report' : 'Signalement de sécurité')}`}>{siteConfig.email} <span aria-hidden="true">↗</span></a></section>
+      </div>
+    </section>
+    <section class="service-section" aria-labelledby="faq-heading">
+      <h2 id="faq-heading">{en ? 'Frequently asked questions' : 'Questions fréquentes'}</h2>
+      <div class="service-faq">
+        {page.faq.map(item => <details><summary><h3>{item.question[lang]}</h3></summary><p>{item.answer[lang]}</p></details>)}
+      </div>
+    </section>
+    <aside class="case-contact">
+      <h2>{en ? 'See the evidence for yourself' : 'Voyez les preuves par vous-même'}</h2>
+      <p>{en
+        ? 'We show you the compliance dashboard, a report and an evidence pack on our own installation, then map them to your audit.'
+        : 'Nous vous montrons le tableau de bord de conformité, un rapport et un dossier de preuves sur notre propre installation, puis nous les rapprochons de votre audit.'}</p>
+      <a class="button" href={demo}>{en ? 'Request a demo' : 'Demander une démo'} <span aria-hidden="true">↗</span></a>
+    </aside>
+    <section class="service-others" aria-labelledby="others-heading">
+      <h2 id="others-heading">{product.name}</h2>
+      <div class="case-related-grid">
+        <a href={overview}><span class="eyebrow">{en ? 'Overview' : 'Présentation'}</span><p>{product.description[lang]}</p><span class="text-link">{en ? 'Discover Swirl Cloud' : 'Découvrir Swirl Cloud'} ↗</span></a>
+        <a href={productPagePath('how-it-works', lang)}><span class="eyebrow">{en ? 'How it works' : 'Fonctionnement'}</span><p>{howItWorks.description[lang]}</p><span class="text-link">{en ? 'See how it works' : 'Voir le fonctionnement'} ↗</span></a>
+      </div>
+    </section>
+  </article>
+</Subpage>

@@ -2,6 +2,7 @@ import { projects, services } from '../../data/portfolio';
 import { servicePages } from '../../data/expertise';
 import { product } from '../../data/product';
 import { howItWorks } from '../../data/how-it-works';
+import { security } from '../../data/security';
 import {
   absoluteUrl,
   homePath,
@@ -43,6 +44,11 @@ export function GET() {
       'How Swirl Cloud works',
       productPagePath('how-it-works', 'en'),
       howItWorks.description.en,
+    ),
+    link(
+      'Swirl Cloud security and compliance',
+      productPagePath('security', 'en'),
+      security.description.en,
     ),
     '',
     '## Case studies',

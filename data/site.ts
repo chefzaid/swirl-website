@@ -82,6 +82,7 @@ export const productPath = (lang: Lang) =>
   lang === 'fr' ? '/swirl-cloud/' : '/en/swirl-cloud/';
 const productPageSlugs = {
   'how-it-works': { fr: 'fonctionnement', en: 'how-it-works' },
+  security: { fr: 'securite-conformite', en: 'security-compliance' },
 } satisfies Record<string, Bilingual>;
 export type ProductPage = keyof typeof productPageSlugs;
 export const productPages = Object.keys(productPageSlugs) as ProductPage[];
