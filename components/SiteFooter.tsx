@@ -1,6 +1,6 @@
 import { ArrowUpRight } from 'lucide-react';
 import type { Lang } from '@/data/portfolio';
-import { homePath, siteConfig } from '@/data/site';
+import { homePath, resourcesPath, siteConfig } from '@/data/site';
 import LinkedInIcon from './LinkedInIcon';
 
 export default function SiteFooter({
@@ -38,6 +38,7 @@ export default function SiteFooter({
         {en ? 'All rights reserved.' : 'Tous droits réservés.'}
       </p>
       <div className="footer-links">
+        <a href={resourcesPath(lang)}>{en ? 'Resources' : 'Ressources'}</a>
         <a href={en ? '/en/privacy/' : '/confidentialite/'}>
           {en ? 'Privacy' : 'Confidentialité'}
         </a>

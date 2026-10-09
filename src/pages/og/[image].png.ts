@@ -1,4 +1,5 @@
 import type { APIRoute } from 'astro';
+import { getEntry } from 'astro:content';
 import { projects, sectors, services } from '../../../data/portfolio';
 import { servicePages } from '../../../data/expertise';
 import { product } from '../../../data/product';
@@ -13,15 +14,24 @@ import {
 } from '../../../data/site';
 import { socialCardPng, type SocialCard } from '../../../lib/social-image';
 
-export function getStaticPaths() {
-  return documentRoutes.map((route) => ({
-    params: { image: socialImagePath(route.path).slice('/og/'.length, -4) },
-    props: { route },
-  }));
+export async function getStaticPaths() {
+  return Promise.all(
+    documentRoutes.map(async (route) => ({
+      params: { image: socialImagePath(route.path).slice('/og/'.length, -4) },
+      props: {
+        route,
+        heading:
+          route.page.kind === 'article'
+            ? (await getEntry('articles', `${route.lang}/${route.page.id}`))
+                ?.data.heading
+            : undefined,
+      },
+    })),
+  );
 }
 
 // Card copy mirrors each page's H1 so shared links preview what they open.
-function card({ page, lang }: DocumentRoute): SocialCard {
+function card({ page, lang }: DocumentRoute, heading = ''): SocialCard {
   const en = lang === 'en';
   const upper = (text: string) => text.toLocaleUpperCase(lang);
   switch (page.kind) {
@@ -65,6 +75,21 @@ function card({ page, lang }: DocumentRoute): SocialCard {
         tags: detail.tags,
       };
     }
+    case 'resources':
+      return {
+        eyebrow: en ? 'RESOURCES' : 'RESSOURCES',
+        title: en ? 'Resources.' : 'Ressources.',
+        accent: en
+          ? 'Rules and practice, checked.'
+          : 'Les règles et la pratique, vérifiées.',
+        tags: ['NIS2', 'DORA', 'Cloud'],
+      };
+    case 'article':
+      return {
+        eyebrow: en ? 'RESOURCES · GUIDE' : 'RESSOURCES · GUIDE',
+        title: heading,
+        tags: [],
+      };
     case 'projects':
       return {
         eyebrow: en ? 'SELECTED WORK' : 'RÉFÉRENCES',
@@ -95,6 +120,10 @@ function card({ page, lang }: DocumentRoute): SocialCard {
 
 export const GET: APIRoute = async ({ props }) =>
   new Response(
-    new Uint8Array(await socialCardPng(card(props.route as DocumentRoute))),
+    new Uint8Array(
+      await socialCardPng(
+        card(props.route as DocumentRoute, props.heading as string | undefined),
+      ),
+    ),
     { headers: { 'Content-Type': 'image/png' } },
   );

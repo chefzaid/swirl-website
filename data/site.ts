@@ -90,6 +90,17 @@ export type ProductPage = keyof typeof productPageSlugs;
 export const productPages = Object.keys(productPageSlugs) as ProductPage[];
 export const productPagePath = (id: ProductPage, lang: Lang) =>
   `${productPath(lang)}${productPageSlugs[id][lang]}/`;
+// Resource articles; their text lives in src/content/articles/<lang>/<id>.md.
+export const resourcesPath = (lang: Lang) =>
+  lang === 'fr' ? '/ressources/' : '/en/resources/';
+const articleSlugs = {
+  'nis2-checklist': { fr: 'checklist-nis2', en: 'nis2-checklist' },
+} satisfies Record<string, Bilingual>;
+export type Article = keyof typeof articleSlugs;
+export const articles = Object.keys(articleSlugs) as Article[];
+export const articleSlug = (id: Article, lang: Lang) => articleSlugs[id][lang];
+export const articlePath = (id: Article, lang: Lang) =>
+  `${resourcesPath(lang)}${articleSlug(id, lang)}/`;
 export const projectSlug = (id: Project['id'], lang: Lang) => slugs[id][lang];
 export const projectPath = (id: Project['id'], lang: Lang) =>
   `${projectsPath(lang)}${projectSlug(id, lang)}/`;
@@ -99,7 +110,8 @@ export const servicePath = (id: Service['id'], lang: Lang) =>
   `${homePath(lang)}${serviceSlug(id, lang)}/`;
 
 export type PageRef =
-  | { kind: 'home' | 'privacy' | 'projects' | 'product' }
+  | { kind: 'home' | 'privacy' | 'projects' | 'product' | 'resources' }
+  | { kind: 'article'; id: Article }
   | { kind: 'service'; id: Service['id'] }
   | { kind: 'product-page'; id: ProductPage }
   | { kind: 'project'; id: Project['id'] };
@@ -115,6 +127,16 @@ const pairs: (Bilingual & { page: PageRef })[] = [
     fr: productPagePath(id, 'fr'),
     en: productPagePath(id, 'en'),
     page: { kind: 'product-page', id } as const,
+  })),
+  {
+    fr: resourcesPath('fr'),
+    en: resourcesPath('en'),
+    page: { kind: 'resources' },
+  },
+  ...articles.map((id) => ({
+    fr: articlePath(id, 'fr'),
+    en: articlePath(id, 'en'),
+    page: { kind: 'article', id } as const,
   })),
   {
     fr: projectsPath('fr'),

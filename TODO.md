@@ -46,7 +46,11 @@ time, sovereignty mode, compliance evidence); mark the rest as roadmap.
 - [x] Serve `/.well-known/security.txt` with the security contact (contact@swirlit.dev), policy links to the disclosure section and a 180-day expiry renewed by each build, and keep it in the built-security check. *(2026-10-09)*
 - [ ] Legal pages for the offer: terms of service, SLA, data processing agreement and acceptable use (FR and EN), linked from the footer.
 - [ ] Releases page listing platform versions, release channels and changelog highlights, linked to the published product documentation.
-- [ ] Resource articles (FR and EN): NIS2 readiness checklist, DORA obligations for ICT suppliers, leaving a hyperscaler, French electronic invoicing; each ends with the demo call to action.
+- Resource articles (FR and EN) under `/ressources/` and `/en/resources/`, each with its sources, last-checked date and the demo call to action:
+  - [x] NIS2 readiness checklist, with the French transposition status as of 2026-10-09. *(2026-10-09)*
+  - [ ] DORA obligations for ICT suppliers.
+  - [ ] Leaving a hyperscaler.
+  - [ ] French electronic invoicing.
 - [ ] Structured data (`SoftwareApplication`/`Product`, `Organization`, `FAQPage`), sitemap entries, hreflang pairs and Open Graph images for every new page; extend `check-built-seo.py` to cover them.
 - [ ] Customer links in the header once they exist: status page, support and fleet console sign-in.
 

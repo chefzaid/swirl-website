@@ -1,0 +1,9 @@
+---
+import ArticleLayout from '../../../layouts/Article.astro';
+import { articleSlug, articles } from '../../../../data/site';
+export function getStaticPaths() {
+  return articles.map(id => ({ params: { slug: articleSlug(id, 'en') }, props: { id } }));
+}
+const { id } = Astro.props;
+---
+<ArticleLayout id={id} lang="en" />

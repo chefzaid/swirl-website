@@ -1,3 +1,4 @@
+import { getEntry } from 'astro:content';
 import { projects, services } from '../../data/portfolio';
 import { servicePages } from '../../data/expertise';
 import { product } from '../../data/product';
@@ -7,19 +8,28 @@ import { sovereignty } from '../../data/sovereignty';
 import { comparison } from '../../data/comparison';
 import {
   absoluteUrl,
+  articlePath,
+  articles,
   homePath,
   privacyPath,
   productPagePath,
   productPath,
   projectPath,
   projectsPath,
+  resourcesPath,
   servicePath,
   siteConfig,
 } from '../../data/site';
 
 // Plain-language site summary for AI answer engines (https://llmstxt.org/),
 // generated from the same content as the pages.
-export function GET() {
+export async function GET() {
+  const guides = await Promise.all(
+    articles.map(async (id) => ({
+      id,
+      data: (await getEntry('articles', `en/${id}`))!.data,
+    })),
+  );
   const link = (name: string, path: string, note?: string) =>
     `- [${name}](${absoluteUrl(path)})${note ? `: ${note}` : ''}`;
   const body = [
@@ -61,6 +71,13 @@ export function GET() {
       'Swirl Cloud compared',
       productPagePath('comparison', 'en'),
       comparison.description.en,
+    ),
+    '',
+    '## Resources',
+    '',
+    link('All resources', resourcesPath('en')),
+    ...guides.map(({ id, data }) =>
+      link(data.heading, articlePath(id, 'en'), data.description),
     ),
     '',
     '## Case studies',
