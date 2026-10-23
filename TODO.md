@@ -54,7 +54,7 @@ Swirl Cloud answers, with sources and dates as for the existing ones.
 - [x] Phone-width end-to-end checks (`e2e/phone.spec.ts`): the header menu opens, navigates and closes on the homepage, and works without JavaScript on inner pages; the axe scan covers the home and an inner page at phone width in both themes. *(2026-10-23)*
 - [x] Guide (FR and EN): the Cyber Resilience Act for companies that make software and connected products — scope, the vulnerability reporting that applies since 11 September 2026, the requirements and support period due by December 2027, and what to prepare (`/ressources/cyber-resilience-act/`, `/en/resources/cyber-resilience-act/`). *(2026-10-23)*
 - [x] Guide (FR and EN): the US CLOUD Act and data hosted in Europe — what the law allows, GDPR Article 48 and Data Act Article 32, the EU–US Data Privacy Framework, SecNumCloud's protection against non-EU laws, and the questions to ask a host (`/ressources/cloud-act/`, `/en/resources/cloud-act/`). *(2026-10-23)*
-- [ ] Service pages link to their guides too: embedded software and IoT → Cyber Resilience Act; sovereign private cloud → CLOUD Act, leaving a hyperscaler; custom software → French e-invoicing.
+- [x] Service pages link to their guides too: embedded software and IoT → Cyber Resilience Act; sovereign private cloud → CLOUD Act, leaving a hyperscaler; custom software → French e-invoicing. *(2026-10-23)*
 - [ ] Resources hub lists the most recently updated guides first.
 - [ ] Re-check the NIS2 guide's French transposition status (stated as of 2026-10-09) and update it and its date if it changed.
 

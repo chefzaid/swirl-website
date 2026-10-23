@@ -118,11 +118,14 @@ export const articles = Object.keys(articleSlugs) as Article[];
 export const articleSlug = (id: Article, lang: Lang) => articleSlugs[id][lang];
 export const articlePath = (id: Article, lang: Lang) =>
   `${resourcesPath(lang)}${articleSlug(id, lang)}/`;
-// Guides shown under each Swirl Cloud page and each guide, by subject.
+// Guides shown under each service page, Swirl Cloud page and guide, by subject.
 export const relatedArticles: Record<
-  'product' | ProductPage | Article,
+  Service['id'] | 'product' | ProductPage | Article,
   Article[]
 > = {
+  web: ['french-e-invoicing'],
+  embedded: ['cyber-resilience-act'],
+  'cloud-ai': ['cloud-act', 'leaving-a-hyperscaler'],
   product: ['nis2-checklist', 'dora-ict-suppliers', 'leaving-a-hyperscaler'],
   'how-it-works': ['leaving-a-hyperscaler'],
   security: ['nis2-checklist', 'dora-ict-suppliers', 'cyber-resilience-act'],
