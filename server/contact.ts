@@ -55,7 +55,7 @@ function validEmail(email: string): boolean {
 
 // Demo requests carry no visitor subject; the company names the inquiry, its
 // notification and its CRM lead.
-export const demoSubject = (company: string) => `Démo Swirl Cloud — ${company}`;
+const demoSubject = (company: string) => `Démo Swirl Cloud — ${company}`;
 
 export function validateContact(value: unknown): ContactData | null {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return null;

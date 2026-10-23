@@ -8,7 +8,7 @@ type Encoding = 'br' | 'gzip';
 type Lang = 'fr' | 'en';
 
 // Prefer Brotli, then gzip, honouring q=0 exclusions and the * wildcard.
-export function preferredEncoding(header: string | null): Encoding | undefined {
+function preferredEncoding(header: string | null): Encoding | undefined {
   const weights = new Map<string, number>();
   for (const part of (header ?? '').toLowerCase().split(',')) {
     const [name, ...params] = part.split(';').map((value) => value.trim());

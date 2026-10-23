@@ -90,7 +90,7 @@ const productPageSlugs = {
   comparison: { fr: 'comparatif', en: 'comparison' },
 } satisfies Record<string, Bilingual>;
 export type ProductPage = keyof typeof productPageSlugs;
-export const productPages = Object.keys(productPageSlugs) as ProductPage[];
+const productPages = Object.keys(productPageSlugs) as ProductPage[];
 export const productPagePath = (id: ProductPage, lang: Lang) =>
   `${productPath(lang)}${productPageSlugs[id][lang]}/`;
 // Resource articles; their text lives in src/content/articles/<lang>/<id>.md.

@@ -2,7 +2,7 @@ import { isIP } from 'node:net';
 import type { ContactDatabase, DatabaseStatement } from '../db/index.ts';
 
 const HOUR = 3_600_000;
-export const MAX_ATTEMPTS_PER_MINUTE = 30;
+const MAX_ATTEMPTS_PER_MINUTE = 30;
 const deniedWindows = new WeakMap<ContactDatabase, Map<string, number>>();
 const MAX_CACHED_BLOCKS = 1000;
 export function sourceBucket(request: Request): string {
