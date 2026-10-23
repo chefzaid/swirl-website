@@ -10,6 +10,7 @@ Open website work, added 2026-09-27. Worked through with the coding loop in
 - [x] `components/SiteFooter.tsx` and `components/ContactForm.tsx` hardcoded the privacy paths; both now use `privacyPath()`, passed to the contact form island as a prop so it does not bundle the site data. *(2026-10-23)*
 - [x] `src/layouts/NotFound.astro` had no "Skip to content" link, unlike every other page; added. *(2026-10-23)*
 - [x] `infra/k8s/swirl-website.yaml` probes waited Kubernetes' 1-second default for an answer, so the shared node under load (load 114, swap full) restarted a working server. They now wait 5 seconds (readiness 3) and restart after a minute without an answer; `test-delivery.sh` checks the base and HA overlay. *(2026-10-23)*
+- [x] The light theme's button and chat-button hover colour (`#4d6c12`) was almost the new accent (`#4c6b13`, from the contrast fix), so hovering barely changed them; both now use a darker `--primary-hover` token. *(2026-10-23)*
 
 ## Needs Input
 

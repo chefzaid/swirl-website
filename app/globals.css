@@ -20,6 +20,7 @@
   --background: light-dark(#f6f7f2, #101211);
   --foreground: light-dark(#151a12, #f2f3ed);
   --primary: light-dark(#4c6b13, #d7ee92);
+  --primary-hover: light-dark(#3b530f, #e7f8b9);
   --primary-foreground: light-dark(#ffffff, #171c11);
   --muted: light-dark(#dce0de, #1e2220);
   --muted-foreground: light-dark(#484f4a, #a3aaa5);
@@ -186,7 +187,7 @@ nav a.active::before {
     transform 0.2s;
 }
 .button:hover {
-  background: light-dark(#4d6c12, #e7f8b9);
+  background: var(--primary-hover);
   transform: translateY(-2px);
 }
 .hero {
@@ -498,7 +499,7 @@ button.chat-launcher {
   cursor: pointer;
 }
 button.chat-launcher:hover {
-  background: light-dark(#4d6c12, #e7f8b9);
+  background: var(--primary-hover);
   transform: translateY(-2px);
 }
 .chat-launcher-text {
