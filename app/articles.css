@@ -4,6 +4,40 @@
   font-size: 13px;
   color: var(--muted-foreground);
 }
+.article-contents {
+  /* A block, unlike the site's flex navigation bars. */
+  display: block;
+  max-width: 760px;
+  margin-top: 40px;
+  padding: 20px 24px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.article-contents h2 {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+.article-contents ul {
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 8px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.article-contents a {
+  color: var(--foreground);
+  text-decoration: underline;
+  text-decoration-color: var(--border);
+  text-underline-offset: 3px;
+}
+.article-contents a:hover {
+  color: var(--primary);
+}
 .article-body {
   max-width: 760px;
   margin-top: 56px;
@@ -86,6 +120,7 @@
   .chat-launcher,
   .chat-frame,
   .chat-shell,
+  .article-contents,
   .case-contact,
   .guide-cards,
   .product-more {

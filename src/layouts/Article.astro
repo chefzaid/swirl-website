@@ -11,7 +11,8 @@ const { id, lang } = Astro.props;
 const en = lang === 'en';
 const entry = await getEntry('articles', `${lang}/${id}`);
 if (!entry) throw new Error(`Missing article: ${lang}/${id}`);
-const { Content } = await render(entry);
+const { Content, headings } = await render(entry);
+const sections = headings.filter(heading => heading.depth === 2);
 const article = entry.data;
 const path = articlePath(id, lang);
 const canonical = absoluteUrl(path);
@@ -38,6 +39,10 @@ const structuredData = [
       <p class="case-lead">{article.lead}</p>
       <p class="article-meta">{siteConfig.name} · {en ? 'Updated' : 'Mis à jour le'} <time datetime={day(article.updated)}>{date(article.updated)}</time></p>
     </header>
+    <nav class="article-contents" aria-labelledby="contents-heading">
+      <h2 id="contents-heading">{en ? 'Contents' : 'Sommaire'}</h2>
+      <ul>{sections.map(section => <li><a href={`#${section.slug}`}>{section.text}</a></li>)}</ul>
+    </nav>
     <div class="article-body"><Content /></div>
     <section class="article-sources" aria-labelledby="sources-heading">
       <h2 id="sources-heading">Sources</h2>

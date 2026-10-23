@@ -59,7 +59,7 @@ Swirl Cloud answers, with sources and dates as for the existing ones.
 - [x] Service pages link to their guides too: embedded software and IoT → Cyber Resilience Act; sovereign private cloud → CLOUD Act, leaving a hyperscaler; custom software → French e-invoicing. *(2026-10-23)*
 - [x] Resources hub lists the most recently updated guides first. *(2026-10-23)*
 - [x] Re-check the NIS2 guide's French transposition status: still not voted by the National Assembly, the 7 and 9 October debate withdrawn without a new date; guide and date updated to 2026-10-23. *(2026-10-23)*
-- [ ] Contents list at the top of each guide, from its sections, so a reader can jump to the part they need.
+- [x] Contents list at the top of each guide, from its sections, so a reader can jump to the part they need. *(2026-10-23)*
 - [x] The 404 page also suggests Swirl Cloud and the resources. *(2026-10-23)*
 - [x] The homepage's Swirl Cloud presentation links to the guides as well as to the product page. *(2026-10-23)*
 
