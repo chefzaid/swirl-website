@@ -22,6 +22,17 @@ assert pvc['metadata']['annotations']['argocd.argoproj.io/sync-options'] == 'Pru
 pod = deployment['spec']['template']['spec']
 assert not pod['automountServiceAccountToken'] and pod['securityContext']['runAsUser'] == 10001
 assert pod['containers'][0]['readinessProbe']['httpGet']['path'] == '/healthz'
+
+
+def tolerates_load(container):
+    # Kubernetes' 1-second default timeout restarts a working server on a loaded node.
+    liveness, readiness = container['livenessProbe'], container['readinessProbe']
+    return (liveness.get('timeoutSeconds', 1) >= 5 and container['startupProbe'].get('timeoutSeconds', 1) >= 5
+            and liveness.get('periodSeconds', 10) * liveness.get('failureThreshold', 3) >= 60
+            and readiness.get('timeoutSeconds', 1) >= 3)
+
+
+assert tolerates_load(pod['containers'][0])
 mail_env = {item['name']: item for item in pod['containers'][0]['env']}
 assert mail_env['CONTACT_SENDER']['value'] == 'noreply@swirlit.dev'
 mail_ref = mail_env['RESEND_API_KEY']['valueFrom']['secretKeyRef']
@@ -67,7 +78,7 @@ if shutil.which('kubectl'):
     assert spread['labelSelector'] == ha['spec']['selector']
     assert all(volume['name'] != 'data' for volume in ha_pod['volumes'])
     app_container = ha_pod['containers'][0]
-    assert app_container['livenessProbe']['httpGet']['path'] == '/livez'
+    assert app_container['livenessProbe']['httpGet']['path'] == '/livez' and tolerates_load(app_container)
     assert any(env['name'] == 'DATABASE_URL' and not env['valueFrom']['secretKeyRef'].get('optional') for env in app_container['env'])
     budget = next(doc for doc in rendered if doc['kind'] == 'PodDisruptionBudget')
     assert budget['spec']['minAvailable'] == 1 and budget['spec']['selector'] == ha['spec']['selector']

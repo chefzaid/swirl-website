@@ -118,7 +118,10 @@ workflow is present on GitHub's default branch to send a dispatch test.
 
 The Node container listens on port 8080 as UID/GID 10001 with a read-only root
 filesystem. `PUBLIC_ORIGIN=https://swirlit.dev` fixes the origin used by the
-application. `/healthz` checks the SQLite connection. The single replica uses
+application. `/healthz` checks the SQLite connection; its probes wait 5 seconds
+for an answer (readiness 3) and restart the container only after a minute
+without one, so a loaded node does not restart a working server
+(`infra/scripts/test-delivery.sh` rejects shorter values). The single replica uses
 the `swirl-website-data` Longhorn PVC at `/data`; the Node adapter stores
 `contact.sqlite` and applies the plain SQL migrations in `db/migrations`.
 `Recreate` ensures two application replicas never write the same database during

@@ -109,17 +109,21 @@ spec:
               path: /healthz
               port: http
             periodSeconds: 3
+            timeoutSeconds: 5
             failureThreshold: 30
           readinessProbe:
             httpGet:
               path: /healthz
               port: http
             periodSeconds: 5
+            timeoutSeconds: 3
           livenessProbe:
             httpGet:
               path: /healthz
               port: http
             periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
           resources:
             requests:
               cpu: 50m
