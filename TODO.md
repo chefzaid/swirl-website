@@ -56,7 +56,7 @@ Swirl Cloud answers, with sources and dates as for the existing ones.
 - [x] Guide (FR and EN): the US CLOUD Act and data hosted in Europe — what the law allows, GDPR Article 48 and Data Act Article 32, the EU–US Data Privacy Framework, SecNumCloud's protection against non-EU laws, and the questions to ask a host (`/ressources/cloud-act/`, `/en/resources/cloud-act/`). *(2026-10-23)*
 - [x] Service pages link to their guides too: embedded software and IoT → Cyber Resilience Act; sovereign private cloud → CLOUD Act, leaving a hyperscaler; custom software → French e-invoicing. *(2026-10-23)*
 - [x] Resources hub lists the most recently updated guides first. *(2026-10-23)*
-- [ ] Re-check the NIS2 guide's French transposition status (stated as of 2026-10-09) and update it and its date if it changed.
+- [x] Re-check the NIS2 guide's French transposition status: still not voted by the National Assembly, the 7 and 9 October debate withdrawn without a new date; guide and date updated to 2026-10-23. *(2026-10-23)*
 
 ## Company details
 

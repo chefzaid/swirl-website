@@ -4,7 +4,7 @@ description: 'Où en est NIS2 en France en octobre 2026, comment savoir si vous 
 heading: 'Checklist NIS2 : ce qu’il faut préparer en 2026'
 lead: 'La France n’a pas encore adopté sa loi NIS2, mais les obligations de la directive sont connues et demandent des mois de mise en place. Cette checklist couvre le périmètre, la gouvernance, les dix mesures de sécurité et la notification des incidents, avec les preuves que chacune exige.'
 published: 2026-10-09
-updated: 2026-10-09
+updated: 2026-10-23
 sources:
   - label: 'Directive (UE) 2022/2555 (NIS2), EUR-Lex'
     url: 'https://eur-lex.europa.eu/eli/dir/2022/2555/oj'
@@ -16,7 +16,7 @@ sources:
 
 ## Où en est NIS2 en France
 
-Les États membres devaient transposer la directive NIS2, (UE) 2022/2555, avant le 17 octobre 2024. En France, elle est portée par le projet de loi relatif à la résilience des infrastructures critiques et au renforcement de la cybersécurité, dit *loi Résilience*, qui transpose aussi la directive sur la résilience des entités critiques (REC) et la directive qui accompagne DORA. Le Sénat l’a adopté le 12 mars 2025. Au 9 octobre 2026, l’Assemblée nationale ne l’a pas voté : l’examen prévu début octobre a été reporté. En juillet 2026, la Commission européenne a saisi la Cour de justice de l’Union européenne de ce retard.
+Les États membres devaient transposer la directive NIS2, (UE) 2022/2555, avant le 17 octobre 2024. En France, elle est portée par le projet de loi relatif à la résilience des infrastructures critiques et au renforcement de la cybersécurité, dit *loi Résilience*, qui transpose aussi la directive sur la résilience des entités critiques (REC) et la directive qui accompagne DORA. Le Sénat l’a adopté le 12 mars 2025. Au 23 octobre 2026, l’Assemblée nationale ne l’a pas voté : l’examen prévu les 7 et 9 octobre a été retiré de l’ordre du jour, sans nouvelle date. En juillet 2026, la Commission européenne a saisi la Cour de justice de l’Union européenne de ce retard.
 
 Tant que la loi et ses décrets ne sont pas publiés, les obligations ci-dessous ne s’appliquent pas en droit français, et leurs échéances précises ne sont pas fixées. L’ANSSI propose déjà un pré-enregistrement volontaire et a publié le 17 mars 2026 le ReCyF, son référentiel de cybersécurité pour NIS2, sous forme de document de travail.
 

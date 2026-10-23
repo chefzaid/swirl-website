@@ -4,7 +4,7 @@ description: 'Where NIS2 stands in France in October 2026, how to check whether 
 heading: 'NIS2 readiness checklist: what to prepare in 2026'
 lead: 'France has not yet adopted its NIS2 law, but the directive’s obligations are known and take months to put in place. This checklist covers scope, governance, the ten security measures and incident reporting, with the evidence each one calls for.'
 published: 2026-10-09
-updated: 2026-10-09
+updated: 2026-10-23
 sources:
   - label: 'Directive (EU) 2022/2555 (NIS2), EUR-Lex'
     url: 'https://eur-lex.europa.eu/eli/dir/2022/2555/oj'
@@ -16,7 +16,7 @@ sources:
 
 ## Where NIS2 stands in France
 
-Member states had to transpose the NIS2 Directive, (EU) 2022/2555, by 17 October 2024. In France it is carried by the bill on the resilience of critical infrastructure and the strengthening of cybersecurity, known as the *loi Résilience*, which also transposes the critical entities resilience (CER) directive and the directive that accompanies DORA. The Senate adopted the bill on 12 March 2025. As of 9 October 2026 the National Assembly has not voted on it: the debate planned for early October was postponed. In July 2026 the European Commission referred France to the Court of Justice of the EU for the delay.
+Member states had to transpose the NIS2 Directive, (EU) 2022/2555, by 17 October 2024. In France it is carried by the bill on the resilience of critical infrastructure and the strengthening of cybersecurity, known as the *loi Résilience*, which also transposes the critical entities resilience (CER) directive and the directive that accompanies DORA. The Senate adopted the bill on 12 March 2025. As of 23 October 2026 the National Assembly has not voted on it: the debate planned for 7 and 9 October was withdrawn from the agenda, with no new date set. In July 2026 the European Commission referred France to the Court of Justice of the EU for the delay.
 
 Until the law and its decrees are published, the obligations below do not apply under French law, and their exact deadlines are not set. ANSSI already offers a voluntary pre-registration, and on 17 March 2026 it published ReCyF, its cybersecurity reference framework for NIS2, as a working document.
 
