@@ -8,6 +8,7 @@ Open website work, added 2026-09-27. Worked through with the coding loop in
 - [x] `npm audit --audit-level=high` in the CI `verify` job failed on `vite` 8.2.2 (high) and `astro` 7.3.1 (moderate XSS and CSS injection): upgraded to `vite` 8.3.5 and `astro` 7.4.1. `satori` still pins `fflate` 0.7.3 (moderate, ZIP64 parsing), reached only at build time on our own fonts, with no upstream fix yet. *(2026-10-23)*
 - [x] `components/SiteFooter.tsx` hardcoded "© 2013–2026"; the end year now comes from the build date. *(2026-10-23)*
 - [x] `components/SiteFooter.tsx` and `components/ContactForm.tsx` hardcoded the privacy paths; both now use `privacyPath()`, passed to the contact form island as a prop so it does not bundle the site data. *(2026-10-23)*
+- [ ] `src/layouts/NotFound.astro` has no "Skip to content" link, unlike every other page (`src/layouts/Subpage.astro`). *(found by: Coding Agent)*
 
 ## Needs Input
 
@@ -40,6 +41,19 @@ Parts of tasks that cannot advance without the owner's decision or information. 
 - [x] End-to-end tests (Playwright, `e2e/`) on the built site for the critical paths: project inquiry and Swirl Cloud demo submissions (demo preselected from the product page), language switch, theme kept across pages, and the chat contacting Odoo only once opened; the CI `e2e` job gates the image build. *(2026-10-23)*
 - [x] Automated accessibility scan (axe, WCAG 2.2 AA) of each page template in both light and dark themes inside the end-to-end suite. Fixed what it reported: the light theme's accent green and three muted greys lacked 4.5:1 contrast, and the FR/EN links' accessible names did not contain their visible text. *(2026-10-23)*
 - [ ] Contact data retention: delete stored inquiries, their CRM queue rows and expired rate-limit records after a fixed period once the lead is in Odoo, and state the period on the privacy page (FR and EN).
+
+## Content and discovery (added 2026-10-23)
+
+The guides are what a NIS2 or DORA buyer finds first, and the product pages are
+what convinces them; link the two and keep adding guides on the questions
+Swirl Cloud answers, with sources and dates as for the existing ones.
+
+- [ ] Related guides: each Swirl Cloud page and each article links to the guides on its subject (security → NIS2, DORA; sovereignty and comparison → leaving a hyperscaler; …), from one mapping in `data/site.ts`.
+- [ ] Sitemap `lastmod` for the resource articles, from their `updated` date.
+- [ ] Print styles for articles, so a checklist prints or saves as PDF without the header, chat and footer, with link targets shown.
+- [ ] Phone-width end-to-end checks: the header menu opens and navigates, and the axe scan passes on the home and an inner page.
+- [ ] Guide (FR and EN): answering a customer security questionnaire — what NIS2 and DORA customers ask their suppliers, the common questionnaire formats, and the evidence to keep ready.
+- [ ] Guide (FR and EN): the US CLOUD Act and data hosted in Europe — what the law allows, the EU–US Data Privacy Framework, SecNumCloud's protection against non-EU laws, and what it means when choosing a host.
 
 ## Company details
 
