@@ -5,7 +5,7 @@ Open website work, added 2026-09-27. Worked through with the coding loop in
 
 ## Bugs to fix
 
-- [x] `npm audit --audit-level=high` in the CI `verify` job failed on `vite` 8.2.2 (high) and `astro` 7.3.1 (moderate XSS and CSS injection): upgraded to `vite` 8.3.5 and `astro` 7.4.1. `satori` still pins `fflate` 0.7.3 (moderate, ZIP64 parsing), reached only at build time on our own fonts, with no upstream fix yet. *(2026-10-23)*
+- [x] `npm audit --audit-level=high` in the CI `verify` job failed on `vite` 8.2.2 (high) and `astro` 7.3.1 (moderate XSS and CSS injection): upgraded to `vite` 8.3.5 and `astro` 7.4.1. The remaining moderate `fflate` advisory under `satori` is cleared by an override (see Quality and maintenance). *(2026-10-23)*
 - [x] `components/SiteFooter.tsx` hardcoded "© 2013–2026"; the end year now comes from the build date. *(2026-10-23)*
 - [x] `components/SiteFooter.tsx` and `components/ContactForm.tsx` hardcoded the privacy paths; both now use `privacyPath()`, passed to the contact form island as a prop so it does not bundle the site data. *(2026-10-23)*
 - [x] `src/layouts/NotFound.astro` had no "Skip to content" link, unlike every other page; added. *(2026-10-23)*
@@ -44,7 +44,7 @@ Parts of tasks that cannot advance without the owner's decision or information. 
 - [x] README source map: the end-to-end suite and the guide cards. *(2026-10-23)*
 - [x] Upgrade the Astro React integration to 7.1 (Oxc JSX transform and `@vitejs/plugin-react` 6); the site uses neither custom Babel transforms nor the optional React Compiler, so nothing else changed. *(2026-10-23)*
 - [ ] Upgrade TypeScript to 7.
-- [ ] Upgrade satori to 0.63 for the social cards and icons, which also takes it off the vulnerable `fflate`.
+- [x] Upgrade satori to 0.63 for the social cards and icons. It now follows CSS `content-box` sizing, so the card's root and tag row set `border-box` to keep their layout; titles wrap slightly differently. It still pins the vulnerable `fflate` 0.7.3, so `package.json` overrides it with 0.8.3, which renders pixel-identical cards; `npm audit` now reports no vulnerabilities. *(2026-10-23)*
 - [ ] Contact data retention: delete stored inquiries, their CRM queue rows and expired rate-limit records after a fixed period once the lead is in Odoo, and state the period on the privacy page (FR and EN).
 
 ## Content and discovery (added 2026-10-23)

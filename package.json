@@ -42,11 +42,14 @@
     "oxfmt": "0.74.0",
     "oxlint": "1.89.0",
     "oxlint-tsgolint": "7.0.2005",
-    "satori": "0.35.1",
+    "satori": "0.63.2",
     "sharp": "0.35.5",
     "tailwindcss": "4.3.3",
     "typescript": "5.9.3",
     "vite": "^8.3.5"
   },
-  "type": "module"
+  "type": "module",
+  "overrides": {
+    "fflate": "0.8.3"
+  }
 }

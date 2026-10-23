@@ -67,7 +67,11 @@ treats it as ineligible for software rich results.
 
 `src/pages/og/[image].png.ts` renders a 1200×630 card per document at build
 time (`lib/social-image.tsx`: Satori with the bundled Manrope font, then
-sharp), mirroring the page H1. The same module builds `/logo.png`,
+sharp), mirroring the page H1. Satori follows CSS `content-box` sizing, so
+boxes that combine a size with padding set `boxSizing: 'border-box'`. It pins
+`fflate` 0.7.3, which has a security advisory; `overrides` in `package.json`
+replaces it with 0.8.3, which renders identical cards. Remove the override once
+satori depends on a fixed `fflate`. The same module builds `/logo.png`,
 `/apple-touch-icon.png` and `/favicon.ico` from `public/assets/mark.svg`.
 `/llms.txt` summarizes the company, services and case studies for AI answer
 engines from the same data.

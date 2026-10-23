@@ -83,6 +83,7 @@ export async function socialCardPng(card: SocialCard) {
       style={{
         width: '100%',
         height: '100%',
+        boxSizing: 'border-box',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
@@ -167,6 +168,7 @@ export async function socialCardPng(card: SocialCard) {
       <div
         style={{
           display: 'flex',
+          boxSizing: 'border-box',
           gap: 12,
           paddingTop: 28,
           borderTop: `1px solid ${colors.border}`,
