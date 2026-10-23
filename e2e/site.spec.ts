@@ -46,3 +46,14 @@ test('the chat contacts Odoo only once the visitor opens it', async ({
   );
   await expect.poll(() => odooRequests.length).toBeGreaterThan(0);
 });
+
+test('a printed guide keeps only the article, in light colours', async ({
+  page,
+}) => {
+  await page.emulateMedia({ media: 'print' });
+  await page.goto('/en/resources/nis2-checklist/');
+  await expect(page.locator('h1')).toBeVisible();
+  for (const chrome of ['.header', '.footer', '.chat-launcher'])
+    await expect(page.locator(chrome)).toBeHidden();
+  await expect(page.locator('html')).toHaveCSS('color-scheme', 'light');
+});

@@ -50,7 +50,7 @@ Swirl Cloud answers, with sources and dates as for the existing ones.
 
 - [ ] Related guides: each Swirl Cloud page and each article links to the guides on its subject (security → NIS2, DORA; sovereignty and comparison → leaving a hyperscaler; …), from one mapping in `data/site.ts`.
 - [x] Sitemap `lastmod` for the resource articles, from their `updated` date; other pages still carry none, checked by `check-built-seo.py`. *(2026-10-23)*
-- [ ] Print styles for articles, so a checklist prints or saves as PDF without the header, chat and footer, with link targets shown.
+- [x] Print styles for articles, so a checklist prints or saves as PDF without the header, chat and footer, in light colours, with external link targets shown. *(2026-10-23)*
 - [ ] Phone-width end-to-end checks: the header menu opens and navigates, and the axe scan passes on the home and an inner page.
 - [ ] Guide (FR and EN): answering a customer security questionnaire — what NIS2 and DORA customers ask their suppliers, the common questionnaire formats, and the evidence to keep ready.
 - [ ] Guide (FR and EN): the US CLOUD Act and data hosted in Europe — what the law allows, the EU–US Data Privacy Framework, SecNumCloud's protection against non-EU laws, and what it means when choosing a host.

@@ -70,3 +70,41 @@
   font-size: 14px;
   line-height: 1.7;
 }
+/* Printed or saved as PDF: the guide alone, in light colours, with links. */
+@media print {
+  /* Outranks the dark default in globals.css (`:root, .dark`). */
+  html:root {
+    color-scheme: light;
+  }
+  body {
+    background: #fff;
+  }
+  .header,
+  .skip-link,
+  .breadcrumbs,
+  .footer,
+  .chat-launcher,
+  .chat-frame,
+  .chat-shell,
+  .case-contact,
+  .product-more {
+    display: none !important;
+  }
+  .article-body,
+  .article-sources {
+    max-width: none;
+  }
+  .article-body h2,
+  .article-body h3 {
+    break-after: avoid;
+  }
+  .article-body li {
+    break-inside: avoid;
+  }
+  .article-body a[href^='http']::after,
+  .article-sources a::after {
+    content: ' (' attr(href) ')';
+    font-size: 0.85em;
+    word-break: break-all;
+  }
+}
