@@ -5,6 +5,7 @@ node_modules
 .data
 .openai
 coverage
+e2e-results
 outputs
 work
 .cache

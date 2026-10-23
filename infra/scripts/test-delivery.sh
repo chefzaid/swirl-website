@@ -76,7 +76,8 @@ if shutil.which('kubectl'):
         assert hook['metadata']['annotations']['argocd.argoproj.io/hook'] == 'PreSync'
         assert hook['spec']['template']['spec']['containers'][0]['image'] == app_container['image']
 assert pipeline['release']['resource_group'] == 'swirl-website-production'
-assert pipeline['image-build']['needs'] == [{'job': 'verify', 'artifacts': True}]
+assert pipeline['image-build']['needs'] == [{'job': 'verify', 'artifacts': True}, {'job': 'e2e', 'artifacts': False}]
+assert pipeline['e2e']['needs'] == [{'job': 'verify', 'artifacts': True}] and not pipeline['e2e'].get('allow_failure', False)
 assert pipeline['release']['needs'] == [{'job': 'image-build', 'artifacts': True}]
 assert pipeline['image-build']['image']['entrypoint'] == ['']
 

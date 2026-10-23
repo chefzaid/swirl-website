@@ -13,7 +13,8 @@
     "format": "oxfmt",
     "check": "astro check",
     "test": "node --experimental-strip-types --test tests/*.test.ts",
-    "test:coverage": "mkdir -p coverage && node --experimental-strip-types --experimental-test-coverage --test-coverage-exclude=\"tests/**\" --test-coverage-exclude=\"node_modules/**\" --test-reporter=spec --test-reporter-destination=stdout --test-reporter=lcov --test-reporter-destination=coverage/lcov.info --test tests/*.test.ts"
+    "test:coverage": "mkdir -p coverage && node --experimental-strip-types --experimental-test-coverage --test-coverage-exclude=\"tests/**\" --test-coverage-exclude=\"node_modules/**\" --test-reporter=spec --test-reporter-destination=stdout --test-reporter=lcov --test-reporter-destination=coverage/lcov.info --test tests/*.test.ts",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@astrojs/react": "6.0.5",
@@ -32,6 +33,7 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.0",
     "@fontsource/manrope": "5.3.0",
+    "@playwright/test": "1.64.1",
     "@tailwindcss/postcss": "4.2.1",
     "@types/node": "24.19.2",
     "@types/react": "19.2.14",

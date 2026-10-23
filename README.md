@@ -128,6 +128,7 @@ npm run check
 npm run lint
 npm test
 npm run build
+npm run test:e2e
 python3 scripts/check-built-security.py
 python3 scripts/check-built-seo.py
 bash infra/scripts/test-delivery.sh
@@ -135,7 +136,13 @@ python3 infra/scripts/test-onboarding.py
 bash infra/scripts/test-postgres.sh
 ```
 
-Tests use temporary databases and mocked email providers. The PostgreSQL helper
+Tests use temporary databases and mocked email providers. `npm run test:e2e`
+runs the Playwright suite (`e2e/`) in Chromium against the production build,
+served on port 4173 with a temporary SQLite directory and no Odoo or email
+delivery; requests to Odoo are blocked. Install its browser once with
+`npx playwright install chromium`, or point `CHROMIUM_PATH` at an existing
+Chromium. CI runs it in the matching Playwright image after `verify`, and the
+image build waits for it. The PostgreSQL helper
 requires Docker and creates an isolated local database.
 
 ## Privacy maintenance

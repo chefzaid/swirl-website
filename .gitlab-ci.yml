@@ -63,6 +63,31 @@ verify:
       - dist/
       - coverage/
 
+e2e:
+  stage: verify
+  image: mcr.microsoft.com/playwright:v1.64.1-noble@sha256:47b510dd9230bf0b9bfc9b20102241e577ea7a99334ab4c3ca19f19770e9b8ea
+  needs:
+    - job: verify
+      artifacts: true
+  cache:
+    key:
+      files:
+        - package-lock.json
+      prefix: swirl-website-npm
+    paths:
+      - .cache/npm/
+    policy: pull
+  script:
+    - npm ci --no-fund --prefer-offline
+    - npm run test:e2e
+  artifacts:
+    when: always
+    expire_in: 7 days
+    paths:
+      - e2e-results/
+    reports:
+      junit: e2e-results/junit.xml
+
 image-build:
   stage: image
   image:
@@ -71,6 +96,8 @@ image-build:
   needs:
     - job: verify
       artifacts: true
+    - job: e2e
+      artifacts: false
   script:
     - sh infra/scripts/ci-build-image.sh
   artifacts:

@@ -5,6 +5,7 @@
 /.wrangler/
 /.data/
 /coverage/
+/e2e-results/
 /outputs/
 /work/
 /.cache/
