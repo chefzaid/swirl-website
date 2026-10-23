@@ -43,7 +43,8 @@ Parts of tasks that cannot advance without the owner's decision or information. 
 - [x] Minor and patch dependency updates within the current major versions: React 19.3, Tailwind 4.3, Base UI 1.9, lucide 1.61, oxlint 1.89 and others. oxlint 1.79+ replaced the `react/react-compiler` rule with React Compiler rules in the `correctness` category, so the old name is gone from `.oxlintrc.json`; its purity rule moved the footer's build year out of render. Majors (Astro React integration 7, TypeScript 7, satori 0.63) are left for a deliberate upgrade. *(2026-10-23)*
 - [x] README source map: the end-to-end suite and the guide cards. *(2026-10-23)*
 - [x] Upgrade the Astro React integration to 7.1 (Oxc JSX transform and `@vitejs/plugin-react` 6); the site uses neither custom Babel transforms nor the optional React Compiler, so nothing else changed. *(2026-10-23)*
-- [ ] Upgrade TypeScript to 7.
+- [x] Upgrade TypeScript from 5.9 to 6.0, the newest version `astro check` supports; `astro check` and `tsc` report no errors. *(2026-10-23)*
+- [ ] TypeScript 7, once `@astrojs/check` supports it: it relies on TypeScript's JavaScript API, which 7.0 no longer ships, and accepts only TypeScript 5 or 6. Lint's type-aware rules already run on the TypeScript 7 compiler through `oxlint-tsgolint`. **Blocked:** waiting on `@astrojs/check`.
 - [x] Upgrade satori to 0.63 for the social cards and icons. It now follows CSS `content-box` sizing, so the card's root and tag row set `border-box` to keep their layout; titles wrap slightly differently. It still pins the vulnerable `fflate` 0.7.3, so `package.json` overrides it with 0.8.3, which renders pixel-identical cards; `npm audit` now reports no vulnerabilities. *(2026-10-23)*
 - [ ] Contact data retention: delete stored inquiries, their CRM queue rows and expired rate-limit records after a fixed period once the lead is in Odoo, and state the period on the privacy page (FR and EN).
 
