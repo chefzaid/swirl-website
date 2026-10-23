@@ -13,6 +13,19 @@ Open website work, added 2026-09-27. Worked through with the coding loop in
 
 Parts of tasks that cannot advance without the owner's decision or information. Answer under the item, and the next agent run applies the answer and removes the entry.
 
+- [ ] Company identity for the footer, contact section and legal notice: headquarters address, SIRET, legal form, share capital and RCS registry city, the OnOff business number (international format), and the publication director (Zaïd Chefchaouni as CEO?). *(task: Company details; asked by: Coding Agent)*
+  - Answer:
+- [ ] Host to name in the legal notice (French law asks for its name, address and phone): the provider and data-centre country of the bare-metal servers running `swirlit.dev`, and whether to also name Cloudflare as the CDN. *(task: Company details › legal notice; asked by: Coding Agent)*
+  - Answer:
+- [ ] How long to keep contact inquiries and chat leads on the website side once they are in Odoo? Options: delete from the website database as soon as Odoo accepts the lead (Odoo stays the record); keep 3 years after the last contact, the CNIL's guideline for prospects; or another period. *(task: Quality and maintenance › contact data retention; asked by: Coding Agent)*
+  - Answer:
+- [ ] Legal basis to state on the privacy page for answering inquiries and chats: pre-contractual steps at the visitor's request (GDPR art. 6(1)(b)), legitimate interest (art. 6(1)(f)), or consent (the form's checkbox, which then must be withdrawable)? *(task: Company details › GDPR Article 13 privacy notice; asked by: Coding Agent)*
+  - Answer:
+- [ ] Which domain serves the Swirl Cloud product pages: keep them under `swirlit.dev`, or move them to one of `swirl.cloud`, `swirlcloud.io`, `swirl-cloud.com` once acquired? *(task: Domains; asked by: Coding Agent)*
+  - Answer:
+- [ ] Licensing decision for the editions and pricing page and the cost calculator: edition names, what each includes, prices or "on quote", support hours and SLA targets. *(task: Swirl Cloud product pages › editions and pricing, cost calculator; asked by: Coding Agent)*
+  - Answer:
+
 ## Quality and maintenance (added 2026-10-23)
 
 - [x] Align `@types/node` with the Node 24 runtime declared in `engines` and the Docker/CI images (22.19 to 24.19). *(2026-10-23)*
@@ -25,6 +38,7 @@ Parts of tasks that cannot advance without the owner's decision or information. 
 - [ ] Show the headquarters address in the footer and contact page (FR and EN).
 - [ ] Show the SIRET number.
 - [ ] Show the business phone number (OnOff virtual number) with a `tel:` link.
+- [ ] Complete the privacy notice to GDPR Article 13 (FR and EN): controller identity (from the details above), legal basis, retention period and the right to lodge a complaint with the CNIL. The CNIL complaint right is published *(2026-10-23)*; the rest waits in **Needs Input**.
 - [ ] Add a legal notice page (mentions légales) with company name, SIRET, headquarters address, phone, publication director and host, linked from the footer; no such page exists today.
 
 ## Odoo integration through its API
