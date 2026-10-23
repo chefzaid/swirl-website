@@ -10,11 +10,13 @@ const { lang } = Astro.props;
 const en = lang === 'en';
 const path = resourcesPath(lang);
 const canonical = absoluteUrl(path);
-const entries = await Promise.all(articles.map(async id => {
+const loaded = await Promise.all(articles.map(async id => {
   const entry = await getEntry('articles', `${lang}/${id}`);
   if (!entry) throw new Error(`Missing article: ${lang}/${id}`);
   return { id, ...entry.data };
 }));
+// Most recently updated guides first.
+const entries = loaded.toSorted((a, b) => b.updated.getTime() - a.updated.getTime());
 const list = {
   '@type': 'ItemList', '@id': canonical + '#articles', numberOfItems: entries.length,
   itemListElement: entries.map((article, index) => ({ '@type': 'ListItem', position: index + 1,
@@ -35,7 +37,7 @@ const list = {
       ? 'Guides on the regulations and choices that shape a company’s IT, with their sources and the date they were last checked.'
       : 'Des guides sur les règles et les choix qui façonnent l’informatique d’une entreprise, avec leurs sources et la date de leur dernière vérification.'}</p>
   </header>
-  <GuideCards lang={lang} ids={articles} heading="Guides" />
+  <GuideCards lang={lang} ids={entries.map(entry => entry.id)} heading="Guides" />
   <aside class="case-contact">
     <h2>{en ? 'Have a question these guides do not answer?' : 'Une question à laquelle ces guides ne répondent pas ?'}</h2>
     <p>{en ? 'Tell us about your context; we reply with what applies to you.' : 'Parlez-nous de votre contexte ; nous vous répondons sur ce qui s’applique à vous.'}</p>
