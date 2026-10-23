@@ -53,7 +53,7 @@ def png_size(path):
 manifest = json.loads(Path('dist/runtime/page-manifest.json').read_text())
 raw = manifest['documents']
 pages = {path: Page(html) for path, html in raw.items()}
-assert len(pages) == 52
+assert len(pages) == 54
 origin = pages['/'].canonical().rstrip('/')
 titles = set(); descriptions = set()
 for path, page in pages.items():

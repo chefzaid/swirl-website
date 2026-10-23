@@ -107,6 +107,10 @@ const articleSlugs = {
     fr: 'facturation-electronique-2026',
     en: 'french-e-invoicing',
   },
+  'cyber-resilience-act': {
+    fr: 'cyber-resilience-act',
+    en: 'cyber-resilience-act',
+  },
 } satisfies Record<string, Bilingual>;
 export type Article = keyof typeof articleSlugs;
 export const articles = Object.keys(articleSlugs) as Article[];
@@ -120,13 +124,14 @@ export const relatedArticles: Record<
 > = {
   product: ['nis2-checklist', 'dora-ict-suppliers', 'leaving-a-hyperscaler'],
   'how-it-works': ['leaving-a-hyperscaler'],
-  security: ['nis2-checklist', 'dora-ict-suppliers'],
+  security: ['nis2-checklist', 'dora-ict-suppliers', 'cyber-resilience-act'],
   sovereignty: ['leaving-a-hyperscaler', 'dora-ict-suppliers'],
   comparison: ['leaving-a-hyperscaler'],
-  'nis2-checklist': ['dora-ict-suppliers'],
+  'nis2-checklist': ['dora-ict-suppliers', 'cyber-resilience-act'],
   'dora-ict-suppliers': ['nis2-checklist', 'leaving-a-hyperscaler'],
   'leaving-a-hyperscaler': ['dora-ict-suppliers'],
   'french-e-invoicing': [],
+  'cyber-resilience-act': ['nis2-checklist'],
 };
 export const projectSlug = (id: Project['id'], lang: Lang) => slugs[id][lang];
 export const projectPath = (id: Project['id'], lang: Lang) =>

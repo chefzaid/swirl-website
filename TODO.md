@@ -52,7 +52,7 @@ Swirl Cloud answers, with sources and dates as for the existing ones.
 - [x] Sitemap `lastmod` for the resource articles, from their `updated` date; other pages still carry none, checked by `check-built-seo.py`. *(2026-10-23)*
 - [x] Print styles for articles, so a checklist prints or saves as PDF without the header, chat and footer, in light colours, with external link targets shown. *(2026-10-23)*
 - [x] Phone-width end-to-end checks (`e2e/phone.spec.ts`): the header menu opens, navigates and closes on the homepage, and works without JavaScript on inner pages; the axe scan covers the home and an inner page at phone width in both themes. *(2026-10-23)*
-- [ ] Guide (FR and EN): the Cyber Resilience Act for companies that make software and connected products — scope, the vulnerability reporting that applies since 11 September 2026, the requirements and support period due by December 2027, and what to prepare.
+- [x] Guide (FR and EN): the Cyber Resilience Act for companies that make software and connected products — scope, the vulnerability reporting that applies since 11 September 2026, the requirements and support period due by December 2027, and what to prepare (`/ressources/cyber-resilience-act/`, `/en/resources/cyber-resilience-act/`). *(2026-10-23)*
 - [ ] Guide (FR and EN): the US CLOUD Act and data hosted in Europe — what the law allows, the EU–US Data Privacy Framework, SecNumCloud's protection against non-EU laws, and what it means when choosing a host.
 
 ## Company details
