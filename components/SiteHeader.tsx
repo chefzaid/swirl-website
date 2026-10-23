@@ -64,19 +64,17 @@ export default function SiteHeader({
             <a
               href={alternates.fr}
               lang="fr"
-              aria-label="Français"
               aria-current={!en ? 'page' : undefined}
             >
-              FR
+              FR<span className="sr-only"> – Français</span>
             </a>
             <span aria-hidden="true">/</span>
             <a
               href={alternates.en}
               lang="en"
-              aria-label="English"
               aria-current={en ? 'page' : undefined}
             >
-              EN
+              EN<span className="sr-only"> – English</span>
             </a>
           </div>
           <a

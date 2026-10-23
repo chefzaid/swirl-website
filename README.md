@@ -51,7 +51,9 @@ switches to the light theme; a script at the start of `<body>`
 (`src/layouts/Layout.astro`) applies the saved choice before the page paints and
 is allowed by its hash in the Content Security Policy. Colours are
 `light-dark(<light>, <dark>)` pairs in `app/*.css`, resolved by the page's
-`color-scheme`; give every new colour both values.
+`color-scheme`; give every new colour both values, each with at least 4.5:1
+contrast on its backgrounds. The end-to-end suite runs axe (WCAG 2.2 AA) on
+every page template in both themes (`e2e/accessibility.spec.ts`).
 
 ## Contact storage
 

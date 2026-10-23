@@ -5,10 +5,10 @@ test('the language links switch between French and English', async ({
 }) => {
   await page.goto('/');
   await expect(page.locator('html')).toHaveAttribute('lang', 'fr');
-  await page.getByRole('link', { name: 'English', exact: true }).click();
+  await page.getByRole('link', { name: 'EN – English' }).click();
   await expect(page).toHaveURL('/en/');
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
-  await page.getByRole('link', { name: 'Français', exact: true }).click();
+  await page.getByRole('link', { name: 'FR – Français' }).click();
   await expect(page).toHaveURL('/');
 });
 
