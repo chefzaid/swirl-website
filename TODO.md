@@ -1,6 +1,24 @@
 # TODO
 
-Open website work, added 2026-09-27.
+Open website work, added 2026-09-27. Worked through with the coding loop in
+[`chefzaid/agents`](https://github.com/chefzaid/agents) (`CODING_AGENT.md`).
+
+## Bugs to fix
+
+- [ ] `npm audit --audit-level=high` in the CI `verify` job fails: `vite` 8.2.2 has high-severity advisories (GHSA-9jrq-w75r-8gcw, GHSA-rq7h-c2jc-7f22, launch-editor) fixed in 8.3.x, and `astro` ≤ 7.3.2 has moderate XSS and CSS-injection advisories (GHSA-98hj-9722-w3j8, GHSA-mpr7-6m5w-76rw) fixed in 7.4.x. Reproduce with `npm audit`. *(found by: Coding Agent)*
+- [ ] `components/SiteFooter.tsx` hardcodes "© 2013–2026", which goes stale on 2027-01-01; take the end year from the build date. *(found by: Coding Agent)*
+- [ ] `components/SiteFooter.tsx` and `components/ContactForm.tsx` hardcode `/confidentialite/` and `/en/privacy/` instead of using `privacyPath()` from `data/site.ts`. *(found by: Coding Agent)*
+
+## Needs Input
+
+Parts of tasks that cannot advance without the owner's decision or information. Answer under the item, and the next agent run applies the answer and removes the entry.
+
+## Quality and maintenance (added 2026-10-23)
+
+- [ ] Align `@types/node` with the Node 24 runtime declared in `engines` and the Docker/CI images (currently 22.x).
+- [ ] End-to-end tests (Playwright) on the built site for the critical paths: project inquiry and Swirl Cloud demo submissions (demo preselected from `?topic=demo`), language switch, theme switch kept across pages, and the chat button opening the Odoo frame; run them in CI.
+- [ ] Automated accessibility scan (axe, WCAG 2.2 AA) of each page template in both light and dark themes inside the end-to-end suite, fixing what it reports.
+- [ ] Contact data retention: delete stored inquiries, their CRM queue rows and expired rate-limit records after a fixed period once the lead is in Odoo, and state the period on the privacy page (FR and EN).
 
 ## Company details
 
