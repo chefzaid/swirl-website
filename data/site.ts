@@ -111,6 +111,7 @@ const articleSlugs = {
     fr: 'cyber-resilience-act',
     en: 'cyber-resilience-act',
   },
+  'cloud-act': { fr: 'cloud-act', en: 'cloud-act' },
 } satisfies Record<string, Bilingual>;
 export type Article = keyof typeof articleSlugs;
 export const articles = Object.keys(articleSlugs) as Article[];
@@ -125,13 +126,14 @@ export const relatedArticles: Record<
   product: ['nis2-checklist', 'dora-ict-suppliers', 'leaving-a-hyperscaler'],
   'how-it-works': ['leaving-a-hyperscaler'],
   security: ['nis2-checklist', 'dora-ict-suppliers', 'cyber-resilience-act'],
-  sovereignty: ['leaving-a-hyperscaler', 'dora-ict-suppliers'],
-  comparison: ['leaving-a-hyperscaler'],
+  sovereignty: ['cloud-act', 'leaving-a-hyperscaler', 'dora-ict-suppliers'],
+  comparison: ['leaving-a-hyperscaler', 'cloud-act'],
   'nis2-checklist': ['dora-ict-suppliers', 'cyber-resilience-act'],
   'dora-ict-suppliers': ['nis2-checklist', 'leaving-a-hyperscaler'],
-  'leaving-a-hyperscaler': ['dora-ict-suppliers'],
+  'leaving-a-hyperscaler': ['cloud-act', 'dora-ict-suppliers'],
   'french-e-invoicing': [],
   'cyber-resilience-act': ['nis2-checklist'],
+  'cloud-act': ['leaving-a-hyperscaler'],
 };
 export const projectSlug = (id: Project['id'], lang: Lang) => slugs[id][lang];
 export const projectPath = (id: Project['id'], lang: Lang) =>
