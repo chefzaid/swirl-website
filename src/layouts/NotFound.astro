@@ -4,7 +4,7 @@ import SiteFooter from '../../components/SiteFooter';
 import SiteHeader from '../../components/SiteHeader';
 import SiteChat from '../components/SiteChat.astro';
 import { services, type Lang } from '../../data/portfolio';
-import { homePath, productPath, projectsPath, resourcesPath, servicePath, siteConfig } from '../../data/site';
+import { homePath, productPath, projectsPath, resourcesPath, servicePath, siteConfig, contactPath } from '../../data/site';
 interface Props { lang: Lang; }
 const { lang } = Astro.props;
 const en = lang === 'en';
@@ -15,7 +15,7 @@ const links = [
   [productPath(lang), 'Swirl Cloud'],
   [resourcesPath(lang), en ? 'Resources' : 'Ressources'],
   [projectsPath(lang), en ? 'Case studies' : 'Références'],
-  [`${home}#contact`, 'Contact'],
+  [contactPath(lang), 'Contact'],
 ];
 ---
 <Layout lang={lang} noindex title={`${siteConfig.name} | ${en ? 'Page not found' : 'Page introuvable'}`}

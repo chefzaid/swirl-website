@@ -4,6 +4,7 @@
 import { getEntry } from 'astro:content';
 import type { Lang } from '../../data/portfolio';
 import { articlePath, type Article } from '../../data/site';
+import { longDate } from '../../lib/utils';
 interface Props { lang: Lang; ids: Article[]; heading: string; }
 const { lang, ids, heading } = Astro.props;
 const en = lang === 'en';
@@ -12,12 +13,11 @@ const entries = await Promise.all(ids.map(async id => {
   if (!entry) throw new Error(`Missing article: ${lang}/${id}`);
   return { id, ...entry.data };
 }));
-const date = new Intl.DateTimeFormat(en ? 'en-US' : 'fr-FR', { dateStyle: 'long', timeZone: 'UTC' });
 ---
 {entries.length > 0 && <section class="service-section case-related guide-cards" aria-labelledby="guides-heading">
   <h2 id="guides-heading">{heading}</h2>
   <div class="case-related-grid">{entries.map(article => <a href={articlePath(article.id, lang)}>
-    <span class="eyebrow">{date.format(article.updated)}</span>
+    <span class="eyebrow">{longDate(article.updated, lang)}</span>
     <h3>{article.heading}</h3><p>{article.description}</p>
     <span class="text-link">{en ? 'Read the guide' : 'Lire le guide'} ↗</span></a>)}</div>
 </section>}

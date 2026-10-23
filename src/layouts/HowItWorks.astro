@@ -2,16 +2,16 @@
 import Subpage from './Subpage.astro';
 import GuideCards from '../components/GuideCards.astro';
 import '../../app/swirl-cloud.css';
+import ContactCta from '../components/ContactCta.astro';
 import type { Lang } from '../../data/portfolio';
 import { product } from '../../data/product';
 import { howItWorks as page } from '../../data/how-it-works';
-import { absoluteUrl, homePath, productPagePath, productPath, siteConfig, relatedArticles } from '../../data/site';
+import { absoluteUrl, productPagePath, productPath, siteConfig, relatedArticles, demoPath } from '../../data/site';
 interface Props { lang: Lang; }
 const { lang } = Astro.props;
 const en = lang === 'en';
 const path = productPagePath('how-it-works', lang);
 const overview = productPath(lang);
-const demo = `${homePath(lang)}?topic=demo#contact`;
 const number = (index: number) => String(index + 1).padStart(2, '0');
 ---
 <Subpage lang={lang} path={path} title={`${siteConfig.name} | ${page.title[lang]}`} description={page.description[lang]}
@@ -23,7 +23,7 @@ const number = (index: number) => String(index + 1).padStart(2, '0');
       <h1>{page.heading[lang]} <span>{page.accent[lang]}</span></h1>
       <p class="case-lead">{page.lead[lang]}</p>
       <div class="hero-actions">
-        <a class="button" href={demo}>{en ? 'Request a demo' : 'Demander une démo'} <span aria-hidden="true">↗</span></a>
+        <a class="button" href={demoPath(lang)}>{en ? 'Request a demo' : 'Demander une démo'} <span aria-hidden="true">↗</span></a>
         <a class="text-link" href="#architecture">{en ? 'See the architecture' : 'Voir l’architecture'} <span aria-hidden="true">↓</span></a>
       </div>
       <ul class="tags case-tags" aria-label="Technologies">{page.tags.map(tag => <li>{tag}</li>)}</ul>
@@ -68,13 +68,11 @@ const number = (index: number) => String(index + 1).padStart(2, '0');
       </dl>
     </section>
     <GuideCards lang={lang} ids={relatedArticles['how-it-works']} heading={en ? 'Related guides' : 'Guides associés'} />
-    <aside class="case-contact">
-      <h2>{en ? 'See it running' : 'Voyez-la fonctionner'}</h2>
-      <p>{en
-        ? 'We walk you through the installation that runs our own website and applications, then size one for your servers.'
-        : 'Nous vous présentons l’installation qui fait tourner notre propre site et nos applications, puis nous en dimensionnons une pour vos serveurs.'}</p>
-      <a class="button" href={demo}>{en ? 'Request a demo' : 'Demander une démo'} <span aria-hidden="true">↗</span></a>
-    </aside>
+    <ContactCta lang={lang} action="demo"
+      heading={en ? 'See it running' : 'Voyez-la fonctionner'}
+      text={en
+      ? 'We walk you through the installation that runs our own website and applications, then size one for your servers.'
+      : 'Nous vous présentons l’installation qui fait tourner notre propre site et nos applications, puis nous en dimensionnons une pour vos serveurs.'} />
     <section class="service-others" aria-labelledby="others-heading">
       <h2 id="others-heading">{product.name}</h2>
       <div class="case-related-grid"><a href={overview}><span class="eyebrow">{en ? 'Overview' : 'Présentation'}</span><p>{product.description[lang]}</p><span class="text-link">{en ? 'Discover Swirl Cloud' : 'Découvrir Swirl Cloud'} ↗</span></a></div>

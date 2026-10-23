@@ -72,6 +72,9 @@ const serviceSlugs: Record<Service['id'], Bilingual> = {
   },
 };
 export const homePath = (lang: Lang) => (lang === 'fr' ? '/' : '/en/');
+export const contactPath = (lang: Lang) => `${homePath(lang)}#contact`;
+// Opens the contact form with the Swirl Cloud demo request selected.
+export const demoPath = (lang: Lang) => `${homePath(lang)}?topic=demo#contact`;
 export const privacyPath = (lang: Lang) =>
   lang === 'fr' ? '/confidentialite/' : '/en/privacy/';
 export const projectsPath = (lang: Lang) =>
@@ -198,6 +201,8 @@ export const documentRoutes = pairs.flatMap(({ page, ...alternates }) =>
 export type DocumentRoute = (typeof documentRoutes)[number];
 export const absoluteUrl = (path: string) =>
   new URL(path, siteConfig.origin).href;
+// JSON-LD reference to the Organization entity that every page declares.
+export const organizationRef = { '@id': absoluteUrl('/#organization') };
 // Build-time social preview for a document route, e.g. /og/en-projects.png.
 export const socialImagePath = (path: string) =>
   `/og/${path.replace(/^\/|\/$/g, '').replaceAll('/', '-') || 'fr'}.png`;

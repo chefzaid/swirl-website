@@ -1,15 +1,15 @@
 ---
 import Subpage from './Subpage.astro';
+import ContactCta from '../components/ContactCta.astro';
 import ClientLogo from '../../components/ClientLogo';
 import ProjectCaseStudy from '../../components/ProjectCaseStudy';
 import { localizeCaseStudy } from '../../data/project-view';
 import { projects, services, type Lang, type Project } from '../../data/portfolio';
 import { projectServices } from '../../data/expertise';
-import { absoluteUrl, homePath, projectPath, projectsPath, servicePath, siteConfig } from '../../data/site';
+import { absoluteUrl, projectPath, projectsPath, servicePath, siteConfig, organizationRef } from '../../data/site';
 interface Props { project: Project; lang: Lang; }
 const { project, lang } = Astro.props;
 const en = lang === 'en';
-const home = homePath(lang);
 const path = projectPath(project.id, lang);
 const related = projects.filter(p => p.id !== project.id && p.sector === project.sector).slice(0, 2);
 const expertise = services.filter(service => projectServices(project.id).includes(service.id));
@@ -22,7 +22,7 @@ const canonical = absoluteUrl(path);
 const caseStudy = {
   '@type': 'CreativeWork', '@id': canonical + '#case-study', name: project.title[lang], abstract: project.text[lang],
   inLanguage: lang, keywords: project.tags[lang].join(', '), temporalCoverage: project.date.replace(' — ', '/'),
-  creator: { '@id': absoluteUrl('/#organization') },
+  creator: organizationRef,
   about: { '@type': 'Organization', name: project.client },
   isPartOf: { '@id': absoluteUrl(projectsPath(lang)) + '#webpage' },
 };
@@ -44,11 +44,9 @@ const caseStudy = {
       <p class="case-attribution">{en ? 'Project delivered directly or through consulting partnerships.' : 'Projet réalisé directement ou dans le cadre de partenariats de conseil.'}</p>
       <p class="case-expertise">{en ? 'Related expertise:' : 'Expertises associées :'} {expertise.map((service, index) => <>{index > 0 && ', '}<a href={servicePath(service.id, lang)}>{service.title[lang]}</a></>)}</p>
     </section>
-    <aside class="case-contact">
-      <h2>{en ? 'Planning a similar project?' : 'Un projet similaire ?'}</h2>
-      <p>{en ? 'Tell us what you want to achieve. Swirl designs your application architecture and integrates it with your business systems, from idea to production.' : 'Parlez-nous de ce que vous souhaitez accomplir. Swirl conçoit l’architecture de vos applications et leur intégration dans votre système d’information, de l’idée à la production.'}</p>
-      <a class="button" href={`${home}#contact`}>{en ? 'Let’s talk about your project' : 'Parlons de votre projet'} <span aria-hidden="true">↗</span></a>
-    </aside>
+    <ContactCta lang={lang} action="project"
+      heading={en ? 'Planning a similar project?' : 'Un projet similaire ?'}
+      text={en ? 'Tell us what you want to achieve. Swirl designs your application architecture and integrates it with your business systems, from idea to production.' : 'Parlez-nous de ce que vous souhaitez accomplir. Swirl conçoit l’architecture de vos applications et leur intégration dans votre système d’information, de l’idée à la production.'} />
   </article>
   {related.length > 0 && <section class="case-related" aria-labelledby="related-heading">
     <h2 id="related-heading">{en ? 'Explore more projects' : 'Découvrez aussi'}</h2>

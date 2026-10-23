@@ -2,18 +2,18 @@
 import Subpage from './Subpage.astro';
 import GuideCards from '../components/GuideCards.astro';
 import '../../app/swirl-cloud.css';
+import ContactCta from '../components/ContactCta.astro';
 import type { Lang } from '../../data/portfolio';
 import { product } from '../../data/product';
 import { security } from '../../data/security';
 import { sovereignty as page } from '../../data/sovereignty';
-import { absoluteUrl, homePath, productPagePath, productPath, siteConfig, relatedArticles } from '../../data/site';
+import { absoluteUrl, productPagePath, productPath, siteConfig, relatedArticles, demoPath } from '../../data/site';
 interface Props { lang: Lang; }
 const { lang } = Astro.props;
 const en = lang === 'en';
 const path = productPagePath('sovereignty', lang);
 const canonical = absoluteUrl(path);
 const overview = productPath(lang);
-const demo = `${homePath(lang)}?topic=demo#contact`;
 const structuredData = [
   { '@type': 'FAQPage', '@id': canonical + '#faq', inLanguage: lang, isPartOf: { '@id': canonical + '#webpage' },
     mainEntity: page.faq.map(item => ({ '@type': 'Question', name: item.question[lang],
@@ -29,7 +29,7 @@ const structuredData = [
       <h1>{page.heading[lang]} <span>{page.accent[lang]}</span></h1>
       <p class="case-lead">{page.lead[lang]}</p>
       <div class="hero-actions">
-        <a class="button" href={demo}>{en ? 'Request a demo' : 'Demander une démo'} <span aria-hidden="true">↗</span></a>
+        <a class="button" href={demoPath(lang)}>{en ? 'Request a demo' : 'Demander une démo'} <span aria-hidden="true">↗</span></a>
         <a class="text-link" href="#services">{en ? 'See every outside service' : 'Voir chaque service externe'} <span aria-hidden="true">↓</span></a>
       </div>
       <ul class="tags case-tags" aria-label="Technologies">{page.tags.map(tag => <li>{tag}</li>)}</ul>
@@ -74,13 +74,11 @@ const structuredData = [
       </div>
     </section>
     <GuideCards lang={lang} ids={relatedArticles.sovereignty} heading={en ? 'Related guides' : 'Guides associés'} />
-    <aside class="case-contact">
-      <h2>{en ? 'Check it on a real installation' : 'Vérifiez-le sur une vraie installation'}</h2>
-      <p>{en
-        ? 'We show you where each piece of data lives on our own installation and plan yours with the host and country you need.'
-        : 'Nous vous montrons où vit chaque donnée sur notre propre installation et préparons la vôtre avec l’hébergeur et le pays dont vous avez besoin.'}</p>
-      <a class="button" href={demo}>{en ? 'Request a demo' : 'Demander une démo'} <span aria-hidden="true">↗</span></a>
-    </aside>
+    <ContactCta lang={lang} action="demo"
+      heading={en ? 'Check it on a real installation' : 'Vérifiez-le sur une vraie installation'}
+      text={en
+      ? 'We show you where each piece of data lives on our own installation and plan yours with the host and country you need.'
+      : 'Nous vous montrons où vit chaque donnée sur notre propre installation et préparons la vôtre avec l’hébergeur et le pays dont vous avez besoin.'} />
     <section class="service-others" aria-labelledby="others-heading">
       <h2 id="others-heading">{product.name}</h2>
       <div class="case-related-grid">

@@ -3,8 +3,9 @@ import { getEntry } from 'astro:content';
 import Subpage from './Subpage.astro';
 import GuideCards from '../components/GuideCards.astro';
 import '../../app/swirl-cloud.css';
+import ContactCta from '../components/ContactCta.astro';
 import type { Lang } from '../../data/portfolio';
-import { absoluteUrl, articlePath, articles, homePath, resourcesPath, siteConfig } from '../../data/site';
+import { absoluteUrl, articlePath, articles, resourcesPath, siteConfig } from '../../data/site';
 interface Props { lang: Lang; }
 const { lang } = Astro.props;
 const en = lang === 'en';
@@ -38,9 +39,7 @@ const list = {
       : 'Des guides sur les règles et les choix qui façonnent l’informatique d’une entreprise, avec leurs sources et la date de leur dernière vérification.'}</p>
   </header>
   <GuideCards lang={lang} ids={entries.map(entry => entry.id)} heading="Guides" />
-  <aside class="case-contact">
-    <h2>{en ? 'Have a question these guides do not answer?' : 'Une question à laquelle ces guides ne répondent pas ?'}</h2>
-    <p>{en ? 'Tell us about your context; we reply with what applies to you.' : 'Parlez-nous de votre contexte ; nous vous répondons sur ce qui s’applique à vous.'}</p>
-    <a class="button" href={`${homePath(lang)}#contact`}>{en ? 'Contact Swirl' : 'Contacter Swirl'} <span aria-hidden="true">↗</span></a>
-  </aside>
+  <ContactCta lang={lang} action="contact"
+    heading={en ? 'Have a question these guides do not answer?' : 'Une question à laquelle ces guides ne répondent pas ?'}
+    text={en ? 'Tell us about your context; we reply with what applies to you.' : 'Parlez-nous de votre contexte ; nous vous répondons sur ce qui s’applique à vous.'} />
 </Subpage>

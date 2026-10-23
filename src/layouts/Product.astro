@@ -2,10 +2,11 @@
 import Subpage from './Subpage.astro';
 import GuideCards from '../components/GuideCards.astro';
 import '../../app/swirl-cloud.css';
+import ContactCta from '../components/ContactCta.astro';
 import { services, type Lang } from '../../data/portfolio';
 import { servicePages } from '../../data/expertise';
 import { product } from '../../data/product';
-import { absoluteUrl, homePath, productPagePath, productPath, servicePath, siteConfig, relatedArticles } from '../../data/site';
+import { absoluteUrl, productPagePath, productPath, servicePath, siteConfig, relatedArticles, demoPath, organizationRef } from '../../data/site';
 interface Props { lang: Lang; }
 const { lang } = Astro.props;
 const en = lang === 'en';
@@ -15,14 +16,12 @@ const cloud = services.find(s => s.id === 'cloud-ai')!;
 const structuredData = [
   { '@type': 'SoftwareApplication', '@id': canonical + '#product', name: product.name, url: canonical,
     description: product.lead[lang], applicationCategory: 'BusinessApplication', operatingSystem: 'Ubuntu',
-    featureList: product.layers.map(layer => layer.title[lang]), publisher: { '@id': absoluteUrl('/#organization') },
+    featureList: product.layers.map(layer => layer.title[lang]), publisher: organizationRef,
     audience: { '@type': 'BusinessAudience', audienceType: product.audiences.map(audience => audience.title[lang]).join(', ') } },
   { '@type': 'FAQPage', '@id': canonical + '#faq', inLanguage: lang, isPartOf: { '@id': canonical + '#webpage' },
     mainEntity: product.faq.map(item => ({ '@type': 'Question', name: item.question[lang],
       acceptedAnswer: { '@type': 'Answer', text: item.answer[lang] } })) },
 ];
-// Opens the contact form with the Swirl Cloud demo request selected.
-const demo = `${homePath(lang)}?topic=demo#contact`;
 ---
 <Subpage lang={lang} path={path} title={`${siteConfig.name} | ${product.title[lang]}`} description={product.description[lang]}
   breadcrumbs={[{ name: product.name, path }]} structuredData={structuredData}
@@ -33,7 +32,7 @@ const demo = `${homePath(lang)}?topic=demo#contact`;
       <h1>{product.heading[lang]} <span>{product.accent[lang]}</span></h1>
       <p class="case-lead">{product.lead[lang]}</p>
       <div class="hero-actions">
-        <a class="button" href={demo}>{en ? 'Request a demo' : 'Demander une démo'} <span aria-hidden="true">↗</span></a>
+        <a class="button" href={demoPath(lang)}>{en ? 'Request a demo' : 'Demander une démo'} <span aria-hidden="true">↗</span></a>
         <a class="text-link" href="#platform">{en ? 'What one installation includes' : 'Ce que comprend une installation'} <span aria-hidden="true">↓</span></a>
       </div>
       <ul class="tags case-tags" aria-label="Technologies">{product.tags.map(tag => <li>{tag}</li>)}</ul>
@@ -80,13 +79,11 @@ const demo = `${homePath(lang)}?topic=demo#contact`;
       </div>
     </section>
     <GuideCards lang={lang} ids={relatedArticles.product} heading={en ? 'Related guides' : 'Guides associés'} />
-    <aside class="case-contact">
-      <h2>{en ? 'See Swirl Cloud on a real installation' : 'Voir Swirl Cloud sur une vraie installation'}</h2>
-      <p>{en
-        ? 'We show you the platform that runs our own website and applications, then size an installation for your company.'
-        : 'Nous vous montrons la plateforme qui fait tourner notre propre site et nos applications, puis nous dimensionnons une installation pour votre entreprise.'}</p>
-      <a class="button" href={demo}>{en ? 'Request a demo' : 'Demander une démo'} <span aria-hidden="true">↗</span></a>
-    </aside>
+    <ContactCta lang={lang} action="demo"
+      heading={en ? 'See Swirl Cloud on a real installation' : 'Voir Swirl Cloud sur une vraie installation'}
+      text={en
+      ? 'We show you the platform that runs our own website and applications, then size an installation for your company.'
+      : 'Nous vous montrons la plateforme qui fait tourner notre propre site et nos applications, puis nous dimensionnons une installation pour votre entreprise.'} />
     <section class="service-others" aria-labelledby="others-heading">
       <h2 id="others-heading">{en ? 'Related expertise' : 'Expertise associée'}</h2>
       <div class="case-related-grid"><a href={servicePath(cloud.id, lang)}><span class="eyebrow">{cloud.title[lang]}</span><p>{servicePages[cloud.id].description[lang]}</p></a></div>

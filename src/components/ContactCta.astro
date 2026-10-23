@@ -1,0 +1,19 @@
+---
+// The call to action that closes inner pages: a demo request for Swirl Cloud,
+// or the contact form for projects and questions.
+import type { Lang } from '../../data/portfolio';
+import { contactPath, demoPath } from '../../data/site';
+interface Props { lang: Lang; action: 'demo' | 'project' | 'contact'; heading: string; text: string; }
+const { lang, action, heading, text } = Astro.props;
+const en = lang === 'en';
+const button = {
+  demo: { href: demoPath(lang), label: en ? 'Request a demo' : 'Demander une démo' },
+  project: { href: contactPath(lang), label: en ? 'Let’s talk about your project' : 'Parlons de votre projet' },
+  contact: { href: contactPath(lang), label: en ? 'Contact Swirl' : 'Contacter Swirl' },
+}[action];
+---
+<aside class="case-contact">
+  <h2>{heading}</h2>
+  <p>{text}</p>
+  <a class="button" href={button.href}>{button.label} <span aria-hidden="true">↗</span></a>
+</aside>
