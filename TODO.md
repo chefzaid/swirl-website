@@ -5,7 +5,7 @@ Open website work, added 2026-09-27. Worked through with the coding loop in
 
 ## Bugs to fix
 
-- [ ] `npm audit --audit-level=high` in the CI `verify` job fails: `vite` 8.2.2 has high-severity advisories (GHSA-9jrq-w75r-8gcw, GHSA-rq7h-c2jc-7f22, launch-editor) fixed in 8.3.x, and `astro` ≤ 7.3.2 has moderate XSS and CSS-injection advisories (GHSA-98hj-9722-w3j8, GHSA-mpr7-6m5w-76rw) fixed in 7.4.x. Reproduce with `npm audit`. *(found by: Coding Agent)*
+- [x] `npm audit --audit-level=high` in the CI `verify` job failed on `vite` 8.2.2 (high) and `astro` 7.3.1 (moderate XSS and CSS injection): upgraded to `vite` 8.3.5 and `astro` 7.4.1. `satori` still pins `fflate` 0.7.3 (moderate, ZIP64 parsing), reached only at build time on our own fonts, with no upstream fix yet. *(2026-10-23)*
 - [ ] `components/SiteFooter.tsx` hardcodes "© 2013–2026", which goes stale on 2027-01-01; take the end year from the build date. *(found by: Coding Agent)*
 - [ ] `components/SiteFooter.tsx` and `components/ContactForm.tsx` hardcode `/confidentialite/` and `/en/privacy/` instead of using `privacyPath()` from `data/site.ts`. *(found by: Coding Agent)*
 
