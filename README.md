@@ -1,164 +1,131 @@
-# Swirl portfolio
+# Swirl website
 
-Swirl's bilingual company website uses Astro 7 and React 19, served by a
-Node 24 application on the bare-metal Kubernetes cluster at `https://swirlit.dev`.
-Pages are rendered at build time; the header, project gallery and contact form
-hydrate independently. Contact inquiries are stored privately on the server.
+Swirl's bilingual company website (French at `/`, English at `/en/`), live at
+`https://swirlit.dev`. Pages are built with Astro 7 and React 19 and served by a
+Node 24 application on Swirl's bare-metal Kubernetes cluster. Only the chat
+button hydrates on every page; the homepage also hydrates its project gallery,
+contact form and, on small screens, its header.
 
-## Local development
+| Guide                                           | When to read it                                          |
+| ----------------------------------------------- | -------------------------------------------------------- |
+| [Deployment](docs/deployment.md)                | CI/CD, runtime, secrets, edge cache, email, Odoo, logs   |
+| [DNS](docs/dns.md)                              | Public DNS records, direct or HA ingress                 |
+| [Onboarding](docs/onboarding.md)                | Installing on a new cluster                              |
+| [PostgreSQL and HA](docs/high-availability.md)  | Moving from one SQLite replica to PostgreSQL and two     |
+| [SEO](docs/seo.md)                              | Adding or renaming pages, metadata and structured data   |
+| [Client logos](docs/client-logos.md)            | Replacing a client logo                                  |
+
+## Run it locally
 
 Requires Node 24.15+ and npm.
 
 ```sh
 npm ci
 cp .env.example .env
-npm run dev
+npm run dev          # http://127.0.0.1:4321, stop with: npx astro dev stop
 ```
 
-Astro prints the local URL (normally `http://127.0.0.1:4321`). The development
-contact endpoint uses the same Node storage adapter, SQL migrations and
-validation as production. By default it creates `.data/contact.sqlite`;
-`DATA_DIR` can select another private directory. `.env` and local databases are
-ignored by Git. Leave email credentials empty to test storage without sending
-notifications. Stop development with `npx astro dev stop`.
+The development contact form uses the same storage, migrations and validation
+as production and writes to `.data/contact.sqlite`. Leave the email and Odoo
+settings empty to store inquiries without sending anything.
 
-To build and run the production Node server locally:
+To run the production server instead:
 
 ```sh
 npm run build
-npm start
+npm start            # http://127.0.0.1:8080, loads .env
 ```
 
-`npm start` loads `.env` when present and listens on port 8080. The example
-sets `PUBLIC_ORIGIN=http://127.0.0.1:8080`; use the same URL in your browser for
-contact submissions. Production sets `PUBLIC_ORIGIN` and `DATA_DIR=/data`
-through Kubernetes. `npm run build` bundles HTML and the request handler into
-`dist/runtime`; CSS, scripts, fonts, images, social cards, robots.txt,
-llms.txt, the sitemap and `.well-known/security.txt` remain in `dist/client`.
-The Node server applies security headers to every response and compresses
-HTML documents. `security.txt` (RFC 9116) names the security contact and links
-the disclosure policy on the Swirl Cloud security page; each build renews its
-180-day expiry, so release at least every few months.
+Open it at exactly `PUBLIC_ORIGIN` from `.env`: the contact form rejects other
+origins, `localhost` included.
 
-See [Kubernetes deployment](docs/deployment.md) for delivery, persistent storage and the
-[Cloudflare edge cache](docs/deployment.md#cloudflare-edge-cache),
-and [repository onboarding](docs/onboarding.md) for a new cluster or import.
+## Checks
 
-## Light and dark themes
-
-The site is dark by default. The header's theme button (`components/SiteHeader.tsx`)
-switches to the light theme; a script at the start of `<body>`
-(`src/layouts/Layout.astro`) applies the saved choice before the page paints and
-is allowed by its hash in the Content Security Policy. Colours are
-`light-dark(<light>, <dark>)` pairs in `app/*.css` and `app/styles/*.css`, resolved by the page's
-`color-scheme`; give every new colour both values, each with at least 4.5:1
-contrast on its backgrounds. The end-to-end suite runs axe (WCAG 2.2 AA) on
-every page template in both themes (`e2e/accessibility.spec.ts`).
-
-## Contact storage
-
-The default deployment (`infra/k8s`) runs one replica with **SQLite**, using
-Node's built-in `node:sqlite` module and `/data/contact.sqlite` on the
-`swirl-website-data` persistent volume. `DATABASE_URL` is unset in this profile.
-PostgreSQL support exists but is **opt-in**: setting `DATABASE_URL` selects it
-only after the database/schema and any existing data have been prepared.
-Follow [the PostgreSQL cutover guide](docs/high-availability.md) before selecting
-`infra/overlays/ha`. Enabling the platform's PostgreSQL service alone does not
-switch Swirl Website's contact storage.
-
-SQLite migrations are plain SQL under `db/migrations`, applied transactionally
-at startup and recorded with checksums. Preserve applied filenames and contents;
-add a new numbered SQL file for a change. PostgreSQL's versioned schema and
-migration/import commands are in `runtime/postgres.ts` and
-`runtime/migrate-postgres.ts`.
-
-## Source map
-
-| Area | Files |
-| --- | --- |
-| Resource articles (Markdown) | `src/content/articles/`, `src/content.config.ts` |
-| Guide cards and related guides | `src/components/GuideCards.astro`, `relatedArticles` in `data/site.ts` |
-| French and US English content | `data/portfolio.ts`, `data/expertise.ts`, `data/product.ts`, `data/how-it-works.ts`, `data/security.ts`, `data/compliance-controls.ts`, `data/sovereignty.ts`, `data/comparison.ts`, `data/site.ts` |
-| Pages and metadata | `src/layouts/` |
-| Social cards and icons | `lib/social-image.tsx`, `src/pages/og/` |
-| UI and shared project content | `components/`, `data/project-view.ts` |
-| Styles and assets | `app/globals.css` (imports `app/styles/` in cascade order), `app/swirl-cloud.css`, `app/articles.css`, `public/assets/` |
-| Contact API and notifications | `server/contact.ts`, `runtime/contact.ts` |
-| Odoo CRM delivery and Live Chat | `server/odoo.ts`, `runtime/crm.ts`, `components/ChatLauncher.tsx` |
-| Request handling | `server/handler.ts`, `runtime/server.ts` |
-| End-to-end and accessibility tests | `e2e/`, `playwright.config.ts` |
-| Deployment | `infra/` |
-
-See [SEO maintenance](docs/seo.md) for route and metadata changes, and
-[client asset sources](docs/client-logos.md) when updating logos.
-
-## Contact inquiries
-
-The form stores inquiries in the private `contact_messages` table and confirms **storage**, not email delivery. Visitors choose a project inquiry or a **Swirl Cloud demo** request (`topic`); a demo request names the company instead of a subject, and the Swirl Cloud page's demo links open the form with `?topic=demo`. It uses origin checks, strict field validation (including a free-text subject of 1–160 characters), bounded request bodies, a honeypot, timing checks, atomic rate counters and idempotency keys. There is no public endpoint to list messages.
-
-Inspect production inquiries through an authenticated operator session against
-the selected database. To inspect a local SQLite database without modifying it:
+CI runs all of these except the PostgreSQL test; run them before pushing:
 
 ```sh
-node --input-type=module <<'JS'
-import { DatabaseSync } from 'node:sqlite';
-const db = new DatabaseSync('.data/contact.sqlite', { readOnly: true });
-try {
-  console.table(db.prepare('SELECT id, topic, company, name, email, service, created_at, notification_status FROM contact_messages ORDER BY created_at DESC').all());
-} finally {
-  db.close();
-}
-JS
-```
-
-Every stored inquiry is also queued for Odoo CRM (`contact_crm_queue`) and
-sent as a lead through the platform's intake API with the `ODOO_*` settings.
-Delivery runs after the response and retries with backoff until Odoo accepts it,
-so an Odoo outage delays leads without losing them; retries reuse the inquiry
-ID and never create a second lead. Every page also offers a **Chat with us**
-button that opens Odoo Live Chat in a frame; see
-[Odoo CRM and Live Chat](docs/deployment.md#odoo-crm-and-live-chat).
-
-Optional notifications use `RESEND_API_KEY` and `CONTACT_SENDER`, or Microsoft
-Graph's `MS_TENANT_ID`, `MS_CLIENT_ID`, `MS_CLIENT_SECRET` and `CONTACT_SENDER`.
-Resend takes precedence when configured. Keep credentials server-side in `.env`
-locally or Vault/Kubernetes Secrets in production; see
-[contact email credentials](docs/deployment.md#contact-email-credentials).
-
-## Validation
-
-```sh
-npm run check
+npm run check                          # Astro and TypeScript
 npm run lint
 npm run format:check
-npm test
+npm test                               # unit tests (CI also measures coverage)
 npm run build
-npm run test:e2e
+npm run test:e2e                       # Playwright and axe, on the build
 python3 scripts/check-built-security.py
 python3 scripts/check-built-seo.py
 bash infra/scripts/test-delivery.sh
 python3 infra/scripts/test-onboarding.py
-bash infra/scripts/test-postgres.sh
+bash infra/scripts/test-postgres.sh    # needs Docker
 ```
 
-Tests use temporary databases and mocked email providers. `npm run test:e2e`
-runs the Playwright suite (`e2e/`) in Chromium against the production build,
-served on port 4173 with a temporary SQLite directory and no Odoo or email
-delivery; requests to Odoo are blocked. Install its browser once with
-`npx playwright install chromium`, or point `CHROMIUM_PATH` at an existing
-Chromium. CI runs it in the matching Playwright image after `verify`, and the
-image build waits for it. The PostgreSQL helper
-requires Docker and creates an isolated local database.
+The end-to-end suite serves the build on port 4173 with a temporary database and
+blocks requests to Odoo. Install its browser once with
+`npx playwright install chromium`, or set `CHROMIUM_PATH` to an existing one.
 
-## Privacy maintenance
+## Where things are
 
-The site uses no analytics or advertising trackers. Browser storage holds only
-the visitor's light or dark theme choice (`localStorage`) and, once they open the
-chat, a marker for the current tab (`sessionStorage`). Review
-consent requirements before introducing third-party scripts or embeds, and keep
-the bilingual notice in `src/layouts/Privacy.astro` aligned with data handling.
-See [CNIL guidance](https://www.cnil.fr/fr/cookies-et-autres-traceurs/que-dit-la-loi).
+| Area                         | Files                                                              |
+| ---------------------------- | ------------------------------------------------------------------ |
+| Text, routes and site data   | `data/` (French and US English side by side; routes in `site.ts`)  |
+| Resource guides              | `src/content/articles/<lang>/<id>.md`                              |
+| Pages and shared blocks      | `src/layouts/`, `src/components/`, `components/` (React)           |
+| Styles                       | `app/globals.css` → `app/styles/`, `app/swirl-cloud.css`, `app/articles.css` |
+| Social cards and icons       | `lib/social-image.tsx`, `src/pages/og/`                            |
+| Contact form, CRM and email  | `server/`, `runtime/`, `db/migrations/`                            |
+| End-to-end tests             | `e2e/`, `playwright.config.ts`                                     |
+| Deployment                   | `infra/`, `Dockerfile`, `.gitlab-ci.yml`                           |
 
-Expired visitor rate-limit records are deleted on the next valid new submission.
-Contact messages have no automatic retention limit; define and operate a deletion
-policy for production data.
+## Conventions
+
+- **Colours.** The site is dark by default; the header switches to light. Every
+  colour is a `light-dark(<light>, <dark>)` pair with at least 4.5:1 contrast;
+  the axe scan checks every page template in both themes.
+- **Styles.** `app/globals.css` imports `app/styles/` in cascade order: later
+  files override earlier ones, so keep the order. In a layout, import its
+  stylesheet before new components, or the stylesheet order on the page changes.
+- **Claims.** Publish a fact about Swirl Cloud only once the platform
+  demonstrates it; mark the rest as roadmap.
+
+### Adding a guide
+
+1. Write `src/content/articles/fr/<id>.md` and `en/<id>.md`, with sources and
+   `updated` set to the day the facts were checked.
+2. Register its slugs in `articleSlugs` and its related guides in
+   `relatedArticles` (`data/site.ts`), and link it from the pages on its subject.
+3. Raise the page count in `scripts/check-built-security.py` and
+   `scripts/check-built-seo.py` by two.
+
+## Contact form and data
+
+Visitors send a project inquiry or a Swirl Cloud demo request (links ending in
+`?topic=demo#contact` preselect it). The form confirms that the inquiry is
+**stored**, not emailed. It checks the origin, validates every field, limits
+body size and submission rate, and uses a honeypot, a timing check and
+idempotency keys. No endpoint lists messages.
+
+- **Storage:** SQLite on a persistent volume, one replica. PostgreSQL is opt-in
+  and needs a data cutover first; see [PostgreSQL and HA](docs/high-availability.md).
+  Migrations are numbered SQL files in `db/migrations`: never edit an applied
+  one, add a new file.
+- **CRM:** every inquiry is queued and sent to Odoo as a lead, retried until
+  Odoo accepts it, never twice. The chat button opens Odoo Live Chat.
+- **Email:** optional notifications through Resend (or Microsoft Graph).
+- **Retention:** inquiries are not deleted automatically yet; the period waits
+  on a decision (`TODO.md`).
+
+Inspect a local database without changing it:
+
+```sh
+node --input-type=module -e "
+import { DatabaseSync } from 'node:sqlite';
+const db = new DatabaseSync('.data/contact.sqlite', { readOnly: true });
+console.table(db.prepare('SELECT id, topic, company, name, email, created_at, notification_status FROM contact_messages ORDER BY created_at DESC').all());
+db.close();"
+```
+
+## Privacy
+
+No analytics, advertising trackers or cookies. The browser keeps only the theme
+choice (`localStorage`) and, once the chat is opened, a marker for the current
+tab (`sessionStorage`). Before adding any third-party script or embed, check the
+[CNIL rules](https://www.cnil.fr/fr/cookies-et-autres-traceurs/que-dit-la-loi)
+and update the notice in `src/layouts/Privacy.astro` (French and English).

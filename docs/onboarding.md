@@ -36,7 +36,7 @@ the [HA guide](high-availability.md).
 The platform initializes the optional `apps/swirl-website/contact` Vault contract
 with an empty `RESEND_API_KEY` if missing, preserving any existing value. Contact
 storage works without email. Configure sender, recipient and company contact details separately using the
-[deployment guide](deployment.md#contact-email-credentials).
+[deployment guide](deployment.md#contact-email).
 It also initializes `apps/swirl-website/cloudflare` with empty `purge_token` and
 `zone_id` fields; the post-release cache purge skips until both are set (see
 [Cloudflare edge cache](deployment.md#cloudflare-edge-cache)).
@@ -47,13 +47,6 @@ source. The GitOps commit records `Onboarding-Pipeline` and `Onboarding-Source`
 trailers. If rollout fails after publication, retry the release job while that
 commit is still the default-branch tip; it resumes the existing publication.
 
-Validate locally with:
-
-```sh
-python3 infra/scripts/test-onboarding.py
-bash infra/scripts/test-delivery.sh
-npm test
-```
-
-The onboarding and delivery tests use temporary repositories and mock tools,
-without changing DNS, Vault, GitLab or a cluster.
+`python3 infra/scripts/test-onboarding.py` and `bash infra/scripts/test-delivery.sh`
+check this contract with temporary repositories and mock tools, without
+changing DNS, Vault, GitLab or a cluster.

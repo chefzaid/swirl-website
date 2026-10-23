@@ -118,19 +118,11 @@ while inquiries remain available in PostgreSQL.
 
 ## Verification
 
-```sh
-npm run check
-npm run lint
-npm test
-npm run build
-bash infra/scripts/test-delivery.sh
-bash infra/scripts/test-postgres.sh
-```
-
-The PostgreSQL test helper creates and removes its own localhost-only Docker
-fixture. It does not use `DATABASE_URL`. Tests exercise concurrent quotas,
-duplicate submissions, rollback, claim fencing, Graph recovery, retry expiry,
-idempotent/conflicting snapshot imports and database-dependent readiness.
+Run the [checks](../README.md#checks), including
+`bash infra/scripts/test-postgres.sh`, which creates and removes its own
+localhost-only Docker database and ignores `DATABASE_URL`. It covers concurrent
+quotas, duplicate submissions, rollback, claim fencing, Graph recovery, retry
+expiry, idempotent and conflicting snapshot imports, and readiness.
 
 Before admitting traffic on new nodes, test an actual host loss, PostgreSQL
 primary failover, application drain and restore from backup. Verify inquiries

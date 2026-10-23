@@ -1,108 +1,84 @@
-# Kubernetes deployment
+# Deployment
 
-The production website is `https://swirlit.dev`, with French at `/` and English
-at `/en/`. `https://www.swirlit.dev` redirects to the same apex URL, preserving
-the path and query string. GitHub `chefzaid/swirl-website` and GitLab `swirlit/swirl-website`
-are private source repositories.
+Production is `https://swirlit.dev`; `https://www.swirlit.dev` redirects to it.
+The source lives in two private repositories kept in sync: GitHub
+`chefzaid/swirl-website` and GitLab `swirlit/swirl-website`.
 
-This repository owns its runtime image, resources in the `apps` namespace,
-Argo CD Application, and operator playbook. `swirl-cloud` supplies Kubernetes, the
-private GitLab Registry, Vault/External Secrets, Longhorn, ingress, Cloudflare,
-and the `apps/swirlit-dev-tls` certificate. Keep website ingress separate from
-the Swirl Cloud portal at `cloud.swirlit.dev`, which the header's Swirl Cloud link opens.
+This repository owns the website's image, its Kubernetes resources in the `apps`
+namespace, its Argo CD Application, its DNS records and an operator playbook.
+The `swirl-cloud` platform supplies Kubernetes, the GitLab registry,
+Vault/External Secrets, Longhorn storage, Traefik ingress, Cloudflare and the
+`apps/swirlit-dev-tls` certificate. The Swirl Cloud portal at
+`cloud.swirlit.dev` is a separate application.
 
-The swirl-website Ingress routes both names to the application. The Node runtime
-redirects the `www` host with HTTP 308 to the fixed `PUBLIC_ORIGIN`, retaining
-the validated original path and query, including trailing slashes. Forwarded
-host and protocol headers cannot change this destination. Ingress also preserves
-trailing slashes during its HTTP-to-HTTPS redirect. Keep the shared TLS certificate
-valid for both names. This repository owns both Cloudflare DNS records; see
-[public DNS](dns.md) for direct and HA routing.
-Canonical metadata and `PUBLIC_ORIGIN` remain `https://swirlit.dev`, so visitors
-reach the apex before using the same-origin contact form.
+## Delivery
 
-Traefik serves the native Ingress on `websecure`; the platform owns the
-HTTP-to-HTTPS redirect. `infra/k8s/ingress.yaml` also owns the 18 KiB request-limit
-Middleware and a ServersTransport allowing 30 seconds for backend response
-headers. Connection timeouts are platform settings. The route forwards the
-original path to the app, which owns alias redirection; NetworkPolicy admits
-the platform's Traefik pods.
+Push to `main` to deploy. GitLab runs:
 
-## Automatic delivery
+1. **`verify`:** type check, lint, format check, unit tests with coverage,
+   build, security and SEO checks of the build, `npm audit` (high) and the
+   delivery and onboarding tests.
+2. **`e2e`:** the Playwright and axe suite on the build, in the Playwright image.
+3. **`image-build`:** once both pass, Kaniko builds the Dockerfile's `prebuilt`
+   target from the verified build and pushes it under the commit SHA.
+4. **`release`:** commits the image digest to `infra/k8s/kustomization.yaml`
+   with `[skip ci]`, waits for Argo CD to report it Synced and Healthy, then
+   checks the image and `/healthz`.
 
-[Repository onboarding](onboarding.md) configures a new deployment through the
-platform's `add-repos.sh` entrypoint, using this repository's declaration.
+`sonar` runs after `verify` on `main` without blocking; on other branches it is
+manual. A pipeline with `SONAR_SCAN_ONLY=true` runs only `verify` and `sonar`.
+The platform creates the Sonar project and token from `.sonar-auto.json`.
+Astro templates are not a Sonar language; `astro check` and the build checks
+cover them.
 
-Push source changes to `main` to deploy. GitLab runs three required stages:
+Releases share the `swirl-website-production` resource group, so a newer commit
+supersedes an older one and nothing is overwritten. Artifacts are kept seven
+days. The CI job token must be allowed to push to this project's protected
+`main`. The shared runner can only read the `apps/swirl-website` Deployment
+(`infra/k8s/delivery-rbac.yaml`); it cannot change workloads or read Secrets.
 
-1. `verify`: type checks, lint, tests, build, security/SEO checks, dependency audit
-   and delivery-script checks.
-2. `image-build`: builds the Dockerfile's `prebuilt` target with Kaniko and pushes
-   the verified artifacts to the registry under the source commit SHA.
-3. `release`: commits the immutable image digest to
-   `infra/k8s/kustomization.yaml` with `[skip ci]`, then waits for Argo CD to report
-   that revision as Synced/Healthy and verifies the image and `/healthz`.
+Check the manifests locally with `kubectl kustomize infra/k8s` and
+`ansible-playbook --syntax-check infra/ansible/site.yaml`.
 
-Releases share the `swirl-website-production` resource group. A superseded source
-revision skips deployment; concurrent source changes cannot be overwritten.
-Build artifacts and release metadata are available in GitLab for seven days.
+## First installation
 
-GitLab project settings must permit this project's CI job token to push its own
-repository, including its protected default branch. Registry pushes use the
-standard `CI_REGISTRY_USER` and `CI_REGISTRY_PASSWORD`; no CI credentials are
-committed. The shared `swirl-cloud` runner uses its existing Argo CD Application
-permissions. `infra/k8s/delivery-rbac.yaml` grants it read/watch access to only the
-named `apps/swirl-website` Deployment for rollout and digest verification. The pipeline
-cannot modify website workloads or read application Secrets.
+[Onboarding](onboarding.md) does this through the platform. By hand, store the
+registry credentials in Vault KV v2 at `secret/apps/swirl-website/registry`:
 
-Complete the first pipeline before installing the Application so its image
-digest replaces `bootstrap`. Argo CD reconciles `infra/k8s` from GitLab `main`.
+| Field      | Value                                                        |
+| ---------- | ------------------------------------------------------------ |
+| `registry` | `registry.swirlit.dev`                                       |
+| `username` | Project deploy-token username                                |
+| `password` | Deploy token with `read_registry` and `read_repository`      |
 
-## Private GitLab and Registry access
-
-Vault KV v2 path `secret/apps/swirl-website/registry` contains:
-
-| Field | Value |
-| --- | --- |
-| `registry` | `registry.swirlit.dev` |
-| `username` | Project deploy-token username |
-| `password` | Project deploy token with `read_registry` and `read_repository` |
-
-`infra/k8s/registry-credentials.yaml` creates the pull Secret in `apps`.
-`infra/argocd/repository-credentials.yaml` independently creates Argo CD's
-repository credential in `infra`, using the same token for
-`http://gitlab.swirlit.internal/swirlit/swirl-website.git`. The cluster's
-`vault-backend` ClusterSecretStore must be ready first.
-
-Once the first CI image digest is committed, bootstrap from a configured
-operator host:
+`infra/k8s/registry-credentials.yaml` turns them into the image pull Secret and
+`infra/argocd/repository-credentials.yaml` into Argo CD's access to
+`http://gitlab.swirlit.internal/swirlit/swirl-website.git`. The
+`vault-backend` ClusterSecretStore must be ready. Let the first pipeline commit
+an image digest, then, from an operator host:
 
 ```sh
 kubectl apply -f infra/argocd/repository-credentials.yaml
 kubectl wait --for=condition=Ready externalsecret/swirl-website-gitlab-repository -n infra --timeout=120s
 kubectl apply -f infra/k8s/delivery-rbac.yaml
-ansible-playbook infra/ansible/site.yaml
+ansible-playbook infra/ansible/site.yaml   # credentials, Application, rollout
 ```
 
-The playbook reconciles credentials and the Application, then waits for rollout.
+Argo CD then follows `infra/k8s` on GitLab `main`.
 
-## GitHub and GitLab synchronization
+## GitHub and GitLab sync
 
-`.github/workflows/sync-gitlab.yml` reconciles all branches and tags after a
-GitHub push or GitLab `repository_dispatch`. It fast-forwards the lagging side,
-merges compatible divergence with a normal merge, and fails on merge conflicts
-or conflicting tag objects. It does not force-push or delete branches; coordinate
-branch deletions on both remotes.
+`.github/workflows/sync-gitlab.yml` reconciles branches and tags after a push on
+GitHub or a dispatch from GitLab. It fast-forwards the side that lags, merges
+compatible divergence and fails on conflicts; it never force-pushes or deletes
+branches, so delete a branch on both remotes.
 
-The workflow uses GitHub Actions secrets `GITLAB_SYNC_USERNAME`,
-`GITLAB_SYNC_TOKEN`, and `REPOSITORY_SYNC_ADMIN_TOKEN`, plus the non-secret
-`GITLAB_PROJECT_ID` variable. The GitHub credential needs repository contents,
-workflow-file, Actions secret, and Actions variable access for this repository.
-The GitLab project token has `write_repository` and `self_rotate`; its managed
-credential is checked monthly and renewed before expiration.
-
-An operator can reconcile these encrypted secrets and the GitLab webhook using
-environment-provided administrative credentials:
+It uses the GitHub Actions secrets `GITLAB_SYNC_USERNAME`, `GITLAB_SYNC_TOKEN`
+and `REPOSITORY_SYNC_ADMIN_TOKEN` and the variable `GITLAB_PROJECT_ID`. The
+GitLab project token (`write_repository`, `self_rotate`) is checked monthly and
+renewed before it expires. To reconcile the secrets and the GitLab webhook, with
+`GITLAB_ADMIN_TOKEN` and `GITHUB_ADMIN_TOKEN` set in the environment (never on
+the command line):
 
 ```sh
 GITLAB_PROJECT_PATH=swirlit/swirl-website \
@@ -110,179 +86,141 @@ GITHUB_OWNER=chefzaid GITHUB_REPOSITORY=swirl-website \
   infra/scripts/configure-repository-sync.sh
 ```
 
-Set `GITLAB_ADMIN_TOKEN` and `GITHUB_ADMIN_TOKEN` in the caller's environment;
-do not put token literals in command history. Set `TEST_REPOSITORY_SYNC_WEBHOOK=true` only after the
-workflow is present on GitHub's default branch to send a dispatch test.
+Add `TEST_REPOSITORY_SYNC_WEBHOOK=true` to send a test dispatch once the
+workflow is on GitHub's default branch.
 
-## Runtime and stored inquiries
+## Ingress and client addresses
 
-The Node container listens on port 8080 as UID/GID 10001 with a read-only root
-filesystem. `PUBLIC_ORIGIN=https://swirlit.dev` fixes the origin used by the
-application. `/healthz` checks the SQLite connection; its probes wait 5 seconds
-for an answer (readiness 3) and restart the container only after a minute
-without one, so a loaded node does not restart a working server
-(`infra/scripts/test-delivery.sh` rejects shorter values). The single replica uses
-the `swirl-website-data` Longhorn PVC at `/data`; the Node adapter stores
-`contact.sqlite` and applies the plain SQL migrations in `db/migrations`.
-`Recreate` ensures two application replicas never write the same database during
-an update, with a short interruption while the replacement starts.
+The Ingress routes both hostnames to the app, which redirects `www` with a 308
+to `PUBLIC_ORIGIN`, keeping the path, query and trailing slash; forwarded
+headers cannot change the destination. Traefik serves HTTPS on `websecure` and the platform redirects
+HTTP. `infra/k8s/ingress.yaml` limits request bodies to 18 KiB and gives the app
+30 seconds to answer. The TLS certificate must cover both names; DNS is in
+[DNS](dns.md).
 
-To use PostgreSQL and multiple replicas, follow the
-[cutover guide](high-availability.md) before selecting `infra/overlays/ha`.
-`DATABASE_URL` is unset in the SQLite profile and required for PostgreSQL.
+The app trusts `X-Forwarded-For` only from `TRUSTED_PROXY_CIDRS` (the pod
+network, `10.42.0.0/16`). Cloudflare appends the visitor's address and Traefik
+its own peer, so the app takes the second-to-last address; a single address is
+accepted, and a malformed chain falls back to the socket address. It ignores
+caller-supplied `X-Real-IP`, `CF-Connecting-IP` and `Forwarded`. Keep Traefik
+appending `X-Forwarded-For` and trusting only Cloudflare (direct) or loopback
+(Tunnel), and update the CIDR if the pod network changes. The NetworkPolicy
+admits Traefik and the CI smoke-test jobs.
 
-The PVC uses `Prune=false` so an Argo CD manifest removal does not delete saved
-inquiries. Longhorn replication is not an independent backup; include this
-volume in the platform backup policy. Do not copy only the database file while
-it is open in WAL mode; use SQLite's online backup support or a consistent
-volume backup. Define retention and deletion for contact inquiries as part of
-normal operations.
+## Runtime
 
-The Node adapter accepts `X-Forwarded-For` only from `TRUSTED_PROXY_CIDRS`
-(`10.42.0.0/16`, the cluster's current pod network). Cloudflare appends the real visitor
-address, then Traefik appends its immediate edge peer or Tunnel loopback address.
-The adapter uses the penultimate address, ignoring any visitor-supplied prefix;
-a single address is accepted for sanitized direct or legacy ingress requests.
-Keep Traefik's `notAppendXForwardedFor` disabled and its trusted peers restricted
-to Cloudflare networks in direct mode or loopback in Tunnel mode. Missing or
-malformed chain tails fall back to the socket address. The adapter ignores
-`X-Real-IP`, `CF-Connecting-IP` and `Forwarded` supplied by callers, then passes
-only its validated address to contact rate limiting.
+The container runs as UID/GID 10001 on port 8080 with a read-only root
+filesystem and a separate `/tmp`. `PUBLIC_ORIGIN=https://swirlit.dev` fixes the
+origin. Every response gets security headers; HTML is compressed (Brotli or
+gzip) and sent with `Cache-Control: no-cache, no-transform`, so no intermediary
+can alter it and break the hash-based Content Security Policy.
 
-The swirl-website NetworkPolicy admits the `infra` ingress controller and the shared
-CI jobs used for smoke tests. Update the trusted pod CIDR if the cluster network
-changes. Other reverse-proxy topologies require reviewing this two-hop contract.
+`/healthz` checks the database. The probes allow 5 seconds per answer (3 for
+readiness) and restart the container only after a minute without one, so a busy
+node does not restart a working server; `test-delivery.sh` rejects shorter
+values.
 
-HTML responses use `Cache-Control: no-cache, no-transform` so intermediary
-modifications cannot invalidate the generated hash-based Content Security Policy.
-Cloudflare [honors `no-transform` for JavaScript Detection injection](https://developers.cloudflare.com/cloudflare-challenges/challenge-types/javascript-detections/#if-your-origin-sends-a-no-transform-header).
+One replica stores `contact.sqlite` on the `swirl-website-data` Longhorn volume
+at `/data` and applies `db/migrations` at startup. The `Recreate` strategy
+prevents two writers during an update, at the cost of a short interruption. The
+volume has `Prune=false`, so removing it from the manifests does not delete
+inquiries. Longhorn replicas are not a backup: include the volume in the
+platform backups, and back up SQLite with its online backup or a consistent
+volume snapshot, never by copying the open file. PostgreSQL and two replicas
+are in [PostgreSQL and HA](high-availability.md).
+
+Each build renews the 180-day expiry of `/.well-known/security.txt`, so release
+at least every few months.
 
 ## Cloudflare edge cache
 
-Every visitor receives the same prebuilt pages (no cookies, hash-based script
-policy), so Cloudflare keeps the whole site at its edge until the next release.
-The zone's `http_request_cache_settings` ruleset holds a rule, described
-`swirl-website: cache the site until the next release`, that caches every path
-on both hosts except `/api/` and `/healthz` for 30 days, whatever the origin's
-`Cache-Control` says. Error responses are never stored, and browsers still follow
-the origin headers: they revalidate pages with the edge on each visit, so a new
-release appears as soon as the edge is purged. Cloudflare serves the cached
-Brotli page to Brotli clients and decompresses it for the others. The platform's
-Smart Tiered Cache applies to the whole zone. Re-create the rule if the zone is
-rebuilt; `swirl-cloud` reconciles only its own rule in that ruleset.
+Pages are the same for every visitor, so Cloudflare keeps the whole site at its
+edge until the next release. A rule in the zone's `http_request_cache_settings`
+ruleset, described `swirl-website: cache the site until the next release`,
+caches every path on both hosts except `/api/` and `/healthz` for 30 days.
+Errors are never cached. Browsers still revalidate each page with the edge, so
+a release shows as soon as the edge is purged. Re-create the rule if the zone is
+rebuilt; `swirl-cloud` manages only its own rule in that ruleset.
 
-After every successful Argo CD sync, the `swirl-website-cache-purge` PostSync Job
-in `infra/k8s/cache-purge.yaml` purges both hosts, leaving other applications'
-cache in the zone untouched. It runs the release image with outbound HTTPS only,
-reading `purge_token` and `zone_id` from Vault KV v2 path
-`secret/apps/swirl-website/cloudflare`. The token needs only **Zone → Cache Purge
-→ Purge** on the zone; the current token also purges designxprint.com and is
-stored for designXprint too, so rotate both Vault entries together. Onboarding
-seeds both fields empty; until they are set
-the Job skips the purge, so a deployment without them must not enable the cache
-rule. A failed purge marks the Argo CD sync failed and Argo CD retries it; check
-`kubectl logs -n apps job/swirl-website-cache-purge`. To refresh the edge
+After each successful sync, the `swirl-website-cache-purge` PostSync Job
+(`infra/k8s/cache-purge.yaml`) purges both hosts and nothing else in the zone.
+It reads `purge_token` and `zone_id` from Vault `secret/apps/swirl-website/cloudflare`.
+The token needs only **Zone → Cache Purge → Purge**; it is shared with
+designXprint, so rotate both Vault entries together. Until both fields are set
+the Job skips the purge, so do not enable the cache rule before. A failed purge
+fails the sync and Argo CD retries it
+(`kubectl logs -n apps job/swirl-website-cache-purge`). To refresh the edge
 without a release, purge both hostnames in Cloudflare.
 
-## Contact email credentials
+## Contact email
 
-Production uses Resend to notify `contact@swirlit.dev` from
-`noreply@swirlit.dev`; the visitor's email is Reply-To. Incoming mail continues
-through Cloudflare Email Routing. Verify `swirlit.dev` in Resend for sending
-only, leaving its Receiving option off and retaining Cloudflare's apex MX
-records. Add the sending DNS records supplied by Resend for this domain.
+Resend notifies `contact@swirlit.dev` from `noreply@swirlit.dev`, with the
+visitor as Reply-To. Incoming mail stays on Cloudflare Email Routing: verify
+`swirlit.dev` in Resend for sending only, add the DNS records Resend gives
+for it, and keep Cloudflare's MX records.
 
-Store the domain-restricted Sending access key as the `RESEND_API_KEY` field
-at Vault KV v2 path `secret/apps/swirl-website/contact` before deploying the email
-integration. `infra/k8s/contact-notifications.yaml` synchronizes it to the
-`apps/swirl-website-contact-email` Secret through `vault-backend`. The website
-Deployment reads only that key through `secretKeyRef`; the sender is a
-non-secret environment setting. Do not place credentials in manifests,
-CI variables, build arguments, Git, or browser code.
+Store the domain-restricted sending key as `RESEND_API_KEY` in Vault
+`secret/apps/swirl-website/contact`; `infra/k8s/contact-notifications.yaml`
+syncs it to the `swirl-website-contact-email` Secret. Never put credentials in
+manifests, CI variables, build arguments, Git or browser code. The Secret is
+optional, so the site serves pages and stores inquiries without it, but the
+ExternalSecret reports an error until the Vault field exists. After setting or
+rotating the key, wait for the ExternalSecret to be Ready (it refreshes hourly;
+request a refresh), then restart the Deployment.
 
-The Secret reference is optional so a missing Secret does not prevent the
-website from serving pages or saving inquiries. Email remains unconfigured
-until the key is present. The ExternalSecret itself will report a sync error
-until its Vault field exists; provision it before expecting a healthy Argo CD
-release. After provisioning or rotating the key, wait for the ExternalSecret
-to become Ready and restart the Deployment to pick up the new environment
-value. External Secrets refreshes hourly by default; request a refresh when
-rotating rather than assuming a restart refreshes Vault data.
-
-The provider's successful response records `notification_status = sent`,
-meaning accepted for sending, not guaranteed inbox delivery. Check Resend logs
-for delivery or bounce events. Stored inquiries and failed notifications are
-not automatically replayed by the default SQLite adapter. The PostgreSQL
-profile's new submissions use the [bounded notification queue](high-availability.md#contact-delivery-across-replicas).
-Unit tests mock the provider; live delivery needs
-a separate contact submission after the domain and credentials are ready.
+`notification_status = sent` means Resend accepted the email, not that it
+arrived; check Resend's logs. Microsoft Graph (`MS_*`) is the alternative when
+`RESEND_API_KEY` is empty. With SQLite, failed notifications are not retried;
+PostgreSQL has a [retry queue](high-availability.md#contact-delivery-across-replicas).
 
 ## Odoo CRM and Live Chat
 
-The platform's Odoo (`swirl-cloud`, [Odoo website integration](https://gitlab.swirlit.dev/swirlit/swirl-cloud/-/blob/main/docs/guides/odoo-website.md))
-receives every inquiry as a CRM lead and hosts the site's live chat. Provision
-the integration once from the platform host:
+The platform's Odoo receives every inquiry as a lead and hosts the chat (see the
+platform's [Odoo website guide](https://gitlab.swirlit.dev/swirlit/swirl-cloud/-/blob/main/docs/guides/odoo-website.md)).
+Set it up once from the platform host:
 
 ```sh
 python3 scripts/configure-odoo-website.py --application swirl-website \
   --website-origin https://swirlit.dev
 ```
 
-It stores a key that can only create leads at Vault
-`secret/apps/swirl-website/odoo` (`url`, `database`, `login`, `apiKey`).
-`infra/k8s/odoo-integration.yaml` turns it into the `swirl-website-odoo`
-Secret, read as `ODOO_URL`, `ODOO_DATABASE` and `ODOO_API_KEY`. The
-Deployment's `swirl-cloud.io/odoo-crm-intake: "true"` pod label is what admits
-the pod to Odoo on port 8069. Without these values the site still stores
-inquiries; they wait in `contact_crm_queue` and are sent once Odoo is
-configured. The SQLite migration and PostgreSQL schema version 2 also queue
-inquiries stored before the integration existed.
+This stores a key that can only create leads at Vault
+`secret/apps/swirl-website/odoo`; `infra/k8s/odoo-integration.yaml` passes it
+to the app as `ODOO_URL`, `ODOO_DATABASE` and `ODOO_API_KEY`, and the pod label
+`swirl-cloud.io/odoo-crm-intake: "true"` admits the pod to Odoo. Without these
+values inquiries wait in `contact_crm_queue` and are sent once Odoo is set up.
 
-A lead carries the inquiry's subject as its name, the visitor's name, email,
-message and language. A Swirl Cloud demo request (`topic = 'demo'` in
-`contact_messages`, added by SQLite migration `0002` and PostgreSQL schema
-version 3) has no visitor subject: its lead is named
-`Démo Swirl Cloud — <company>` and the company is sent as `partner_name`.
-
-Each queue row records `status` (`queued`, `sent` or `manual`), `attempts`,
-`lead_id` and `last_error`. Odoo outages and unexpected replies are retried with
-backoff up to hourly; a rejected key or request (`401`, `403`, `422`) is set to
-`manual` for review. After fixing the cause, requeue those rows:
+A lead is named after the inquiry's subject, or `Démo Swirl Cloud — <company>`
+for a demo request (sent with the company as `partner_name`). Queue rows record
+`status` (`queued`, `sent` or `manual`), `attempts`, `lead_id` and `last_error`.
+Outages are retried with backoff up to hourly; a rejected key or request (401,
+403, 422) becomes `manual`. Once the cause is fixed:
 
 ```sql
 UPDATE contact_crm_queue SET status = 'queued', run_at = 0 WHERE status = 'manual';
 ```
 
-Every page shows the **Chat with us** button (`src/components/SiteChat.astro`),
-with Chloé marked online. It hydrates as the page loads, and a tap that comes
-earlier is kept by the page script and honoured once it is ready. Hovering or
-focusing it only opens a connection to Odoo; nothing is requested or stored
-until the visitor selects it. It then shows, at once, a window laid out like
-Odoo's chat (same font, header, buttons and message box, with Chloé typing)
-while it frames
-`https://odoo.swirlit.dev/platform_crm_intake/chat/1?lang=<fr|en>&open=1`, which
-runs Odoo's widget on Odoo's origin, so the page's Content Security Policy only
-adds `frame-src https://odoo.swirlit.dev`. Odoo's widget takes a moment to start
-(about 700 KB to download and 3 MB of script to run), so the frame replaces that
-window once it reports the chat open. The button reappears when the visitor
-closes the chat; if the chat cannot
-start within 20 seconds the button offers the contact form instead. The channel
-ID (`chatChannelId`) and Odoo origin are in `data/site.ts`. The channel's
-colours match the site (header and button `#d7ee92`, text `#171c11`) and are set
-in Odoo under **Live Chat → Configuration → Channels**. Agents answer in
-Odoo **Discuss**; while none is online, the chatbot collects the visitor's email
-and request and creates a lead.
+The **Chat with us** button (`src/components/SiteChat.astro`) shows Chloé
+online. Nothing is requested or stored until it is selected (hovering only
+opens a connection). It then shows at once a window drawn like Odoo's while it
+frames `https://odoo.swirlit.dev/platform_crm_intake/chat/1?lang=<fr|en>&open=1`;
+Odoo's widget (about 700 KB) replaces it once the chat is open, and after 20
+seconds without it the button offers the contact form instead. Because the
+widget runs on Odoo's origin, the page's CSP only adds
+`frame-src https://odoo.swirlit.dev`. The origin and channel ID are in
+`data/site.ts`; the channel's colours (`#d7ee92`, text `#171c11`) are set in
+Odoo under **Live Chat → Configuration → Channels**. Agents answer in Odoo
+**Discuss**; when none is online, the chatbot collects the visitor's email and
+request and creates a lead.
 
 ### Chloé and answering by email
 
-The chatbot appears as **Chloé**, defined in `infra/odoo/chat-persona.json`
-(name, the `chloe.png` avatar drawn from `chloe.svg`, and the English and
-French text of each chatbot step); the button's window uses the same name and a
-copy of the avatar in `public/assets/chloe.svg`. Odoo's chat window shows Chloé
-online too. New visitor messages are emailed to the team;
-replying to that email answers in the chat as Chloé, and the answer is emailed
-to the visitor if they have left the site, so they can reply in turn. Apply the
-persona and the email settings from the platform host:
+`infra/odoo/chat-persona.json` defines Chloé: her name, avatar and the French and
+English text of each chatbot step (one message per step, in order);
+`public/assets/chloe.svg` is the site's copy of the avatar. New visitor messages
+are emailed to the team, and replying to that email answers in the chat as
+Chloé, by email too if the visitor has left. Apply the persona and email
+settings from the platform host:
 
 ```sh
 python3 scripts/configure-odoo-website.py --application swirl-website \
@@ -292,48 +230,15 @@ python3 scripts/configure-odoo-website.py --application swirl-website \
   --resend-key-path apps/swirl-website/contact --email-worker
 ```
 
-Odoo then sends its mail through the same Resend account as the contact form,
-from `chat@swirlit.dev`. Replies reach Odoo through Cloudflare Email Routing
-(`chat@swirlit.dev` and its plus-addresses) and an Email Worker; `--email-worker`
+Odoo sends through the same Resend account, from `chat@swirlit.dev`; replies
+come back through Cloudflare Email Routing and an Email Worker (`--email-worker`
 needs `CLOUDFLARE_API_TOKEN` with Workers Scripts and Email Routing Rules edit
-rights. List every address you reply from with `--reply-sender`: replies from
-other senders are bounced. To change Chloé's texts or face, edit the persona
-file (keep one message per chatbot step, in order) and rerun the command.
+rights). Replies from addresses not listed with `--reply-sender` are bounced.
 
-## Local delivery verification
+## Logs
 
-```sh
-bash infra/scripts/test-delivery.sh
-kubectl kustomize infra/k8s
-ansible-playbook --syntax-check infra/ansible/site.yaml
-```
-
-These checks use temporary repositories and mock infrastructure commands.
-The container uses UID/GID 10001, a read-only root filesystem, `fsGroup` access to
-the database volume and a separate `/tmp` volume.
-
-## Application logs
-
-Use [Swirl Website — Application Logs](https://kibana.swirlit.dev/app/dashboards#/view/swirl-website-logs)
-in Kibana. Filter `kubernetes-logs-*` by `kubernetes.namespace_name: apps` and
-`app: swirl-website`. Fluent Bit collects stdout and stderr; the runtime does not log
-every HTTP request. Retention follows the platform's seven-day policy.
-
-`infra/k8s/observability.yaml` defines the dashboard and saved searches. Its Argo
-CD PostSync hook imports them using `apps/kibana-bootstrap-credentials` and the
-`kubernetes-container-logs` data view.
-
-## Automatic Sonar coverage
-
-The default branch automatically runs the non-blocking `sonar` job after a successful
-`verify`, using the Node test LCOV coverage and the source paths in
-`sonar-project.properties`. Other branches and merge requests offer it as a manual job.
-Sonar analyzes supported TypeScript/TSX, JavaScript, CSS and other supported source
-files; Astro templates are not a supported Sonar language and remain checked by
-`astro check`, the build and the compiled security/SEO checks.
-
-The platform discovers Swirl Website from its Argo CD workloads in `apps`, provisions a
-private Sonar project and masked analysis token, and refreshes missing or stale
-analysis. `.sonar-auto.json` declares this contract. A default-branch pipeline with
-`SONAR_SCAN_ONLY=true` runs `verify` and `sonar` without building an image or
-releasing. Reports expire after seven days.
+The [Swirl Website — Application Logs](https://kibana.swirlit.dev/app/dashboards#/view/swirl-website-logs)
+dashboard in Kibana shows the app's output (`kubernetes-logs-*`, namespace
+`apps`, `app: swirl-website`), kept seven days. Requests are not logged one by
+one. `infra/k8s/observability.yaml` defines the dashboard and saved searches;
+a PostSync hook imports them with `apps/kibana-bootstrap-credentials`.

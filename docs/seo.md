@@ -1,113 +1,89 @@
-# SEO maintenance
+# SEO
 
-`src/layouts/Layout.astro` generates page titles, descriptions, canonical URLs,
-language alternates, social cards and JSON-LD. Routes and site identity are
-defined in `data/site.ts`; service and project content lives in
-`data/portfolio.ts`, the service landing pages in `data/expertise.ts` and the
-Swirl Cloud product pages in `data/product.ts`, `data/how-it-works.ts`,
-`data/security.ts`, `data/compliance-controls.ts`, `data/sovereignty.ts` and `data/comparison.ts`.
-Resource articles are Markdown in `src/content/articles/<lang>/<id>.md`
-(schema in `src/content.config.ts`), registered with their slugs in
-`articles` in `data/site.ts`; update `updated` whenever a fact is re-checked.
+`src/layouts/Layout.astro` writes every page's title, description, canonical
+URL, language alternates, social card and JSON-LD. Routes and site identity are
+in `data/site.ts`; page text is in `data/` and the guides in
+`src/content/articles/` (schema in `src/content.config.ts`).
 
-## Site structure
+## Pages
 
-| Page | French | English |
-| --- | --- | --- |
-| Home | `/` | `/en/` |
-| Services (3) | `/developpement-applications-sur-mesure/`, `/logiciel-embarque-iot/`, `/cloud-prive-souverain-ia/` | `/en/custom-software-development/`, `/en/embedded-software-iot/`, `/en/sovereign-private-cloud-ai/` |
-| Swirl Cloud product | `/swirl-cloud/` | `/en/swirl-cloud/` |
-| Swirl Cloud: how it works | `/swirl-cloud/fonctionnement/` | `/en/swirl-cloud/how-it-works/` |
-| Swirl Cloud: security and compliance | `/swirl-cloud/securite-conformite/` | `/en/swirl-cloud/security-compliance/` |
-| Swirl Cloud: sovereignty | `/swirl-cloud/souverainete/` | `/en/swirl-cloud/sovereignty/` |
-| Swirl Cloud: comparison | `/swirl-cloud/comparatif/` | `/en/swirl-cloud/comparison/` |
-| Resources hub | `/ressources/` | `/en/resources/` |
-| Resource articles | `/ressources/<slug>/` | `/en/resources/<slug>/` |
-| Case-study hub | `/projets/` | `/en/projects/` |
-| Case studies (10) | `/projets/<slug>/` | `/en/projects/<slug>/` |
-| Privacy | `/confidentialite/` | `/en/privacy/` |
+| Page                        | French                                | English                                  |
+| --------------------------- | ------------------------------------- | ---------------------------------------- |
+| Home                        | `/`                                   | `/en/`                                   |
+| Services (3)                | `/developpement-applications-sur-mesure/`, `/logiciel-embarque-iot/`, `/cloud-prive-souverain-ia/` | `/en/custom-software-development/`, `/en/embedded-software-iot/`, `/en/sovereign-private-cloud-ai/` |
+| Swirl Cloud                 | `/swirl-cloud/`                       | `/en/swirl-cloud/`                       |
+| Swirl Cloud detail pages    | `/swirl-cloud/fonctionnement/`, `securite-conformite/`, `souverainete/`, `comparatif/` | `/en/swirl-cloud/how-it-works/`, `security-compliance/`, `sovereignty/`, `comparison/` |
+| Resources and guides        | `/ressources/`, `/ressources/<slug>/` | `/en/resources/`, `/en/resources/<slug>/` |
+| Case studies (10)           | `/projets/`, `/projets/<slug>/`       | `/en/projects/`, `/en/projects/<slug>/`  |
+| Privacy                     | `/confidentialite/`                   | `/en/privacy/`                           |
 
-Service URLs sit at the root and carry the main search terms. The product page
-keeps the product name in both languages and is linked from the homepage
-presentation before the client logos and from the "Cloud & AI" card; its detail pages sit below it (`productPages` in
-`data/site.ts`) and are linked from it. Inner pages use
-`src/layouts/Subpage.astro` for the shared header, visible breadcrumbs and
-`BreadcrumbList`. Home service cards, case studies and service pages link to
-each other: keep `projects` in `data/expertise.ts` covering every case study.
-Service pages, Swirl Cloud pages and guides end with their related guides
-(`relatedArticles` in `data/site.ts`, rendered by `src/components/GuideCards.astro`):
-give every new guide an entry and link it from the pages on its subject.
+Service URLs sit at the root to carry the main search terms; the product keeps
+its name in both languages. Inner pages use `src/layouts/Subpage.astro` for the
+header, visible breadcrumbs and `BreadcrumbList`.
 
-When adding or renaming a page, update the route map and both language versions.
-Each page needs a unique title (brand first: `Swirl | …`) and description, one
-H1, a self-canonical and reciprocal language links. `/sitemap.xml` is generated
-from the route map, with a `lastmod` only for articles (their `updated` date); `/robots.txt` excludes the contact API. Keep project links
-in the rendered HTML so they remain crawlable without JavaScript; inner pages
-hydrate nothing except the chat launcher. Every page uses the same header,
-`components/SiteHeader.tsx`: its phone menu is a native popover, so it works
-on inner pages without JavaScript, and only the homepage hydrates it.
+## Rules for every page
+
+- A unique title starting with `Swirl | ` (at most 75 characters), a
+  description of at most 175 characters, one H1, a self-canonical and a link to the other language.
+- Links stay in the HTML, crawlable without JavaScript. Inner pages hydrate only
+  the chat button; the phone menu is a native popover that works without it.
+- Internal links between related pages: home service cards, service pages and
+  case studies link to each other (keep `projects` in `data/expertise.ts`
+  covering every case study), and service pages, Swirl Cloud pages and guides
+  end with their related guides (`relatedArticles` in `data/site.ts`).
+- When adding or renaming a page, update both languages and the routes in
+  `data/site.ts`; the sitemap, `llms.txt` and social cards follow.
+
+`/sitemap.xml` lists every page with its language alternates. Only guides carry
+a `lastmod`: their `updated` date, which you change whenever you re-check their
+facts. `/robots.txt` excludes the contact API. Unknown paths get the localized
+404 page with a 404 status and `noindex`.
 
 ## Structured data
 
-Every page carries `Organization` (with the raster `/logo.png` and founder),
-`WebSite`, the CEO `Person` and its `WebPage`. Service pages add `Service` with
-an `OfferCatalog` and `FAQPage`; the product page adds `SoftwareApplication`
-and `FAQPage`, and its security and sovereignty pages a `FAQPage`; articles add `Article` with their sources as citations; the
-resources and case-study hubs are a `CollectionPage` with an
-`ItemList`; case studies add `CreativeWork`. Homepage `Service` entities share
-the `@id` of their landing page. JSON-LD must escape `<`, and executable inline
-scripts and styles must match the generated CSP. FAQ answers must match the
-visible text and stay factual: Google shows FAQ rich results only for
-authoritative government and health sites, but the markup still describes the
-page to other search and answer engines. The same holds for
-`SoftwareApplication`: it has no `offers` until pricing is published, so Google
-treats it as ineligible for software rich results.
+Every page has `Organization` (with `/logo.png` and its founder), `WebSite`, the
+CEO `Person` and a `WebPage`. On top of that:
+
+| Page                         | Adds                                              |
+| ---------------------------- | ------------------------------------------------- |
+| Service pages                | `Service` with an `OfferCatalog`, and `FAQPage`   |
+| Swirl Cloud                  | `SoftwareApplication` (no `offers` until prices are published) and `FAQPage` |
+| Security and sovereignty     | `FAQPage`                                         |
+| Guides                       | `Article`, with its sources as citations          |
+| Resources and case-study hubs| `CollectionPage` with an `ItemList`               |
+| Case studies                 | `CreativeWork`                                    |
+
+FAQ answers must match the visible text. Google shows FAQ rich results only for
+government and health sites, but other search and answer engines still read
+them. JSON-LD escapes `<`, and inline scripts and styles must match the CSP
+hashes.
 
 ## Social cards, icons and llms.txt
 
-`src/pages/og/[image].png.ts` renders a 1200×630 card per document at build
-time (`lib/social-image.tsx`: Satori with the bundled Manrope font, then
-sharp), mirroring the page H1. Satori follows CSS `content-box` sizing, so
-boxes that combine a size with padding set `boxSizing: 'border-box'`. It pins
-`fflate` 0.7.3, which has a security advisory; `overrides` in `package.json`
-replaces it with 0.8.3, which renders identical cards. Remove the override once
-satori depends on a fixed `fflate`. The same module builds `/logo.png`,
-`/apple-touch-icon.png` and `/favicon.ico` from `public/assets/mark.svg`.
-`/llms.txt` summarizes the company, services and case studies for AI answer
-engines from the same data.
+`src/pages/og/[image].png.ts` renders a 1200×630 card per page at build time
+with the page's H1 (`lib/social-image.tsx`, Satori and sharp, with the bundled
+Manrope font); the same module builds `/logo.png`, `/apple-touch-icon.png` and
+`/favicon.ico` from `public/assets/mark.svg`. Satori sizes boxes the CSS way
+(`content-box`), so a box with both a size and padding sets
+`boxSizing: 'border-box'`. It pins `fflate` 0.7.3, which has a security advisory;
+`overrides` in `package.json` swaps in 0.8.3, which renders identical cards.
+Remove the override once satori depends on a fixed `fflate`.
 
-## Delivery
+`/llms.txt` summarizes the company, services, Swirl Cloud, guides and case
+studies for AI answer engines, from the same data.
 
-The Node handler serves Brotli or gzip HTML (negotiated, cached per document,
-`Vary: Accept-Encoding`) because `Cache-Control: no-transform` stops Cloudflare
-from compressing documents. Cloudflare keeps documents and files at its edge
-until the next release, so crawlers and visitors are served from the nearest
-location; see [Cloudflare edge cache](deployment.md#cloudflare-edge-cache).
-Unknown document paths return the localized `noindex` 404 page with a 404
-status; missing files keep a plain 404. Neither is stored at the edge.
+## Checks
 
-## Validation
+`npm run build`, then `python3 scripts/check-built-seo.py` and
+`python3 scripts/check-built-security.py` check every page and both 404s:
+metadata, social cards, links and anchors, language pairs, structured data, the
+sitemap, `llms.txt`, icons and CSP hashes. Both scripts hold the expected page
+count; raise it by two for each new page pair.
 
-```sh
-npm run check
-npm run build
-python3 scripts/check-built-security.py
-python3 scripts/check-built-seo.py
-```
-
-The checks cover all 52 pages and both 404 pages: metadata, social cards,
-internal links and fragments, language alternates, structured data, sitemap
-entries, `llms.txt`, icons and CSP hashes.
-
-## Production checks
-
-After a domain or route change, verify public access, redirects, canonicals and
-language links at `https://swirlit.dev`. Update `siteConfig.origin` and the runtime
-`PUBLIC_ORIGIN` together; see [deployment](deployment.md) and [DNS](dns.md).
-Verify domain ownership in Google Search Console and Bing Webmaster Tools,
-submit `/sitemap.xml`, and inspect representative URLs after deployment. Check
-a document response carries `Content-Encoding` through Cloudflare, and preview
-a shared link (LinkedIn Post Inspector) after changing a card.
+After a domain or route change, check the live site's redirects, canonicals and
+language links, and update `siteConfig.origin` and the runtime `PUBLIC_ORIGIN`
+together ([deployment](deployment.md), [DNS](dns.md)). After changing a social
+card, preview a shared link in LinkedIn Post Inspector.
 
 ## References
 
