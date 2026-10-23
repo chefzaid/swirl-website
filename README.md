@@ -130,6 +130,7 @@ locally or Vault/Kubernetes Secrets in production; see
 ```sh
 npm run check
 npm run lint
+npm run format:check
 npm test
 npm run build
 npm run test:e2e
