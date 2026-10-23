@@ -20,7 +20,11 @@ const linkedTopic = (): Topic =>
     ? 'demo'
     : 'project';
 const serverTopic = (): Topic => 'project';
-export default function ContactForm({ lang }: Readonly<{ lang: Lang }>) {
+// The privacy link comes as a prop so the island does not bundle the site data.
+export default function ContactForm({
+  lang,
+  privacyHref,
+}: Readonly<{ lang: Lang; privacyHref: string }>) {
   const t = (fr: string, en: string) => (lang === 'en' ? en : fr);
   const [state, setState] = useState<'idle' | 'sending' | 'success' | 'error'>(
     'idle',
@@ -297,7 +301,7 @@ export default function ContactForm({ lang }: Readonly<{ lang: Lang }>) {
             </span>
           </label>
           <p className="form-privacy">
-            <a href={t('/confidentialite/', '/en/privacy/')}>
+            <a href={privacyHref}>
               {t(
                 'Utilisation de vos informations et exercice de vos droits',
                 'How we use your information and how to exercise your rights',

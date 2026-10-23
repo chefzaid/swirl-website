@@ -8,7 +8,7 @@ import ContactForm from '../../components/ContactForm';
 import SiteChat from '../components/SiteChat.astro';
 import type { Lang } from '../../data/portfolio';
 import { projectViews } from '../../data/project-view';
-import { homePath, projectsPath } from '../../data/site';
+import { homePath, privacyPath, projectsPath } from '../../data/site';
 interface Props { lang: Lang; }
 const { lang } = Astro.props;
 ---
@@ -16,7 +16,7 @@ const { lang } = Astro.props;
   <Portfolio lang={lang}>
     <SiteHeader slot="header" lang={lang} alternates={{ fr: homePath('fr'), en: homePath('en') }} client:media="(max-width: 1100px)" />
     <ProjectGallery slot="projects-content" lang={lang} projects={projectViews(lang)} projectsHref={projectsPath(lang)} client:visible={{ rootMargin: '300px' }} />
-    <ContactForm slot="contact-form" lang={lang} client:visible={{ rootMargin: '300px' }} />
+    <ContactForm slot="contact-form" lang={lang} privacyHref={privacyPath(lang)} client:visible={{ rootMargin: '300px' }} />
   </Portfolio>
   <SiteChat lang={lang} />
 </Layout>
