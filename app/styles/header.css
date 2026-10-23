@@ -1,0 +1,105 @@
+/* Header, navigation, theme and language switches, and buttons. */
+.header {
+  height: 104px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+  gap: 28px;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  font-family: 'Manrope Variable', sans-serif;
+  font-size: 29px;
+  font-weight: 700;
+  letter-spacing: -1.4px;
+  white-space: nowrap;
+  gap: 5px;
+}
+.brand img {
+  height: 38px;
+  width: 40px;
+  margin-right: 6px;
+}
+.brand i {
+  font-style: normal;
+  color: var(--primary);
+}
+nav {
+  display: flex;
+  gap: 29px;
+  font-size: 13px;
+  color: var(--muted-foreground);
+}
+nav a:hover,
+nav a.active {
+  color: var(--foreground);
+}
+nav a.active::before {
+  content: '';
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  background: var(--primary);
+  border-radius: 50%;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+.language {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  line-height: 1;
+  font-size: 12px;
+  white-space: nowrap;
+}
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--muted-foreground);
+  cursor: pointer;
+}
+.theme-toggle:hover {
+  color: var(--foreground);
+  border-color: var(--input);
+}
+.theme-toggle .theme-icon-dark,
+:root[data-theme='light'] .theme-toggle .theme-icon-light {
+  display: none;
+}
+:root[data-theme='light'] .theme-toggle .theme-icon-dark {
+  display: block;
+}
+.language span {
+  color: light-dark(#707972, #757e77);
+}
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  padding: 18px 24px;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: 600;
+  transition:
+    background 0.2s,
+    transform 0.2s;
+}
+.button:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+}

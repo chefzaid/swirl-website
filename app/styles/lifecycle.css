@@ -1,0 +1,221 @@
+/* Software lifecycle diagram and the Swirl Cloud header link, then their narrow-screen rules. */
+/* A readable, bilingual diagram of the software lifecycle. */
+.lifecycle-figure {
+  margin: 0;
+  padding: 28px;
+  background: light-dark(#e7ece6, #151b14);
+  border: 1px solid light-dark(#afc0a5, #35432d);
+  border-radius: 8px;
+}
+.lifecycle-heading {
+  margin-bottom: 25px;
+}
+.lifecycle-heading > span {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  font-size: 8px;
+  letter-spacing: 1.6px;
+  color: light-dark(#47543c, #9cab90);
+}
+.lifecycle-heading > span svg {
+  color: var(--primary);
+}
+.lifecycle-heading strong {
+  display: block;
+  font-family: 'Manrope Variable', sans-serif;
+  font-size: 22px;
+  line-height: 1.4;
+  font-weight: 500;
+  letter-spacing: -0.6px;
+  margin-top: 13px;
+}
+.lifecycle-stages {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 19px;
+}
+.lifecycle-stage {
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr);
+  gap: 12px;
+  position: relative;
+  align-items: start;
+}
+.lifecycle-number {
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: light-dark(#46533a, #9ead91);
+  line-height: 1;
+  padding-top: 21px;
+}
+.lifecycle-stage-content {
+  padding: 16px;
+  background: light-dark(#dce2d9, #1b2318);
+  border: 1px solid light-dark(#b3c1ab, #35402e);
+  border-radius: 5px;
+}
+.lifecycle-stage-title {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+.lifecycle-stage-title > svg {
+  color: var(--primary);
+  flex-shrink: 0;
+}
+.lifecycle-stage-title h3 {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+.lifecycle-stage-content > p {
+  margin-top: 7px;
+  color: light-dark(#414c37, #a6b39b);
+  font-size: 10px;
+  line-height: 1.75;
+}
+.lifecycle-connector {
+  position: absolute;
+  left: calc(50% + 11px);
+  bottom: -17px;
+  color: light-dark(#6e7f5e, #6f805f);
+}
+.lifecycle-stage-2 .lifecycle-stage-content {
+  border-color: light-dark(#708554, #697e4e);
+  background: light-dark(#c9d6c0, #252f1e);
+}
+.lifecycle-modules {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-inline-size: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 7px;
+  margin-top: 13px;
+}
+.lifecycle-module {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid light-dark(#93a582, #4c5c3c);
+  background: light-dark(#e0e6dd, #192016);
+  border-radius: 4px;
+  padding: 13px 5px;
+  color: light-dark(#202a09, #d0dfb8);
+}
+.lifecycle-module > span {
+  font-size: 9px;
+}
+.lifecycle-stage-4 .lifecycle-stage-title {
+  color: var(--primary);
+}
+.lifecycle-feedback {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 23px;
+  padding-top: 17px;
+  border-top: 1px solid light-dark(#b2c0aa, #35412e);
+  color: light-dark(#404e2d, #a3b48e);
+  font-size: 10px;
+}
+.cloud-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted-foreground);
+  font-size: 11px;
+  font-weight: 400;
+  white-space: nowrap;
+  padding-block: 8px;
+}
+.cloud-link:hover {
+  color: var(--foreground);
+}
+@media (max-width: 1100px) {
+  .lifecycle-figure {
+    padding: 22px 18px;
+  }
+  .lifecycle-stage {
+    gap: 8px;
+    grid-template-columns: 22px minmax(0, 1fr);
+  }
+  .lifecycle-stage-content {
+    padding: 13px;
+  }
+  .lifecycle-heading strong {
+    font-size: 20px;
+  }
+  .header nav {
+    gap: 21px;
+  }
+}
+@media (max-width: 760px) {
+  .hero-visual {
+    width: 100%;
+    margin: 0;
+  }
+  .lifecycle-figure {
+    padding: 26px 20px;
+  }
+  .lifecycle-heading strong {
+    font-size: 22px;
+  }
+  .lifecycle-stage-title h3 {
+    font-size: 13px;
+  }
+  .lifecycle-stage-content > p {
+    font-size: 11px;
+  }
+  .lifecycle-feedback {
+    font-size: 10px;
+  }
+  .header {
+    gap: 12px;
+  }
+  .header-actions {
+    gap: 11px;
+  }
+  .header .brand {
+    font-size: 24px;
+  }
+  .header .brand img {
+    width: 31px;
+    height: 32px;
+    margin-right: 1px;
+  }
+  .header .language {
+    font-size: 10px;
+    gap: 5px;
+  }
+  .about-photo {
+    margin-top: 8px;
+  }
+  .about-signature {
+    margin-top: 22px;
+  }
+}
+@media (max-width: 380px) {
+  .header-actions {
+    gap: 7px;
+  }
+  .lifecycle-figure {
+    padding: 24px 16px;
+  }
+}
+
+@media (max-width: 1100px) {
+  .header nav {
+    display: none;
+  }
+  .menu-toggle[data-slot='button'] {
+    display: inline-flex;
+  }
+}

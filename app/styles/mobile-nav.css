@@ -1,0 +1,50 @@
+/* Phone menu. */
+/* Phone menu: a native popover under the header, opened by .menu-toggle.
+   The global nav rule would otherwise show it while closed. */
+.mobile-nav:not(:popover-open) {
+  display: none;
+}
+.mobile-nav {
+  position: absolute;
+  inset: 104px 0 auto;
+  width: auto;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-bottom: 1px solid var(--border);
+  background: var(--background);
+  color: var(--foreground);
+}
+.mobile-nav > .wrap {
+  display: flex;
+  flex-direction: column;
+  padding-block: 20px;
+}
+.mobile-nav a {
+  display: flex;
+  justify-content: space-between;
+  padding: 14px 0;
+  font-size: 16px;
+}
+.menu-toggle .menu-close,
+body:has(.mobile-nav:popover-open) .menu-toggle .menu-open {
+  display: none;
+}
+body:has(.mobile-nav:popover-open) .menu-toggle .menu-close {
+  display: block;
+}
+@media (max-width: 380px) {
+  .header {
+    gap: 8px;
+  }
+  .header .brand {
+    font-size: 20px;
+    gap: 2px;
+  }
+  .header .brand i {
+    display: none;
+  }
+  .header .brand img {
+    width: 25px;
+  }
+}

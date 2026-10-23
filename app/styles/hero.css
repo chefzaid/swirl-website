@@ -1,0 +1,287 @@
+/* Homepage hero and client logos, then the first wide, tablet and phone rules (hero, header, footer). */
+.hero {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 90px;
+  padding-block: 73px 70px;
+}
+.hero-copy,
+.hero-visual {
+  min-width: 0;
+}
+.eyebrow {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 2.1px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: light-dark(#20241f, #d8ded7);
+}
+h1 {
+  font-family: 'Manrope Variable', sans-serif;
+  font-size: clamp(50px, 5.4vw, 78px);
+  font-weight: 500;
+  line-height: 1.09;
+  letter-spacing: -4px;
+  margin-top: 28px;
+}
+.hero h1 {
+  margin-top: 0;
+}
+h1 > span {
+  color: var(--primary);
+}
+.hero-description {
+  color: light-dark(#464d47, #a5ada7);
+  font-size: 14px;
+  line-height: 1.9;
+  max-width: 410px;
+  margin-top: 25px;
+}
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 27px;
+  align-items: center;
+  margin-top: 30px;
+}
+.text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 15px;
+  font-size: 12px;
+}
+.text-link:hover {
+  color: var(--primary);
+}
+.hero-facts {
+  display: flex;
+  margin-top: 43px;
+  gap: 34px;
+}
+.hero-facts > div {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding-right: 33px;
+  border-right: 1px solid var(--border);
+}
+.hero-facts > div:last-child {
+  border: 0;
+  padding: 0;
+}
+.hero-facts strong {
+  font-size: 32px;
+  font-family: 'Manrope Variable', sans-serif;
+  font-weight: 500;
+  letter-spacing: -1px;
+}
+.hero-facts strong span {
+  font-size: 22px;
+  color: var(--primary);
+}
+.hero-facts small {
+  font-size: 10px;
+  color: var(--muted-foreground);
+  white-space: normal;
+}
+.hero-visual {
+  padding: 0;
+  margin-bottom: 0;
+  position: relative;
+  align-self: center;
+}
+
+.trust {
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding-block: 27px 36px;
+}
+.trust > p {
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-align: center;
+  color: light-dark(#656f68, #7e8981);
+}
+.client-logos {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 30px;
+  margin-top: 31px;
+}
+.client-row {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-evenly;
+  gap: 28px;
+}
+.client-row > .client-logo {
+  flex: 1 1 0;
+  min-width: 0;
+  align-items: center;
+}
+.client-row + .client-row {
+  padding-top: 26px;
+  border-top: 1px solid light-dark(#cbd5cc, #252d26);
+}
+.client-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 10px;
+  width: 250px;
+  max-width: 100%;
+  height: 84px;
+}
+.client-logo img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 56px;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+  opacity: 0.78;
+}
+.client-row .client-logo img {
+  max-width: min(100%, 180px);
+  max-height: 48px;
+}
+.client-logo--bpce img {
+  max-width: min(100%, 128px);
+  max-height: 32px;
+}
+.client-row .client-logo--bpce img {
+  max-width: min(100%, 116px);
+  max-height: 30px;
+}
+.client-logo--sg img,
+.client-logo--bpce img,
+.client-logo--bouygues img {
+  /* Preserve the light/dark details inside these symbols. */
+  filter: grayscale(1) invert(1);
+}
+/* Logos are drawn for a dark background: make them dark on the light theme. */
+:root[data-theme='light'] .client-logo img {
+  filter: brightness(0);
+  opacity: 0.72;
+}
+:root[data-theme='light'] .client-logo--sg img,
+:root[data-theme='light'] .client-logo--bpce img,
+:root[data-theme='light'] .client-logo--bouygues img {
+  filter: grayscale(1);
+  opacity: 0.6;
+}
+.client-logo--cdc img,
+.client-logo--bouygues img {
+  max-height: 84px;
+}
+.client-row .client-logo--cdc img,
+.client-row .client-logo--bouygues img {
+  max-height: 84px;
+}
+@media (min-width: 1500px) {
+  .hero {
+    gap: 110px;
+  }
+
+  .hero-visual {
+    width: 100%;
+  }
+}
+@media (max-width: 1100px) {
+  .wrap {
+    width: calc(100% - 64px);
+  }
+  .header-actions {
+    gap: 14px;
+  }
+  .hero {
+    gap: 55px;
+  }
+  .hero-facts {
+    gap: 20px;
+  }
+  .hero-facts > div {
+    padding-right: 20px;
+  }
+  h1 {
+    letter-spacing: -3px;
+  }
+  .hero-actions {
+    gap: 17px;
+  }
+  .button {
+    padding: 16px 18px;
+  }
+}
+@media (min-width: 761px) and (max-width: 1100px) {
+  .footer {
+    grid-template-columns: 1fr 1fr;
+  }
+  .footer-copyright {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+}
+@media (max-width: 760px) {
+  .wrap {
+    width: calc(100% - 40px);
+  }
+  .header {
+    height: 80px;
+  }
+  .header nav {
+    display: none;
+  }
+  .brand {
+    font-size: 26px;
+  }
+  .hero {
+    grid-template-columns: 1fr;
+    gap: 50px;
+    padding-top: 44px;
+    padding-bottom: 52px;
+  }
+  h1 {
+    font-size: clamp(48px, 10.5vw, 72px);
+    letter-spacing: -2.9px;
+  }
+  .hero-description {
+    font-size: 14px;
+    max-width: 460px;
+  }
+  .hero-actions {
+    flex-wrap: wrap;
+    gap: 25px;
+  }
+  .hero-facts {
+    margin-top: 35px;
+  }
+  .hero-facts strong {
+    font-size: 29px;
+  }
+  .hero-facts small {
+    font-size: 9px;
+  }
+
+  .client-logos {
+    overflow-x: auto;
+    padding-block: 2px 12px;
+    gap: 24px;
+    scrollbar-width: thin;
+    scrollbar-color: light-dark(#8b9783, #596451) transparent;
+  }
+  .client-row {
+    min-width: 900px;
+    gap: 24px;
+  }
+  .trust > p {
+    font-size: 8px;
+    letter-spacing: 1.5px;
+  }
+}

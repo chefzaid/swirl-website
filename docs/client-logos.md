@@ -21,7 +21,7 @@ Sources retrieved on 2026-09-07:
 
 When replacing an asset, update this source list and check its aspect ratio,
 contrast and text alternative in `components/ClientLogo.tsx`. Theme rules live in
-`app/globals.css`; keep any transformations compatible with the source artwork.
+`app/styles/hero.css`; keep any transformations compatible with the source artwork.
 
 The Commons sources identify the Caisse des Dépôts and Bouygues marks as
 public-domain text/geometry while noting trademark protection. All company

@@ -50,7 +50,7 @@ The site is dark by default. The header's theme button (`components/SiteHeader.t
 switches to the light theme; a script at the start of `<body>`
 (`src/layouts/Layout.astro`) applies the saved choice before the page paints and
 is allowed by its hash in the Content Security Policy. Colours are
-`light-dark(<light>, <dark>)` pairs in `app/*.css`, resolved by the page's
+`light-dark(<light>, <dark>)` pairs in `app/*.css` and `app/styles/*.css`, resolved by the page's
 `color-scheme`; give every new colour both values, each with at least 4.5:1
 contrast on its backgrounds. The end-to-end suite runs axe (WCAG 2.2 AA) on
 every page template in both themes (`e2e/accessibility.spec.ts`).
@@ -82,7 +82,7 @@ migration/import commands are in `runtime/postgres.ts` and
 | Pages and metadata | `src/layouts/` |
 | Social cards and icons | `lib/social-image.tsx`, `src/pages/og/` |
 | UI and shared project content | `components/`, `data/project-view.ts` |
-| Styles and assets | `app/globals.css`, `public/assets/` |
+| Styles and assets | `app/globals.css` (imports `app/styles/` in cascade order), `app/swirl-cloud.css`, `app/articles.css`, `public/assets/` |
 | Contact API and notifications | `server/contact.ts`, `runtime/contact.ts` |
 | Odoo CRM delivery and Live Chat | `server/odoo.ts`, `runtime/crm.ts`, `components/ChatLauncher.tsx` |
 | Request handling | `server/handler.ts`, `runtime/server.ts` |

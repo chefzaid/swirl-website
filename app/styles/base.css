@@ -1,0 +1,95 @@
+/* Design tokens, element defaults and the page width. */
+@custom-variant dark (&:is(.dark *));
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-destructive: light-dark(#b42318, #ff9c8e);
+  --font-sans: 'DM Sans Variable', sans-serif;
+}
+@theme inline {
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--foreground);
+  --color-secondary: var(--muted);
+  --color-secondary-foreground: var(--foreground);
+  --color-accent: var(--muted);
+  --color-accent-foreground: var(--foreground);
+}
+:root,
+.dark {
+  color-scheme: dark;
+  --background: light-dark(#f6f7f2, #101211);
+  --foreground: light-dark(#151a12, #f2f3ed);
+  --primary: light-dark(#4c6b13, #d7ee92);
+  --primary-hover: light-dark(#3b530f, #e7f8b9);
+  --primary-foreground: light-dark(#ffffff, #171c11);
+  --muted: light-dark(#dce0de, #1e2220);
+  --muted-foreground: light-dark(#484f4a, #a3aaa5);
+  --border: light-dark(#c0c8c3, #303632);
+  --input: light-dark(#b3bbb4, #3a413b);
+  --ring: light-dark(#4c6b13, #d7ee92);
+  --radius: 0.5rem;
+  --popover: light-dark(#dee2df, #1c211d);
+}
+/* Dark by default; the header's theme switch sets data-theme="light"
+   (src/layouts/Layout.astro). Colours are light-dark() pairs. */
+:root[data-theme='light'] {
+  color-scheme: light;
+}
+* {
+  box-sizing: border-box;
+}
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 105px;
+}
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: 'DM Sans Variable', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+a {
+  text-decoration: none;
+  color: inherit;
+}
+button,
+a,
+input,
+textarea,
+select {
+  -webkit-tap-highlight-color: transparent;
+}
+button,
+a {
+  touch-action: manipulation;
+}
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 5px;
+}
+button {
+  cursor: pointer;
+}
+img {
+  display: block;
+  max-width: 100%;
+}
+p,
+h1,
+h2,
+h3 {
+  margin: 0;
+}
+.wrap {
+  width: min(1280px, calc(100% - 112px));
+  margin-inline: auto;
+}

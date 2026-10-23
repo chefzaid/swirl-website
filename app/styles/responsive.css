@@ -1,0 +1,198 @@
+/* Tablet and phone layout of the homepage sections, footer, dialog and privacy page. */
+@media (max-width: 1100px) {
+  .section,
+  .projects-section {
+    padding-block: 80px;
+  }
+  .section-heading {
+    gap: 30px;
+  }
+  .services-grid,
+  .projects-grid {
+    gap: 14px;
+  }
+  .service-card {
+    padding: 25px 20px;
+  }
+  .service-card h3 {
+    font-size: 16px;
+  }
+  .service-card > p {
+    min-height: 115px;
+  }
+  .project-top {
+    padding-inline: 17px;
+    font-size: 7px;
+  }
+  .project-client {
+    padding-inline: 17px;
+  }
+  .project-info {
+    padding: 22px 17px 14px;
+  }
+  .about {
+    gap: 55px;
+  }
+  .contact-grid {
+    gap: 50px;
+  }
+  .contact-form-shell {
+    padding: 25px;
+  }
+  .contact-email {
+    font-size: 20px;
+  }
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 760px) {
+  .section,
+  .projects-section {
+    padding-block: 65px;
+  }
+  .section-heading {
+    display: block;
+    margin-bottom: 30px;
+  }
+  .section-intro {
+    margin-top: 22px;
+    max-width: 400px;
+  }
+  .services-grid {
+    grid-template-columns: 1fr;
+  }
+  .service-card {
+    padding: 27px;
+  }
+  .service-card h3 {
+    font-size: 20px;
+  }
+  .service-card > p {
+    min-height: unset;
+    font-size: 13px;
+  }
+  .service-top {
+    margin-bottom: 27px;
+  }
+  .service-card .tags {
+    margin-top: 22px;
+  }
+  .projects-grid {
+    grid-template-columns: 1fr;
+  }
+  .project-top {
+    font-size: 9px;
+    padding: 25px 25px 0;
+  }
+  .project-client {
+    padding: 30px 25px;
+  }
+  .project-info {
+    padding: 25px;
+  }
+  .project-info h3 {
+    font-size: 21px;
+  }
+  .project-info > p {
+    font-size: 13px;
+  }
+  .project-info .tags {
+    margin-top: 20px;
+    margin-bottom: 9px;
+  }
+  .filters {
+    gap: 5px;
+  }
+  .filter[data-slot='button'] {
+    font-size: 10px;
+    padding: 10px;
+  }
+  .about {
+    grid-template-columns: 1fr;
+    gap: 35px;
+  }
+  .about-photo {
+    width: 115px;
+    height: 115px;
+    border-width: 4px;
+  }
+  .about-copy {
+    padding-top: 0;
+  }
+
+  .partners {
+    display: block;
+    padding-bottom: 45px;
+  }
+  .partners .eyebrow {
+    max-width: none;
+    margin-bottom: 20px;
+  }
+  .partners > div {
+    font-size: 11px;
+    gap: 17px 22px;
+  }
+  .contact-section {
+    padding-block: 60px;
+  }
+  .contact-grid {
+    grid-template-columns: 1fr;
+    gap: 35px;
+  }
+  .contact-footnote {
+    display: none;
+  }
+  .contact-form-shell {
+    padding: 24px 20px;
+  }
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 21px;
+  }
+  .form-field input,
+  .form-field textarea {
+    font-size: 16px;
+  }
+  .contact-email {
+    font-size: 22px;
+  }
+  .contact-copy > p:not(.eyebrow) {
+    max-width: none;
+  }
+  .footer {
+    grid-template-columns: 1fr;
+    gap: 22px;
+    padding-block: 30px;
+  }
+  .footer-branding,
+  .footer-links {
+    justify-content: center;
+  }
+  .footer .footer-copyright {
+    grid-column: 1;
+    grid-row: 3;
+    line-height: 1.6;
+  }
+  .project-dialog[data-slot='dialog-content'] {
+    padding: 30px 24px;
+  }
+  .project-dialog .dialog-title {
+    font-size: 27px;
+  }
+  .privacy-page h1 {
+    font-size: 33px;
+  }
+  .form-success {
+    min-height: 320px;
+  }
+  .eyebrow {
+    letter-spacing: 1.5px;
+  }
+  .hero-facts {
+    gap: 16px;
+  }
+  .hero-facts > div {
+    padding-right: 16px;
+  }
+}
