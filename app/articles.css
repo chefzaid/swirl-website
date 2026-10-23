@@ -87,6 +87,7 @@
   .chat-frame,
   .chat-shell,
   .case-contact,
+  .guide-cards,
   .product-more {
     display: none !important;
   }

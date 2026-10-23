@@ -48,7 +48,7 @@ The guides are what a NIS2 or DORA buyer finds first, and the product pages are
 what convinces them; link the two and keep adding guides on the questions
 Swirl Cloud answers, with sources and dates as for the existing ones.
 
-- [ ] Related guides: each Swirl Cloud page and each article links to the guides on its subject (security → NIS2, DORA; sovereignty and comparison → leaving a hyperscaler; …), from one mapping in `data/site.ts`.
+- [x] Related guides: each Swirl Cloud page and each article links to the guides on its subject (security → NIS2, DORA; sovereignty and comparison → leaving a hyperscaler; …), from `relatedArticles` in `data/site.ts`, with the same cards as the resources hub (`src/components/GuideCards.astro`). *(2026-10-23)*
 - [x] Sitemap `lastmod` for the resource articles, from their `updated` date; other pages still carry none, checked by `check-built-seo.py`. *(2026-10-23)*
 - [x] Print styles for articles, so a checklist prints or saves as PDF without the header, chat and footer, in light colours, with external link targets shown. *(2026-10-23)*
 - [ ] Phone-width end-to-end checks: the header menu opens and navigates, and the axe scan passes on the home and an inner page.

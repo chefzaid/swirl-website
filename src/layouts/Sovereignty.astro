@@ -1,11 +1,12 @@
 ---
 import Subpage from './Subpage.astro';
+import GuideCards from '../components/GuideCards.astro';
 import '../../app/swirl-cloud.css';
 import type { Lang } from '../../data/portfolio';
 import { product } from '../../data/product';
 import { security } from '../../data/security';
 import { sovereignty as page } from '../../data/sovereignty';
-import { absoluteUrl, homePath, productPagePath, productPath, siteConfig } from '../../data/site';
+import { absoluteUrl, homePath, productPagePath, productPath, siteConfig, relatedArticles } from '../../data/site';
 interface Props { lang: Lang; }
 const { lang } = Astro.props;
 const en = lang === 'en';
@@ -72,6 +73,7 @@ const structuredData = [
         {page.faq.map(item => <details><summary><h3>{item.question[lang]}</h3></summary><p>{item.answer[lang]}</p></details>)}
       </div>
     </section>
+    <GuideCards lang={lang} ids={relatedArticles.sovereignty} heading={en ? 'Related guides' : 'Guides associés'} />
     <aside class="case-contact">
       <h2>{en ? 'Check it on a real installation' : 'Vérifiez-le sur une vraie installation'}</h2>
       <p>{en

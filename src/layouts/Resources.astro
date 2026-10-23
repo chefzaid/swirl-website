@@ -1,6 +1,7 @@
 ---
 import { getEntry } from 'astro:content';
 import Subpage from './Subpage.astro';
+import GuideCards from '../components/GuideCards.astro';
 import '../../app/swirl-cloud.css';
 import type { Lang } from '../../data/portfolio';
 import { absoluteUrl, articlePath, articles, homePath, resourcesPath, siteConfig } from '../../data/site';
@@ -34,13 +35,7 @@ const list = {
       ? 'Guides on the regulations and choices that shape a company’s IT, with their sources and the date they were last checked.'
       : 'Des guides sur les règles et les choix qui façonnent l’informatique d’une entreprise, avec leurs sources et la date de leur dernière vérification.'}</p>
   </header>
-  <section class="service-section case-related" aria-labelledby="articles-heading">
-    <h2 id="articles-heading">Guides</h2>
-    <div class="case-related-grid">{entries.map(article => <a href={articlePath(article.id, lang)}>
-      <span class="eyebrow">{new Intl.DateTimeFormat(en ? 'en-US' : 'fr-FR', { dateStyle: 'long', timeZone: 'UTC' }).format(article.updated)}</span>
-      <h3>{article.heading}</h3><p>{article.description}</p>
-      <span class="text-link">{en ? 'Read the guide' : 'Lire le guide'} ↗</span></a>)}</div>
-  </section>
+  <GuideCards lang={lang} ids={articles} heading="Guides" />
   <aside class="case-contact">
     <h2>{en ? 'Have a question these guides do not answer?' : 'Une question à laquelle ces guides ne répondent pas ?'}</h2>
     <p>{en ? 'Tell us about your context; we reply with what applies to you.' : 'Parlez-nous de votre contexte ; nous vous répondons sur ce qui s’applique à vous.'}</p>

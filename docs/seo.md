@@ -34,6 +34,9 @@ presentation before the client logos and from the "Cloud & AI" card; its detail 
 `src/layouts/Subpage.astro` for the shared header, visible breadcrumbs and
 `BreadcrumbList`. Home service cards, case studies and service pages link to
 each other: keep `projects` in `data/expertise.ts` covering every case study.
+Swirl Cloud pages and guides end with their related guides
+(`relatedArticles` in `data/site.ts`, rendered by `src/components/GuideCards.astro`):
+give every new guide an entry and link it from the pages on its subject.
 
 When adding or renaming a page, update the route map and both language versions.
 Each page needs a unique title (brand first: `Swirl | …`) and description, one

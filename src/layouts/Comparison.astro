@@ -1,11 +1,12 @@
 ---
 import Subpage from './Subpage.astro';
+import GuideCards from '../components/GuideCards.astro';
 import '../../app/swirl-cloud.css';
 import type { Lang } from '../../data/portfolio';
 import { product } from '../../data/product';
 import { sovereignty } from '../../data/sovereignty';
 import { comparison as page, optionNames, options } from '../../data/comparison';
-import { absoluteUrl, homePath, productPagePath, productPath, siteConfig } from '../../data/site';
+import { absoluteUrl, homePath, productPagePath, productPath, siteConfig, relatedArticles } from '../../data/site';
 interface Props { lang: Lang; }
 const { lang } = Astro.props;
 const en = lang === 'en';
@@ -47,6 +48,7 @@ const demo = `${homePath(lang)}?topic=demo#contact`;
         {page.choose.map(item => <section class="service-card"><h3>{optionNames[item.option][lang]}</h3><p>{item.text[lang]}</p></section>)}
       </div>
     </section>
+    <GuideCards lang={lang} ids={relatedArticles.comparison} heading={en ? 'Related guides' : 'Guides associés'} />
     <aside class="case-contact">
       <h2>{en ? 'Compare with your own figures' : 'Comparez avec vos propres chiffres'}</h2>
       <p>{en

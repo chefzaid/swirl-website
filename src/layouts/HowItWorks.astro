@@ -1,10 +1,11 @@
 ---
 import Subpage from './Subpage.astro';
+import GuideCards from '../components/GuideCards.astro';
 import '../../app/swirl-cloud.css';
 import type { Lang } from '../../data/portfolio';
 import { product } from '../../data/product';
 import { howItWorks as page } from '../../data/how-it-works';
-import { absoluteUrl, homePath, productPagePath, productPath, siteConfig } from '../../data/site';
+import { absoluteUrl, homePath, productPagePath, productPath, siteConfig, relatedArticles } from '../../data/site';
 interface Props { lang: Lang; }
 const { lang } = Astro.props;
 const en = lang === 'en';
@@ -66,6 +67,7 @@ const number = (index: number) => String(index + 1).padStart(2, '0');
         {page.measured.map(figure => <div><dt>{figure.label[lang]}</dt><dd>{figure.value[lang]}</dd></div>)}
       </dl>
     </section>
+    <GuideCards lang={lang} ids={relatedArticles['how-it-works']} heading={en ? 'Related guides' : 'Guides associés'} />
     <aside class="case-contact">
       <h2>{en ? 'See it running' : 'Voyez-la fonctionner'}</h2>
       <p>{en

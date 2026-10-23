@@ -1,10 +1,11 @@
 ---
 import { getEntry, render } from 'astro:content';
 import Subpage from './Subpage.astro';
+import GuideCards from '../components/GuideCards.astro';
 import '../../app/swirl-cloud.css';
 import '../../app/articles.css';
 import type { Lang } from '../../data/portfolio';
-import { absoluteUrl, articlePath, homePath, productPath, resourcesPath, siteConfig, socialImagePath, type Article } from '../../data/site';
+import { absoluteUrl, articlePath, homePath, productPath, resourcesPath, relatedArticles, siteConfig, socialImagePath, type Article } from '../../data/site';
 interface Props { id: Article; lang: Lang; }
 const { id, lang } = Astro.props;
 const en = lang === 'en';
@@ -42,6 +43,7 @@ const structuredData = [
       <h2 id="sources-heading">Sources</h2>
       <ul>{article.sources.map(source => <li><a href={source.url} rel="noopener noreferrer">{source.label}</a></li>)}</ul>
     </section>
+    <GuideCards lang={lang} ids={relatedArticles[id]} heading={en ? 'Related guides' : 'Guides associés'} />
     <aside class="case-contact">
       <h2>{en ? 'See Swirl Cloud on a real installation' : 'Voir Swirl Cloud sur une vraie installation'}</h2>
       <p>{en

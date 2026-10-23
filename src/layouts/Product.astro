@@ -1,10 +1,11 @@
 ---
 import Subpage from './Subpage.astro';
+import GuideCards from '../components/GuideCards.astro';
 import '../../app/swirl-cloud.css';
 import { services, type Lang } from '../../data/portfolio';
 import { servicePages } from '../../data/expertise';
 import { product } from '../../data/product';
-import { absoluteUrl, homePath, productPagePath, productPath, servicePath, siteConfig } from '../../data/site';
+import { absoluteUrl, homePath, productPagePath, productPath, servicePath, siteConfig, relatedArticles } from '../../data/site';
 interface Props { lang: Lang; }
 const { lang } = Astro.props;
 const en = lang === 'en';
@@ -78,6 +79,7 @@ const demo = `${homePath(lang)}?topic=demo#contact`;
         {product.faq.map(item => <details><summary><h3>{item.question[lang]}</h3></summary><p>{item.answer[lang]}</p></details>)}
       </div>
     </section>
+    <GuideCards lang={lang} ids={relatedArticles.product} heading={en ? 'Related guides' : 'Guides associés'} />
     <aside class="case-contact">
       <h2>{en ? 'See Swirl Cloud on a real installation' : 'Voir Swirl Cloud sur une vraie installation'}</h2>
       <p>{en

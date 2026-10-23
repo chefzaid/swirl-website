@@ -113,6 +113,21 @@ export const articles = Object.keys(articleSlugs) as Article[];
 export const articleSlug = (id: Article, lang: Lang) => articleSlugs[id][lang];
 export const articlePath = (id: Article, lang: Lang) =>
   `${resourcesPath(lang)}${articleSlug(id, lang)}/`;
+// Guides shown under each Swirl Cloud page and each guide, by subject.
+export const relatedArticles: Record<
+  'product' | ProductPage | Article,
+  Article[]
+> = {
+  product: ['nis2-checklist', 'dora-ict-suppliers', 'leaving-a-hyperscaler'],
+  'how-it-works': ['leaving-a-hyperscaler'],
+  security: ['nis2-checklist', 'dora-ict-suppliers'],
+  sovereignty: ['leaving-a-hyperscaler', 'dora-ict-suppliers'],
+  comparison: ['leaving-a-hyperscaler'],
+  'nis2-checklist': ['dora-ict-suppliers'],
+  'dora-ict-suppliers': ['nis2-checklist', 'leaving-a-hyperscaler'],
+  'leaving-a-hyperscaler': ['dora-ict-suppliers'],
+  'french-e-invoicing': [],
+};
 export const projectSlug = (id: Project['id'], lang: Lang) => slugs[id][lang];
 export const projectPath = (id: Project['id'], lang: Lang) =>
   `${projectsPath(lang)}${projectSlug(id, lang)}/`;
