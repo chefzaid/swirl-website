@@ -42,7 +42,7 @@ Parts of tasks that cannot advance without the owner's decision or information. 
 - [x] Automated accessibility scan (axe, WCAG 2.2 AA) of each page template in both light and dark themes inside the end-to-end suite. Fixed what it reported: the light theme's accent green and three muted greys lacked 4.5:1 contrast, and the FR/EN links' accessible names did not contain their visible text. *(2026-10-23)*
 - [x] Minor and patch dependency updates within the current major versions: React 19.3, Tailwind 4.3, Base UI 1.9, lucide 1.61, oxlint 1.89 and others. oxlint 1.79+ replaced the `react/react-compiler` rule with React Compiler rules in the `correctness` category, so the old name is gone from `.oxlintrc.json`; its purity rule moved the footer's build year out of render. Majors (Astro React integration 7, TypeScript 7, satori 0.63) are left for a deliberate upgrade. *(2026-10-23)*
 - [x] README source map: the end-to-end suite and the guide cards. *(2026-10-23)*
-- [ ] Upgrade the Astro React integration to 7 (oxc JSX transform).
+- [x] Upgrade the Astro React integration to 7.1 (Oxc JSX transform and `@vitejs/plugin-react` 6); the site uses neither custom Babel transforms nor the optional React Compiler, so nothing else changed. *(2026-10-23)*
 - [ ] Upgrade TypeScript to 7.
 - [ ] Upgrade satori to 0.63 for the social cards and icons, which also takes it off the vulnerable `fflate`.
 - [ ] Contact data retention: delete stored inquiries, their CRM queue rows and expired rate-limit records after a fixed period once the lead is in Odoo, and state the period on the privacy page (FR and EN).
