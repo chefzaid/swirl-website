@@ -182,7 +182,13 @@ for url in urls:
     path = urlsplit(url.findtext('s:loc', namespaces=ns)).path
     alts = {link.attrib['hreflang']: link.attrib['href'] for link in url.findall('x:link', ns)}
     assert alts == pages[path].alternates()
-    assert url.find('s:lastmod', ns) is None, 'Do not fabricate freshness dates'
+    # Only articles carry a real modification date (their `updated` field).
+    articles = pages[path].entities('Article')
+    lastmod = url.findtext('s:lastmod', namespaces=ns)
+    if articles:
+        assert lastmod == articles[0]['dateModified'], path
+    else:
+        assert lastmod is None, 'Do not fabricate freshness dates'
 robots = (CLIENT / 'robots.txt').read_text()
 assert 'Sitemap: ' + origin + '/sitemap.xml' in robots
 assert 'Disallow: /api/' in robots

@@ -38,7 +38,7 @@ each other: keep `projects` in `data/expertise.ts` covering every case study.
 When adding or renaming a page, update the route map and both language versions.
 Each page needs a unique title (brand first: `Swirl | …`) and description, one
 H1, a self-canonical and reciprocal language links. `/sitemap.xml` is generated
-from the route map; `/robots.txt` excludes the contact API. Keep project links
+from the route map, with a `lastmod` only for articles (their `updated` date); `/robots.txt` excludes the contact API. Keep project links
 in the rendered HTML so they remain crawlable without JavaScript; inner pages
 hydrate nothing except the chat launcher. Every page uses the same header,
 `components/SiteHeader.tsx`: its phone menu is a native popover, so it works
