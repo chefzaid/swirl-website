@@ -77,6 +77,7 @@ migration/import commands are in `runtime/postgres.ts` and
 | Area | Files |
 | --- | --- |
 | Resource articles (Markdown) | `src/content/articles/`, `src/content.config.ts` |
+| Guide cards and related guides | `src/components/GuideCards.astro`, `relatedArticles` in `data/site.ts` |
 | French and US English content | `data/portfolio.ts`, `data/expertise.ts`, `data/product.ts`, `data/how-it-works.ts`, `data/security.ts`, `data/compliance-controls.ts`, `data/sovereignty.ts`, `data/comparison.ts`, `data/site.ts` |
 | Pages and metadata | `src/layouts/` |
 | Social cards and icons | `lib/social-image.tsx`, `src/pages/og/` |
@@ -85,6 +86,7 @@ migration/import commands are in `runtime/postgres.ts` and
 | Contact API and notifications | `server/contact.ts`, `runtime/contact.ts` |
 | Odoo CRM delivery and Live Chat | `server/odoo.ts`, `runtime/crm.ts`, `components/ChatLauncher.tsx` |
 | Request handling | `server/handler.ts`, `runtime/server.ts` |
+| End-to-end and accessibility tests | `e2e/`, `playwright.config.ts` |
 | Deployment | `infra/` |
 
 See [SEO maintenance](docs/seo.md) for route and metadata changes, and

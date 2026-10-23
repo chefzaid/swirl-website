@@ -41,7 +41,7 @@ Parts of tasks that cannot advance without the owner's decision or information. 
 - [x] End-to-end tests (Playwright, `e2e/`) on the built site for the critical paths: project inquiry and Swirl Cloud demo submissions (demo preselected from the product page), language switch, theme kept across pages, and the chat contacting Odoo only once opened; the CI `e2e` job gates the image build. *(2026-10-23)*
 - [x] Automated accessibility scan (axe, WCAG 2.2 AA) of each page template in both light and dark themes inside the end-to-end suite. Fixed what it reported: the light theme's accent green and three muted greys lacked 4.5:1 contrast, and the FR/EN links' accessible names did not contain their visible text. *(2026-10-23)*
 - [ ] Minor and patch dependency updates within the current major versions (React, Tailwind, Base UI, lucide, oxlint and others), checked by the full suite.
-- [ ] README source map: the end-to-end suite and the guide cards.
+- [x] README source map: the end-to-end suite and the guide cards. *(2026-10-23)*
 - [ ] Contact data retention: delete stored inquiries, their CRM queue rows and expired rate-limit records after a fixed period once the lead is in Odoo, and state the period on the privacy page (FR and EN).
 
 ## Content and discovery (added 2026-10-23)
