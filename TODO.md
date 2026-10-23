@@ -25,6 +25,14 @@ Parts of tasks that cannot advance without the owner's decision or information. 
   - Answer:
 - [ ] Licensing decision for the editions and pricing page and the cost calculator: edition names, what each includes, prices or "on quote", support hours and SLA targets. *(task: Swirl Cloud product pages › editions and pricing, cost calculator; asked by: Coding Agent)*
   - Answer:
+- [ ] Material from the platform for the product pages: a sample evidence pack exported from a reference installation (no production data), screenshots or short videos of the setup hub, portal, deployment and compliance views for the guided tour, and the URL of the published product documentation and release notes for the releases page. *(task: Swirl Cloud product pages › sample evidence pack, guided tour, releases page; asked by: Coding Agent)*
+  - Answer:
+- [ ] Texts and links for the trust center and the offer's legal pages: the data processing agreement template, terms of service, SLA and acceptable use texts (reviewed by counsel?), and the status page URL. Build the trust center now from what is already published (data location, subprocessors, certification status, security contact) or wait for these? *(task: Swirl Cloud product pages › trust center, legal pages for the offer; asked by: Coding Agent)*
+  - Answer:
+- [ ] Search engine access: verify `swirlit.dev` in Google Search Console and Bing Webmaster Tools by DNS (`docs/dns.md`), or give the HTML verification tokens to add as meta tags; the Rich Results Test and LinkedIn Post Inspector are manual checks on your accounts. For keyword research, which data source (Semrush, Ahrefs, Google Keyword Planner) can the agent use? *(task: SEO follow-up; asked by: Coding Agent)*
+  - Answer:
+- [ ] Measured outcomes for each case study (figures, constraints, team size, duration, technology) that clients allow to be published. *(task: SEO follow-up › expand case studies; asked by: Coding Agent)*
+  - Answer:
 
 ## Quality and maintenance (added 2026-10-23)
 
