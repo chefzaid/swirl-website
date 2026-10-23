@@ -6,7 +6,7 @@ Open website work, added 2026-09-27. Worked through with the coding loop in
 ## Bugs to fix
 
 - [x] `npm audit --audit-level=high` in the CI `verify` job failed on `vite` 8.2.2 (high) and `astro` 7.3.1 (moderate XSS and CSS injection): upgraded to `vite` 8.3.5 and `astro` 7.4.1. `satori` still pins `fflate` 0.7.3 (moderate, ZIP64 parsing), reached only at build time on our own fonts, with no upstream fix yet. *(2026-10-23)*
-- [ ] `components/SiteFooter.tsx` hardcodes "© 2013–2026", which goes stale on 2027-01-01; take the end year from the build date. *(found by: Coding Agent)*
+- [x] `components/SiteFooter.tsx` hardcoded "© 2013–2026"; the end year now comes from the build date. *(2026-10-23)*
 - [ ] `components/SiteFooter.tsx` and `components/ContactForm.tsx` hardcode `/confidentialite/` and `/en/privacy/` instead of using `privacyPath()` from `data/site.ts`. *(found by: Coding Agent)*
 
 ## Needs Input

@@ -11,6 +11,8 @@ export default function SiteFooter({
   homeHref?: string;
 }>) {
   const en = lang === 'en';
+  // The footer is rendered at build time; each release renews the year.
+  const year = new Date().getFullYear();
   return (
     <footer className="footer wrap">
       <div className="footer-branding">
@@ -34,7 +36,7 @@ export default function SiteFooter({
         </a>
       </div>
       <p className="footer-copyright">
-        © 2013–2026 Swirl.{' '}
+        {`© 2013–${year} Swirl. `}
         {en ? 'All rights reserved.' : 'Tous droits réservés.'}
       </p>
       <div className="footer-links">
