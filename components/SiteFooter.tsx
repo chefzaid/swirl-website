@@ -3,6 +3,9 @@ import type { Lang } from '@/data/portfolio';
 import { homePath, privacyPath, resourcesPath, siteConfig } from '@/data/site';
 import LinkedInIcon from './LinkedInIcon';
 
+// The footer is rendered at build time; each release renews the year.
+const year = new Date().getFullYear();
+
 export default function SiteFooter({
   lang,
   homeHref = homePath(lang),
@@ -11,8 +14,6 @@ export default function SiteFooter({
   homeHref?: string;
 }>) {
   const en = lang === 'en';
-  // The footer is rendered at build time; each release renews the year.
-  const year = new Date().getFullYear();
   return (
     <footer className="footer wrap">
       <div className="footer-branding">
