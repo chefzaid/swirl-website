@@ -15,7 +15,7 @@ Parts of tasks that cannot advance without the owner's decision or information. 
 
 ## Quality and maintenance (added 2026-10-23)
 
-- [ ] Align `@types/node` with the Node 24 runtime declared in `engines` and the Docker/CI images (currently 22.x).
+- [x] Align `@types/node` with the Node 24 runtime declared in `engines` and the Docker/CI images (22.19 to 24.19). *(2026-10-23)*
 - [ ] End-to-end tests (Playwright) on the built site for the critical paths: project inquiry and Swirl Cloud demo submissions (demo preselected from `?topic=demo`), language switch, theme switch kept across pages, and the chat button opening the Odoo frame; run them in CI.
 - [ ] Automated accessibility scan (axe, WCAG 2.2 AA) of each page template in both light and dark themes inside the end-to-end suite, fixing what it reports.
 - [ ] Contact data retention: delete stored inquiries, their CRM queue rows and expired rate-limit records after a fixed period once the lead is in Odoo, and state the period on the privacy page (FR and EN).
