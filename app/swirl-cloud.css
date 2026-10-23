@@ -22,8 +22,13 @@
   line-height: 1.8;
   color: var(--muted-foreground);
 }
-.cloud-teaser .text-link {
+.cloud-teaser-links {
+  display: grid;
   flex-shrink: 0;
+  justify-items: start;
+  gap: 12px;
+}
+.cloud-teaser .text-link {
   font-size: 13px;
   color: var(--primary);
 }

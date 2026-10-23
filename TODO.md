@@ -61,7 +61,7 @@ Swirl Cloud answers, with sources and dates as for the existing ones.
 - [x] Re-check the NIS2 guide's French transposition status: still not voted by the National Assembly, the 7 and 9 October debate withdrawn without a new date; guide and date updated to 2026-10-23. *(2026-10-23)*
 - [ ] Contents list at the top of each guide, from its sections, so a reader can jump to the part they need.
 - [x] The 404 page also suggests Swirl Cloud and the resources. *(2026-10-23)*
-- [ ] The homepage's Swirl Cloud presentation links to the guides as well as to the product page.
+- [x] The homepage's Swirl Cloud presentation links to the guides as well as to the product page. *(2026-10-23)*
 
 ## Company details
 

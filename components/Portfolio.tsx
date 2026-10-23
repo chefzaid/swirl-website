@@ -17,7 +17,7 @@ import {
 } from '@/data/portfolio';
 import { clientRows } from '@/data/client-logos';
 import { product } from '@/data/product';
-import { productPath, servicePath } from '@/data/site';
+import { productPath, resourcesPath, servicePath } from '@/data/site';
 import ClientLogo from './ClientLogo';
 import SoftwareLifecycle from './SoftwareLifecycle';
 import SiteFooter from './SiteFooter';
@@ -120,10 +120,19 @@ export default function Portfolio({
             </h2>
             <p>{product.teaser[lang]}</p>
           </div>
-          <a className="text-link" href={productPath(lang)}>
-            {t('Découvrir Swirl Cloud', 'Discover Swirl Cloud')}
-            <ArrowUpRight size={16} aria-hidden="true" />
-          </a>
+          <div className="cloud-teaser-links">
+            <a className="text-link" href={productPath(lang)}>
+              {t('Découvrir Swirl Cloud', 'Discover Swirl Cloud')}
+              <ArrowUpRight size={16} aria-hidden="true" />
+            </a>
+            <a className="text-link" href={resourcesPath(lang)}>
+              {t(
+                'Nos guides : NIS2, DORA, CRA…',
+                'Our guides: NIS2, DORA, CRA…',
+              )}
+              <ArrowUpRight size={16} aria-hidden="true" />
+            </a>
+          </div>
         </section>
         <section
           className="trust wrap"
