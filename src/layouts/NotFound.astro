@@ -18,6 +18,7 @@ const links = [
 ---
 <Layout lang={lang} noindex title={`${siteConfig.name} | ${en ? 'Page not found' : 'Page introuvable'}`}
   description={en ? 'This page does not exist or has moved.' : 'Cette page n’existe pas ou a été déplacée.'}>
+  <a class="skip-link" href="#main">{en ? 'Skip to content' : 'Aller au contenu'}</a>
   <SiteHeader lang={lang} home={home} alternates={{ fr: homePath('fr'), en: homePath('en') }} />
   <main id="main" class="case-page wrap not-found">
     <p class="eyebrow section-kicker">404</p>
