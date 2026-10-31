@@ -77,8 +77,8 @@ studies for AI answer engines, from the same data.
 `npm run build`, then `python3 scripts/check-built-seo.py` and
 `python3 scripts/check-built-security.py` check every page and both 404s:
 metadata, social cards, links and anchors, language pairs, structured data, the
-sitemap, `llms.txt`, icons and CSP hashes. Both scripts hold the expected page
-count; raise it by two for each new page pair.
+sitemap, `llms.txt`, icons and CSP hashes. The security script holds the
+expected page count; raise it by two for each new page pair.
 
 After a domain or route change, check the live site's redirects, canonicals and
 language links, and update `siteConfig.origin` and the runtime `PUBLIC_ORIGIN`

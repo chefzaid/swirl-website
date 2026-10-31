@@ -91,8 +91,7 @@ blocks requests to Odoo. Install its browser once with
    `updated` set to the day the facts were checked.
 2. Register its slugs in `articleSlugs` and its related guides in
    `relatedArticles` (`data/site.ts`), and link it from the pages on its subject.
-3. Raise the page count in `scripts/check-built-security.py` and
-   `scripts/check-built-seo.py` by two.
+3. Raise the page count in `scripts/check-built-security.py` by two.
 
 ## Contact form and data
 
