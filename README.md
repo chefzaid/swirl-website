@@ -67,7 +67,7 @@ blocks requests to Odoo. Install its browser once with
 | ---------------------------- | ------------------------------------------------------------------ |
 | Text, routes and site data   | `data/` (French and US English side by side; routes in `site.ts`)  |
 | Resource guides              | `src/content/articles/<lang>/<id>.md`                              |
-| Pages and shared blocks      | `src/layouts/`, `src/components/`, `components/` (React)           |
+| Pages and components         | `src/layouts/`, `components/` (Astro and React)                    |
 | Styles                       | `styles/` (`globals.css` imports the site-wide files)              |
 | Social cards and icons       | `lib/social-image.tsx`, `src/pages/og/`                            |
 | Contact form, CRM and email  | `server/`, `runtime/`, `db/migrations/`                            |

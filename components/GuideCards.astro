@@ -2,9 +2,9 @@
 // Cards linking to resource guides: the whole list on the resources hub, or
 // the guides related to a page (relatedArticles in data/site.ts).
 import { getEntry } from 'astro:content';
-import type { Lang } from '../../data/portfolio';
-import { articlePath, type Article } from '../../data/site';
-import { longDate } from '../../lib/utils';
+import type { Lang } from '../data/portfolio';
+import { articlePath, type Article } from '../data/site';
+import { longDate } from '../lib/utils';
 interface Props { lang: Lang; ids: Article[]; heading: string; }
 const { lang, ids, heading } = Astro.props;
 const en = lang === 'en';

@@ -200,7 +200,7 @@ Outages are retried with backoff up to hourly; a rejected key or request (401,
 UPDATE contact_crm_queue SET status = 'queued', run_at = 0 WHERE status = 'manual';
 ```
 
-The **Chat with us** button (`src/components/SiteChat.astro`) shows Chloé
+The **Chat with us** button (`components/SiteChat.astro`) shows Chloé
 online. Nothing is requested or stored until it is selected (hovering only
 opens a connection). It then shows at once a window drawn like Odoo's while it
 frames `https://odoo.swirlit.dev/platform_crm_intake/chat/1?lang=<fr|en>&open=1`;
