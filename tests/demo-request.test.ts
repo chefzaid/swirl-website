@@ -38,12 +38,6 @@ void test('a demo request needs a company and is named after it', () => {
     assert.equal(validateContact({ ...demo(), ...patch }), null);
   const longest = validateContact({ ...demo(), company: 'x'.repeat(140) });
   assert.equal(longest?.subject.length, 159);
-  // Forms opened before the choice existed send project inquiries.
-  const { topic: _topic, company: _company, ...older } = valid();
-  assert.deepEqual(
-    [validateContact(older)?.topic, validateContact(older)?.company],
-    ['project', ''],
-  );
 });
 
 void test('demo requests are stored with their topic and company, and retries must match', async () => {

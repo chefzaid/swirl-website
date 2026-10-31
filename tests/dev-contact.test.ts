@@ -39,6 +39,7 @@ void test('development stores contacts in SQLite across restarts and rejects spo
     id: crypto.randomUUID(),
     name: 'Local visitor',
     email: 'visitor@example.test',
+    topic: 'project',
     subject: 'Local development',
     message: 'This enquiry tests local storage without sending an email.',
     lang: 'en',

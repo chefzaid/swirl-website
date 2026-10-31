@@ -106,11 +106,10 @@ void test('accepts arbitrary subjects, stores their exact text and rejects confl
     ).status,
     409,
   );
-  const { subject: _subject, ...previousForm } = valid();
-  assert.equal(
-    validateContact({ ...previousForm, service: 'architecture' })?.subject,
-    'architecture',
-  );
+  const { subject: _subject, ...noSubject } = valid();
+  assert.equal(validateContact(noSubject), null);
+  const { topic: _topic, ...noTopic } = valid();
+  assert.equal(validateContact(noTopic), null);
   sqlite.close();
 });
 void test('rejects control characters in email addresses before storage', async () => {

@@ -396,6 +396,7 @@ void test('Node serves bundled pages, headers, safe assets, durable contact, ali
     id: crypto.randomUUID(),
     name: 'Runtime Test',
     email: 'runtime@example.test',
+    topic: 'project',
     subject: 'Deployment verification',
     message: 'This is an isolated automated test enquiry.',
     lang: 'en',

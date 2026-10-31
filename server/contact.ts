@@ -60,13 +60,11 @@ const demoSubject = (company: string) => `Démo Swirl Cloud — ${company}`;
 export function validateContact(value: unknown): ContactData | null {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
   const v = value as Record<string, unknown>;
-  // Forms opened before the topic choice existed send project inquiries.
-  const topic = v.topic ?? 'project';
+  const topic = v.topic;
   if (topic !== 'project' && topic !== 'demo') return null;
   const company = v.company ?? '';
   if (typeof company !== 'string') return null;
-  // Accept the previous field name while already-open forms finish submitting.
-  const subject = topic === 'demo' ? '' : (v.subject ?? v.service);
+  const subject = topic === 'demo' ? '' : v.subject;
   if (typeof subject !== 'string') return null;
   if (
     !['id', 'name', 'email', 'message', 'website'].every(
