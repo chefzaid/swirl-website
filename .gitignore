@@ -2,11 +2,9 @@
 /node_modules/
 /dist/
 /.astro/
-/.wrangler/
 /.data/
 /coverage/
 /e2e-results/
-/outputs/
 /work/
 /.cache/
 /release.env
@@ -15,7 +13,6 @@
 # local secrets
 .env*
 !.env.example
-.dev.vars
 *.pem
 *.sqlite*
 *.db*

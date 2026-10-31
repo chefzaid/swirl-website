@@ -7,8 +7,8 @@ import {
   type Service,
 } from './portfolio.ts';
 
-// Keep this origin aligned with the deployed domain. Change it once a custom
-// domain is connected; metadata, alternates and the sitemap share this value.
+// Canonical URLs, alternates and the sitemap use this origin; keep it equal to
+// the runtime PUBLIC_ORIGIN.
 export const siteConfig = {
   origin: 'https://swirlit.dev',
   name: 'Swirl',
