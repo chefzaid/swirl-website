@@ -1,8 +1,8 @@
 import type { Bilingual, Project, Service } from './portfolio.ts';
 
 // Service landing pages. Keep every statement backed by the homepage service
-// cards or a published case study; product claims belong to the Swirl Cloud
-// pages planned in TODO.md once they are measured.
+// cards or a published case study; product claims belong on the Swirl Cloud
+// pages.
 interface ServicePage {
   // Search title after the "Swirl | " brand prefix, and meta description.
   title: Bilingual;
