@@ -1,0 +1,15 @@
+@import '../node_modules/tailwindcss/index.css';
+@import '../node_modules/tw-animate-css/dist/tw-animate.css';
+/* Site styles by area, in cascade order: later files override earlier ones,
+   so keep the order when adding rules. Pages add swirl-cloud.css and articles.css. */
+@import './base.css';
+@import './header.css';
+@import './hero.css';
+@import './chat.css';
+@import './sections.css';
+@import './contact.css';
+@import './pages.css';
+@import './responsive.css';
+@import './lifecycle.css';
+@import './mobile-nav.css';
+@import './service-pages.css';

@@ -68,7 +68,7 @@ blocks requests to Odoo. Install its browser once with
 | Text, routes and site data   | `data/` (French and US English side by side; routes in `site.ts`)  |
 | Resource guides              | `src/content/articles/<lang>/<id>.md`                              |
 | Pages and shared blocks      | `src/layouts/`, `src/components/`, `components/` (React)           |
-| Styles                       | `app/globals.css` → `app/styles/`, `app/swirl-cloud.css`, `app/articles.css` |
+| Styles                       | `styles/` (`globals.css` imports the site-wide files)              |
 | Social cards and icons       | `lib/social-image.tsx`, `src/pages/og/`                            |
 | Contact form, CRM and email  | `server/`, `runtime/`, `db/migrations/`                            |
 | End-to-end tests             | `e2e/`, `playwright.config.ts`                                     |
@@ -79,7 +79,7 @@ blocks requests to Odoo. Install its browser once with
 - **Colours.** The site is dark by default; the header switches to light. Every
   colour is a `light-dark(<light>, <dark>)` pair with at least 4.5:1 contrast;
   the axe scan checks every page template in both themes.
-- **Styles.** `app/globals.css` imports `app/styles/` in cascade order: later
+- **Styles.** `styles/globals.css` imports the site-wide files in cascade order: later
   files override earlier ones, so keep the order. In a layout, import its
   stylesheet before new components, or the stylesheet order on the page changes.
 - **Claims.** Publish a fact about Swirl Cloud only once the platform
