@@ -215,9 +215,9 @@ request and creates a lead.
 
 ### Chloé and answering by email
 
-`infra/odoo/chat-persona.json` defines Chloé: her name, avatar and the French and
-English text of each chatbot step (one message per step, in order);
-`public/assets/chloe.svg` is the site's copy of the avatar. New visitor messages
+`infra/odoo/chat-persona.json` defines Chloé: her name, avatar (`chloe.png`,
+drawn from the site's `public/assets/chloe.svg`) and the French and English
+text of each chatbot step (one message per step, in order). New visitor messages
 are emailed to the team, and replying to that email answers in the chat as
 Chloé, by email too if the visitor has left. Apply the persona and email
 settings from the platform host:
