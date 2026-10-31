@@ -5,12 +5,12 @@ Open website work, added 2026-09-27. Worked through with the coding loop in
 
 ## Bugs to fix
 
-- [x] `npm audit --audit-level=high` in the CI `verify` job failed on `vite` 8.2.2 (high) and `astro` 7.3.1 (moderate XSS and CSS injection): upgraded to `vite` 8.3.5 and `astro` 7.4.1. The remaining moderate `fflate` advisory under `satori` is cleared by an override (see Quality and maintenance). *(2026-10-23)*
-- [x] `components/SiteFooter.tsx` hardcoded "© 2013–2026"; the end year now comes from the build date. *(2026-10-23)*
-- [x] `components/SiteFooter.tsx` and `components/ContactForm.tsx` hardcoded the privacy paths; both now use `privacyPath()`, passed to the contact form island as a prop so it does not bundle the site data. *(2026-10-23)*
-- [x] `src/layouts/NotFound.astro` had no "Skip to content" link, unlike every other page; added. *(2026-10-23)*
-- [x] `infra/k8s/swirl-website.yaml` probes waited Kubernetes' 1-second default for an answer, so the shared node under load (load 114, swap full) restarted a working server. They now wait 5 seconds (readiness 3) and restart after a minute without an answer; `test-delivery.sh` checks the base and HA overlay. *(2026-10-23)*
-- [x] The light theme's button and chat-button hover colour (`#4d6c12`) was almost the new accent (`#4c6b13`, from the contrast fix), so hovering barely changed them; both now use a darker `--primary-hover` token. *(2026-10-23)*
+- [x] CI's `npm audit` failed on Vite 8.2.2 and Astro 7.3.1: upgraded. *(2026-10-23)*
+- [x] The footer's copyright year was hardcoded: now the build year. *(2026-10-23)*
+- [x] The footer and contact form hardcoded the privacy paths: now `privacyPath()`. *(2026-10-23)*
+- [x] The 404 page had no "Skip to content" link: added. *(2026-10-23)*
+- [x] Probes waited 1 second, so a loaded node restarted a working server: now 5 seconds (readiness 3), restart after a minute. *(2026-10-23)*
+- [x] Light-theme buttons barely changed on hover after the contrast fix: new `--primary-hover` token. *(2026-10-23)*
 
 ## Needs Input
 
@@ -39,16 +39,11 @@ Parts of tasks that cannot advance without the owner's decision or information. 
 
 ## Quality and maintenance (added 2026-10-23)
 
-- [x] Align `@types/node` with the Node 24 runtime declared in `engines` and the Docker/CI images (22.19 to 24.19). *(2026-10-23)*
-- [x] End-to-end tests (Playwright, `e2e/`) on the built site for the critical paths: project inquiry and Swirl Cloud demo submissions (demo preselected from the product page), language switch, theme kept across pages, and the chat contacting Odoo only once opened; the CI `e2e` job gates the image build. *(2026-10-23)*
-- [x] Automated accessibility scan (axe, WCAG 2.2 AA) of each page template in both light and dark themes inside the end-to-end suite. Fixed what it reported: the light theme's accent green and three muted greys lacked 4.5:1 contrast, and the FR/EN links' accessible names did not contain their visible text. *(2026-10-23)*
-- [x] Minor and patch dependency updates within the current major versions: React 19.3, Tailwind 4.3, Base UI 1.9, lucide 1.61, oxlint 1.89 and others. oxlint 1.79+ replaced the `react/react-compiler` rule with React Compiler rules in the `correctness` category, so the old name is gone from `.oxlintrc.json`; its purity rule moved the footer's build year out of render. Majors (Astro React integration 7, TypeScript 7, satori 0.63) are left for a deliberate upgrade. *(2026-10-23)*
-- [x] README source map: the end-to-end suite and the guide cards. *(2026-10-23)*
-- [x] Upgrade the Astro React integration to 7.1 (Oxc JSX transform and `@vitejs/plugin-react` 6); the site uses neither custom Babel transforms nor the optional React Compiler, so nothing else changed. *(2026-10-23)*
-- [x] Upgrade TypeScript from 5.9 to 6.0, the newest version `astro check` supports; `astro check` and `tsc` report no errors. *(2026-10-23)*
-- [ ] TypeScript 7, once `@astrojs/check` supports it: it relies on TypeScript's JavaScript API, which 7.0 no longer ships, and accepts only TypeScript 5 or 6. Lint's type-aware rules already run on the TypeScript 7 compiler through `oxlint-tsgolint`. **Blocked:** waiting on `@astrojs/check`.
-- [x] Upgrade satori to 0.63 for the social cards and icons. It now follows CSS `content-box` sizing, so the card's root and tag row set `border-box` to keep their layout; titles wrap slightly differently. It still pins the vulnerable `fflate` 0.7.3, so `package.json` overrides it with 0.8.3, which renders pixel-identical cards; `npm audit` now reports no vulnerabilities. *(2026-10-23)*
-- [x] General cleanup: `app/globals.css` (2,240 lines) split into area files under `app/styles/` with byte-identical built CSS; one `ContactCta` component and shared `contactPath`, `demoPath`, `organizationRef` and `longDate` helpers replace copies across ten layouts, with byte-identical pages; the privacy notice laid out one element per line; module-internal values no longer exported; code formatting checked in CI, with hand-written Markdown and YAML left out. *(2026-10-23)*
+- [x] End-to-end tests (Playwright) for the contact and demo forms, language and theme switches, chat and phone menu; CI gates the image on them. *(2026-10-23)*
+- [x] Accessibility scan (axe, WCAG 2.2 AA) of every page template in both themes, at desktop and phone width; contrast and link-name issues fixed. *(2026-10-23)*
+- [x] Dependencies updated: Node types 24, React 19.3, Tailwind 4.3, oxlint 1.89, Astro React integration 7.1, TypeScript 6.0, satori 0.63 (with an `fflate` override; `npm audit` is clean). *(2026-10-23)*
+- [ ] TypeScript 7. **Blocked:** `@astrojs/check` needs TypeScript's JavaScript API, which 7.0 no longer ships.
+- [x] Cleanup: styles split by area in `styles/`, shared layout blocks and helpers, dead exports and compatibility code removed, code formatting checked in CI, docs simplified. *(2026-10-31)*
 - [ ] Contact data retention: delete stored inquiries, their CRM queue rows and expired rate-limit records after a fixed period once the lead is in Odoo, and state the period on the privacy page (FR and EN).
 
 ## Content and discovery (added 2026-10-23)
@@ -57,25 +52,18 @@ The guides are what a NIS2 or DORA buyer finds first, and the product pages are
 what convinces them; link the two and keep adding guides on the questions
 Swirl Cloud answers, with sources and dates as for the existing ones.
 
-- [x] Related guides: each Swirl Cloud page and each article links to the guides on its subject (security → NIS2, DORA; sovereignty and comparison → leaving a hyperscaler; …), from `relatedArticles` in `data/site.ts`, with the same cards as the resources hub (`src/components/GuideCards.astro`). *(2026-10-23)*
-- [x] Sitemap `lastmod` for the resource articles, from their `updated` date; other pages still carry none, checked by `check-built-seo.py`. *(2026-10-23)*
-- [x] Print styles for articles, so a checklist prints or saves as PDF without the header, chat and footer, in light colours, with external link targets shown. *(2026-10-23)*
-- [x] Phone-width end-to-end checks (`e2e/phone.spec.ts`): the header menu opens, navigates and closes on the homepage, and works without JavaScript on inner pages; the axe scan covers the home and an inner page at phone width in both themes. *(2026-10-23)*
-- [x] Guide (FR and EN): the Cyber Resilience Act for companies that make software and connected products — scope, the vulnerability reporting that applies since 11 September 2026, the requirements and support period due by December 2027, and what to prepare (`/ressources/cyber-resilience-act/`, `/en/resources/cyber-resilience-act/`). *(2026-10-23)*
-- [x] Guide (FR and EN): the US CLOUD Act and data hosted in Europe — what the law allows, GDPR Article 48 and Data Act Article 32, the EU–US Data Privacy Framework, SecNumCloud's protection against non-EU laws, and the questions to ask a host (`/ressources/cloud-act/`, `/en/resources/cloud-act/`). *(2026-10-23)*
-- [x] Service pages link to their guides too: embedded software and IoT → Cyber Resilience Act; sovereign private cloud → CLOUD Act, leaving a hyperscaler; custom software → French e-invoicing. *(2026-10-23)*
-- [x] Resources hub lists the most recently updated guides first. *(2026-10-23)*
-- [x] Re-check the NIS2 guide's French transposition status: still not voted by the National Assembly, the 7 and 9 October debate withdrawn without a new date; guide and date updated to 2026-10-23. *(2026-10-23)*
-- [x] Contents list at the top of each guide, from its sections, so a reader can jump to the part they need. *(2026-10-23)*
-- [x] The 404 page also suggests Swirl Cloud and the resources. *(2026-10-23)*
-- [x] The homepage's Swirl Cloud presentation links to the guides as well as to the product page. *(2026-10-23)*
+- [x] Related guides at the end of service pages, Swirl Cloud pages and guides (`relatedArticles` in `data/site.ts`). *(2026-10-23)*
+- [x] Guides: sitemap `lastmod`, contents list, print styles, newest first on the hub, linked from the homepage and the 404 page. *(2026-10-23)*
+- [x] Guide (FR and EN): the Cyber Resilience Act for makers of software and connected products. *(2026-10-23)*
+- [x] Guide (FR and EN): the CLOUD Act and data hosted in Europe. *(2026-10-23)*
+- [x] NIS2 guide re-checked: France has still not voted its transposition law. *(2026-10-23)*
 
 ## Company details
 
 - [ ] Show the headquarters address in the footer and contact page (FR and EN).
 - [ ] Show the SIRET number.
 - [ ] Show the business phone number (OnOff virtual number) with a `tel:` link.
-- [ ] Complete the privacy notice to GDPR Article 13 (FR and EN): controller identity (from the details above), legal basis, retention period and the right to lodge a complaint with the CNIL. The CNIL complaint right is published *(2026-10-23)*; the rest waits in **Needs Input**.
+- [ ] Complete the privacy notice to GDPR Article 13 (FR and EN): controller identity (from the details above), legal basis, retention period and the right to lodge a complaint with the CNIL (published 2026-10-23); the rest waits in **Needs Input**.
 - [ ] Add a legal notice page (mentions légales) with company name, SIRET, headquarters address, phone, publication director and host, linked from the footer; no such page exists today.
 
 ## Odoo integration through its API
