@@ -60,7 +60,7 @@ export const howItWorks = {
         },
         {
           name: same('Keycloak'),
-          detail: { fr: 'Authentification unique', en: 'Single sign-on' },
+          detail: { fr: 'Authentification SSO', en: 'Single sign-on' },
         },
       ],
     },
@@ -124,8 +124,8 @@ export const howItWorks = {
     {
       title: { fr: 'Préparer', en: 'Prepare' },
       text: {
-        fr: 'Des serveurs Ubuntu, loués ou à vous, et un nom de domaine. Un premier serveur demande au moins 8 cœurs, 32 Go de mémoire et 500 Go NVMe.',
-        en: 'Ubuntu servers, rented or owned, and a domain name. A first server needs at least 8 cores, 32 GB of memory and 500 GB NVMe.',
+        fr: 'Des serveurs, loués ou à vous, et un nom de domaine. Un premier serveur demande au moins 64 Go de mémoire et 500 Go NVMe.',
+        en: 'Servers, rented or owned, and a domain name. A first server needs at least 64 GB of memory and 500 GB NVMe.',
       },
     },
     {
@@ -138,7 +138,7 @@ export const howItWorks = {
     {
       title: { fr: 'Installer et vérifier', en: 'Install and verify' },
       text: {
-        fr: 'Kubernetes, le stockage, l’entrée réseau, Vault, les données, l’authentification unique, GitLab, Argo CD et Odoo sont installés dans l’ordre, puis contrôlés.',
+        fr: 'Kubernetes, le stockage, l’entrée réseau, Vault, les données, l’authentification SSO, GitLab, Argo CD et Odoo sont installés dans l’ordre, puis contrôlés.',
         en: 'Kubernetes, storage, ingress, Vault, data services, single sign-on, GitLab, Argo CD and Odoo are installed in order, then checked.',
       },
     },

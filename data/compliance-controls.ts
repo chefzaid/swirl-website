@@ -30,7 +30,7 @@ export const controlGroups: { theme: Bilingual; controls: Control[] }[] = [
     controls: [
       control(
         [
-          'Identité centrale et authentification unique',
+          'Identité centrale et authentification SSO',
           'Les personnes se connectent aux services par un seul fournisseur d’identité, qui applique les règles de mot de passe et de protection contre la force brute ; les comptes locaux ne servent qu’en secours.',
         ],
         [

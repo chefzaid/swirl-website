@@ -79,7 +79,7 @@ export const comparison = {
       name: { fr: 'Ce qui est inclus', en: 'What is included' },
       values: {
         swirl: {
-          fr: 'Livraison, authentification unique, bases de données, supervision, sécurité, ERP et preuves de conformité, installés ensemble',
+          fr: 'Livraison, authentification SSO, bases de données, supervision, sécurité, ERP et preuves de conformité, installés ensemble',
           en: 'Delivery, single sign-on, databases, monitoring, security, ERP and compliance evidence, installed together',
         },
         hyperscaler: {

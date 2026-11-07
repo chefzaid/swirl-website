@@ -59,7 +59,7 @@ function card({ page, lang }: DocumentRoute, heading = ''): SocialCard {
         eyebrow: upper(product.name),
         title: product.heading[lang],
         accent: product.accent[lang],
-        tags: product.tags,
+        tags: product.tags.map((tag) => tag[lang]),
       };
     case 'product-page': {
       const detail = {

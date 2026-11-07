@@ -2,7 +2,8 @@ import type { Bilingual } from './portfolio.ts';
 
 // Swirl Cloud product page. State only what the platform already does (its
 // features guide in the platform repository); anything still being built goes
-// in `roadmap`.
+// in `roadmap`. Describe capabilities, not the technologies or products behind
+// them: the detail pages carry the architecture.
 type Card = { title: Bilingual; text: Bilingual };
 
 export const product = {
@@ -13,8 +14,8 @@ export const product = {
     en: 'Swirl Cloud, a Private Company Cloud on Bare Metal',
   },
   description: {
-    fr: 'Swirl Cloud installe une plateforme d’entreprise complète sur vos serveurs : déploiement, SSO, données, supervision, sécurité, Odoo et preuves de conformité.',
-    en: 'Swirl Cloud installs a complete company platform on your own servers: delivery, single sign-on, data, monitoring, security, Odoo and compliance evidence.',
+    fr: 'Swirl Cloud installe une plateforme d’entreprise complète sur vos serveurs : déploiement, SSO, données, supervision, sécurité, ERP et preuves de conformité.',
+    en: 'Swirl Cloud installs a complete company platform on your own servers: delivery, single sign-on, data, monitoring, security, ERP and compliance evidence.',
   },
   heading: {
     fr: 'Le cloud de votre entreprise,',
@@ -25,23 +26,23 @@ export const product = {
     en: 'on servers you control.',
   },
   lead: {
-    fr: 'Swirl Cloud installe sur des serveurs dédiés, loués ou à vous, ce qu’une entreprise assemble sinon chez un hyperscaler et plusieurs éditeurs SaaS : déploiement des applications, authentification unique, bases de données, supervision, sécurité et l’ERP Odoo. Les preuves de conformité sont produites par la plateforme en fonctionnement, et l’infrastructure coûte le prix mensuel fixe de vos serveurs, sans facturation à l’usage.',
-    en: 'Swirl Cloud installs what a company otherwise assembles from a hyperscaler and several SaaS vendors on rented or owned bare-metal servers: application delivery, single sign-on, databases, monitoring, security and the Odoo ERP. Compliance evidence comes from the running platform, and the infrastructure costs the fixed monthly price of your servers, not usage billing.',
+    fr: 'Swirl Cloud installe sur des serveurs dédiés, loués ou à vous, ce qu’une entreprise assemble sinon chez un hyperscaler et plusieurs éditeurs SaaS : déploiement des applications, authentification SSO, bases de données, supervision, sécurité et un ERP. Les preuves de conformité sont produites par la plateforme en fonctionnement, et l’infrastructure coûte le prix mensuel fixe de vos serveurs, sans facturation à l’usage.',
+    en: 'Swirl Cloud installs what a company otherwise assembles from a hyperscaler and several SaaS vendors on rented or owned bare-metal servers: application delivery, single sign-on, databases, monitoring, security and an ERP. Compliance evidence comes from the running platform, and the infrastructure costs the fixed monthly price of your servers, not usage billing.',
   },
   // Homepage presentation, before the client logos.
   teaser: {
-    fr: 'Déploiement des applications, authentification unique, données, supervision, sécurité, ERP et preuves de conformité, installés ensemble sur vos serveurs, à coût fixe.',
+    fr: 'Déploiement des applications, authentification SSO, données, supervision, sécurité, ERP et preuves de conformité, installés ensemble sur vos serveurs, à coût fixe.',
     en: 'Application delivery, single sign-on, data, monitoring, security, ERP and compliance evidence, installed together on your servers at a fixed cost.',
   },
   tags: [
-    'Bare metal · Kubernetes',
-    'GitLab · Argo CD',
-    'Keycloak · Vault',
-    'Odoo',
-  ],
+    { fr: 'Serveurs dédiés', en: 'Dedicated servers' },
+    { fr: 'Déploiement continu', en: 'Continuous delivery' },
+    { fr: 'SSO et secrets', en: 'SSO and secrets' },
+    { fr: 'ERP intégré', en: 'Built-in ERP' },
+  ] satisfies Bilingual[],
   audienceIntro: {
-    fr: 'Les entreprises de 20 à 500 personnes qui ont besoin d’une plateforme, d’une facture prévisible et de preuves d’audit, sans équipe plateforme dédiée.',
-    en: 'Companies of 20 to 500 people that need a platform, a predictable bill and audit evidence, without a platform team of their own.',
+    fr: 'Les entreprises qui ont besoin d’une plateforme, d’une facture prévisible et de preuves d’audit, sans équipe plateforme dédiée.',
+    en: 'Companies that need a platform, a predictable bill and audit evidence, without a platform team of their own.',
   },
   audiences: [
     {
@@ -50,8 +51,8 @@ export const product = {
         en: 'Companies without a platform team',
       },
       text: {
-        fr: 'Les distributions Kubernetes supposent des ingénieurs plateforme en interne. Le hub d’installation de Swirl Cloud installe la plateforme, ajoute des serveurs et vérifie le résultat, et chaque alerte renvoie à sa procédure.',
-        en: 'Kubernetes distributions expect in-house platform engineers. The Swirl Cloud setup hub installs the platform, adds servers and verifies the result, and every alert links to its runbook.',
+        fr: 'Assembler une plateforme soi-même suppose des ingénieurs plateforme en interne. Le hub d’installation de Swirl Cloud installe la plateforme, ajoute des serveurs et vérifie le résultat, et chaque alerte renvoie à sa procédure.',
+        en: 'Assembling a platform yourself takes in-house platform engineers. The Swirl Cloud setup hub installs the platform, adds servers and verifies the result, and every alert links to its runbook.',
       },
     },
     {
@@ -86,50 +87,50 @@ export const product = {
     },
   ] satisfies Card[],
   layersIntro: {
-    fr: 'Une installation pilotée depuis Git et organisée en couches. Tout ce qui suit est disponible aujourd’hui.',
-    en: 'One installation, managed from Git and organized in layers. Everything below is available today.',
+    fr: 'Une installation pilotée depuis un dépôt de code et organisée en couches. Tout ce qui suit est disponible aujourd’hui.',
+    en: 'One installation, managed from a code repository and organized in layers. Everything below is available today.',
   },
   layers: [
     {
       title: { fr: 'Serveurs et stockage', en: 'Servers and storage' },
       text: {
-        fr: 'Kubernetes sur un ou plusieurs serveurs Ubuntu, loués ou à vous, reliés par un réseau privé. Stockage répliqué Longhorn avec volumes chiffrés au choix, et une archive de restauration quotidienne, chiffrable et copiable hors site.',
-        en: 'Kubernetes on one or more Ubuntu servers, rented or owned, joined by a private network. Replicated Longhorn storage with optional encrypted volumes, and a daily recovery archive that can be encrypted and copied off site.',
+        fr: 'Un ou plusieurs serveurs, loués ou à vous, reliés par un réseau privé. Stockage répliqué avec volumes chiffrés au choix, et une archive de restauration quotidienne, chiffrable et copiable hors site.',
+        en: 'One or more servers, rented or owned, joined by a private network. Replicated storage with optional encrypted volumes, and a daily recovery archive that can be encrypted and copied off site.',
       },
     },
     {
       title: { fr: 'Accès et identité', en: 'Access and identity' },
       text: {
-        fr: 'Une authentification unique Keycloak, en français et en anglais, pour tous les outils d’administration. Les droits d’administrateur sont accordés pour 1 à 24 heures, approuvés, enregistrés et retirés automatiquement.',
-        en: 'Keycloak single sign-on, in English and French, for every administration tool. Administrator rights are granted for 1 to 24 hours, approved, recorded and removed automatically.',
+        fr: 'Une authentification SSO, en français et en anglais, pour tous les outils d’administration. Les droits d’administrateur sont accordés pour 1 à 24 heures, approuvés, enregistrés et retirés automatiquement.',
+        en: 'Single sign-on, in English and French, for every administration tool. Administrator rights are granted for 1 to 24 hours, approved, recorded and removed automatically.',
       },
     },
     {
       title: { fr: 'Livraison des applications', en: 'Application delivery' },
       text: {
-        fr: 'GitLab pour le code, les pipelines CI et le registre d’images ; Argo CD déploie depuis Git vers les environnements int, uat et prod. Chaque application rejoint la plateforme par un contrat déclaratif et un premier déploiement vérifié.',
-        en: 'GitLab for code, CI pipelines and the container registry; Argo CD deploys from Git to int, uat and prod environments. Each application joins through a declarative contract and a verified first deployment.',
+        fr: 'Hébergement du code, pipelines d’intégration continue et registre d’images ; les déploiements partent du dépôt vers les environnements int, uat et prod. Chaque application rejoint la plateforme par un contrat déclaratif et un premier déploiement vérifié.',
+        en: 'Code hosting, CI pipelines and a container registry; deployments go from the repository to int, uat and prod environments. Each application joins through a declarative contract and a verified first deployment.',
       },
     },
     {
       title: { fr: 'Données et secrets', en: 'Data and secrets' },
       text: {
-        fr: 'PostgreSQL, MongoDB, Redis et Kafka, avec des identifiants distincts par environnement. Vault conserve les secrets, transmis aux applications par External Secrets.',
-        en: 'PostgreSQL, MongoDB, Redis and Kafka, with separate credentials per environment. Vault holds the secrets and External Secrets delivers them to applications.',
+        fr: 'Bases de données relationnelles et documentaires, cache et flux d’événements, avec des identifiants distincts par environnement. Un coffre-fort conserve les secrets et les transmet aux applications.',
+        en: 'Relational and document databases, caching and event streaming, with separate credentials per environment. A secure store holds the secrets and delivers them to applications.',
       },
     },
     {
       title: { fr: 'Supervision et coûts', en: 'Monitoring and costs' },
       text: {
-        fr: 'Prometheus, Grafana et Elasticsearch, avec des tableaux de bord par application. Chaque adresse publique est sondée face à un objectif de disponibilité de 99,5 %, et le coût mensuel de chaque serveur est réparti par environnement et par application.',
-        en: 'Prometheus, Grafana and Elasticsearch, with dashboards per application. Every public address is probed against a 99.5% availability objective, and each server’s monthly cost is shown per environment and application.',
+        fr: 'Métriques, journaux centralisés et tableaux de bord par application. Chaque adresse publique est sondée face à un objectif de disponibilité de 99,5 %, et le coût mensuel de chaque serveur est réparti par environnement et par application.',
+        en: 'Metrics, centralized logs and dashboards per application. Every public address is probed against a 99.5% availability objective, and each server’s monthly cost is shown per environment and application.',
       },
     },
     {
       title: { fr: 'Sécurité opérationnelle', en: 'Security operations' },
       text: {
-        fr: 'Analyse des vulnérabilités et des configurations (Trivy), qualité du code (SonarQube), CrowdSec et Fail2ban sur les serveurs exposés, politiques d’admission, et alertes sur les connexions suspectes, les changements de droits et les accès aux secrets.',
-        en: 'Vulnerability and configuration scanning (Trivy), code quality (SonarQube), CrowdSec and Fail2ban on exposed servers, admission policies, and alerts on suspicious logins, permission changes and secret access.',
+        fr: 'Analyse des vulnérabilités et des configurations, qualité du code, protection contre les intrusions sur les serveurs exposés, politiques d’admission, et alertes sur les connexions suspectes, les changements de droits et les accès aux secrets.',
+        en: 'Vulnerability and configuration scanning, code quality analysis, intrusion prevention on exposed servers, admission policies, and alerts on suspicious logins, permission changes and secret access.',
       },
     },
     {
@@ -142,14 +143,14 @@ export const product = {
     {
       title: { fr: 'Applications métier', en: 'Business applications' },
       text: {
-        fr: 'L’ERP Odoo avec authentification unique, dont le CRM et le chat en direct qui reçoivent les demandes de ce site.',
-        en: 'The Odoo ERP with single sign-on, including the CRM and live chat that handle this website’s inquiries.',
+        fr: 'Un ERP avec authentification SSO, dont le CRM et le chat en direct qui reçoivent les demandes de ce site.',
+        en: 'An ERP with single sign-on, including the CRM and live chat that handle this website’s inquiries.',
       },
     },
   ] satisfies Card[],
   deliveryIntro: {
-    fr: 'Serveurs Ubuntu : un premier serveur à partir de 8 cœurs, 32 Go de mémoire et 500 Go NVMe ; 16 cœurs et 64 Go recommandés.',
-    en: 'Ubuntu servers: a first server needs at least 8 cores, 32 GB of memory and 500 GB NVMe; 16 cores and 64 GB recommended.',
+    fr: 'Un premier serveur demande au moins 64 Go de mémoire et 500 Go NVMe.',
+    en: 'A first server needs at least 64 GB of memory and 500 GB NVMe.',
   },
   delivery: [
     {
@@ -205,12 +206,12 @@ export const product = {
     },
     {
       question: {
-        fr: 'Faut-il des compétences Kubernetes ?',
-        en: 'Do we need Kubernetes skills?',
+        fr: 'Faut-il des compétences techniques spécialisées ?',
+        en: 'Do we need specialist platform skills?',
       },
       answer: {
-        fr: 'Pas pour l’installer ni pour l’exploiter au quotidien. Le hub d’installation installe la plateforme, ajoute des serveurs et la vérifie ; les applications se déploient depuis Git ; chaque alerte renvoie à sa procédure. Swirl peut aussi l’installer avec vous, ou l’exploiter pour vous.',
-        en: 'Not to install it or run it day to day. The setup hub installs the platform, adds servers and verifies it; applications deploy from Git; every alert links to its runbook. Swirl can also install it with you, or run it for you.',
+        fr: 'Pas pour l’installer ni pour l’exploiter au quotidien. Le hub d’installation installe la plateforme, ajoute des serveurs et la vérifie ; les applications se déploient depuis leur dépôt de code ; chaque alerte renvoie à sa procédure. Swirl peut aussi l’installer avec vous, ou l’exploiter pour vous.',
+        en: 'Not to install it or run it day to day. The setup hub installs the platform, adds servers and verifies it; applications deploy from their repository; every alert links to its runbook. Swirl can also install it with you, or run it for you.',
       },
     },
     {
@@ -239,8 +240,8 @@ export const product = {
         en: 'Can we leave Swirl Cloud?',
       },
       answer: {
-        fr: 'La plateforme repose principalement sur des composants open source comme Kubernetes, PostgreSQL, GitLab, Keycloak et Odoo, et vos données restent dans leurs formats standard, sur vos serveurs. Une procédure documentée d’exploitation autonome et de sortie est en préparation.',
-        en: 'The platform is built mainly on open-source components such as Kubernetes, PostgreSQL, GitLab, Keycloak and Odoo, and your data stays in their standard formats on your servers. A documented self-operation and exit runbook is in progress.',
+        fr: 'La plateforme repose principalement sur des composants open source répandus, et vos données restent dans des formats standard, sur vos serveurs. Une procédure documentée d’exploitation autonome et de sortie est en préparation.',
+        en: 'The platform is built mainly on widely used open-source components, and your data stays in standard formats on your servers. A documented self-operation and exit runbook is in progress.',
       },
     },
   ],

@@ -208,15 +208,6 @@ export default function Portfolio({
                       </span>
                     ))}
                   </div>
-                  {s.id === 'cloud-ai' && (
-                    <a
-                      className="text-link service-link"
-                      href={productPath(lang)}
-                    >
-                      {t('Découvrir Swirl Cloud', 'Discover Swirl Cloud')}
-                      <ArrowUpRight size={16} aria-hidden="true" />
-                    </a>
-                  )}
                 </article>
               );
             })}
