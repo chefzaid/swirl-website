@@ -308,7 +308,8 @@ h2 span {
   height: 5px;
   border-radius: 50%;
   background: var(--primary);
-  box-shadow: 0 0 0 3px light-dark(rgb(115 42 207 / 15%), rgb(196 163 255 / 14%));
+  box-shadow: 0 0 0 3px
+    light-dark(rgb(115 42 207 / 15%), rgb(196 163 255 / 14%));
 }
 .founder-title {
   color: var(--primary);
