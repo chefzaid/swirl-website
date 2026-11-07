@@ -4,7 +4,8 @@
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
   gap: 25px;
-  padding-block: 35px;
+  /* The bottom padding keeps the floating chat button clear of the links. */
+  padding-block: 35px 100px;
 }
 .footer-branding,
 .footer-links {

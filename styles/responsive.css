@@ -163,7 +163,7 @@
   .footer {
     grid-template-columns: 1fr;
     gap: 22px;
-    padding-block: 30px;
+    padding-block: 30px 90px;
   }
   .footer-branding,
   .footer-links {
