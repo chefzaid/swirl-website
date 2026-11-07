@@ -17,10 +17,12 @@
   white-space: nowrap;
   gap: 5px;
 }
+/* The mark's artwork has empty space on its right; the negative margin keeps
+   the plane close to the name. */
 .brand img {
   height: 38px;
   width: 40px;
-  margin-right: 6px;
+  margin-right: -4px;
 }
 .brand i {
   font-style: normal;

@@ -189,7 +189,7 @@
   .header .brand img {
     width: 31px;
     height: 32px;
-    margin-right: 1px;
+    margin-right: -4px;
   }
   .header .language {
     font-size: 10px;

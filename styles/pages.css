@@ -25,6 +25,7 @@
 .footer .brand img {
   width: 28px;
   height: 28px;
+  margin-right: -2px;
 }
 .footer > p,
 .footer-links {
