@@ -67,7 +67,7 @@ const pageScript = `(() => {
   const apply = (light) => {
     root.dataset.theme = light ? 'light' : 'dark';
     root.classList.toggle('dark', !light);
-    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', light ? '#f6f7f2' : '#101211');
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', light ? '#f5f6ff' : '#12101b');
     for (const button of document.querySelectorAll('[data-theme-toggle]')) button.setAttribute('aria-pressed', String(light));
   };
   let stored = null;
@@ -94,7 +94,7 @@ const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': [...
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta name="robots" content={noindex ? 'noindex, follow' : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'} />
-    <meta name="theme-color" content="#101211" />
+    <meta name="theme-color" content="#12101b" />
     <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="icon" type="image/svg+xml" href="/assets/mark.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />

@@ -19,12 +19,12 @@ const fonts = ([500, 700] as const).map((weight) => ({
 }));
 const mark = readFileSync(resolve('public/assets/mark.svg'));
 const colors = {
-  background: '#101211',
-  foreground: '#f2f3ed',
-  primary: '#d7ee92',
-  muted: '#a3aaa5',
-  kicker: '#aeb7a9',
-  border: '#303632',
+  background: '#12101b',
+  foreground: '#f4f1fb',
+  primary: '#c4a3ff',
+  muted: '#a8a7b3',
+  kicker: '#b5b2c6',
+  border: '#333345',
 };
 
 // The mark is a 300×300 viewBox; oversample before downscaling for crisp edges.
@@ -92,7 +92,7 @@ export async function socialCardPng(card: SocialCard) {
         color: colors.foreground,
         backgroundColor: colors.background,
         backgroundImage:
-          'radial-gradient(circle at 92% 8%, rgba(215, 238, 146, 0.16), rgba(16, 18, 17, 0) 46%)',
+          'radial-gradient(circle at 92% 8%, rgba(140, 64, 239, 0.3), rgba(18, 16, 27, 0) 46%)',
       }}
     >
       <div
@@ -180,11 +180,11 @@ export async function socialCardPng(card: SocialCard) {
             key={tag}
             style={{
               display: 'flex',
-              border: '1px solid #354037',
+              border: '1px solid #3d3a56',
               borderRadius: 6,
               padding: '8px 14px',
               fontSize: 19,
-              color: '#c3ccc3',
+              color: '#c9c8d9',
             }}
           >
             {tag}

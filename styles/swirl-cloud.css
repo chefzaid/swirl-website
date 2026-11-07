@@ -43,7 +43,7 @@
   max-width: 760px;
   font-size: 15px;
   line-height: 1.9;
-  color: light-dark(#374233, #b1beac);
+  color: light-dark(#413a5d, #b9b8d0);
 }
 .product-layers {
   list-style: none;
@@ -81,7 +81,7 @@
   border-bottom: 1px solid var(--border);
   font-size: 15px;
   line-height: 1.8;
-  color: light-dark(#374233, #b1beac);
+  color: light-dark(#413a5d, #b9b8d0);
 }
 .product-roadmap li::before {
   content: '→';
@@ -108,7 +108,7 @@
   padding: 0;
   margin-bottom: 11px;
   font-size: 11px;
-  color: light-dark(#202918, #d1ddc7);
+  color: light-dark(#2c213d, #ded4f8);
 }
 .topic-options {
   display: grid;
@@ -120,16 +120,16 @@
   align-items: center;
   gap: 9px;
   padding: 12px 13px;
-  border: 1px solid light-dark(#a4b29a, #414d38);
+  border: 1px solid light-dark(#b2a8d1, #4d4468);
   border-radius: 4px;
-  background: light-dark(#d0dccc, #20291d);
+  background: light-dark(#d9d6ed, #262340);
   font-size: 12px;
-  color: light-dark(#202918, #d1ddc7);
+  color: light-dark(#2c213d, #ded4f8);
   cursor: pointer;
 }
 .topic-options label:has(input:checked) {
   border-color: var(--primary);
-  color: light-dark(#12160f, #edf3e8);
+  color: light-dark(#161225, #f3effe);
 }
 .topic-options label:has(input:focus-visible) {
   outline: 2px solid var(--ring);
@@ -162,8 +162,8 @@
 .architecture {
   margin: 28px 0 0;
   padding: clamp(20px, 3vw, 32px);
-  background: light-dark(#e7ece6, #151b14);
-  border: 1px solid light-dark(#afc0a5, #35432d);
+  background: light-dark(#ece9f5, #19172c);
+  border: 1px solid light-dark(#c1b4e3, #44395f);
   border-radius: 8px;
 }
 .architecture > ol {
@@ -186,13 +186,13 @@
   top: -22px;
   left: calc(128px + (100% - 128px) / 2);
   font-size: 12px;
-  color: light-dark(#6f7f62, #6f7f62);
+  color: light-dark(#7f73a4, #7f73a4);
 }
 .architecture-layer {
   font-size: 10px;
   letter-spacing: 1.6px;
   text-transform: uppercase;
-  color: light-dark(#47543c, #9cab90);
+  color: light-dark(#574971, #ae9fcd);
 }
 .architecture ul {
   list-style: none;
@@ -208,8 +208,8 @@
   display: grid;
   gap: 6px;
   padding: 14px 16px;
-  background: light-dark(#dce2d9, #1b2318);
-  border: 1px solid light-dark(#b3c1ab, #35402e);
+  background: light-dark(#dfdfee, #221d38);
+  border: 1px solid light-dark(#c3b7dd, #413857);
   border-radius: 5px;
 }
 .architecture strong {
@@ -219,7 +219,7 @@
 .architecture ul span {
   font-size: 12px;
   line-height: 1.6;
-  color: light-dark(#374233, #b1beac);
+  color: light-dark(#413a5d, #b9b8d0);
 }
 .architecture figcaption {
   margin-top: 22px;
@@ -239,7 +239,7 @@
   justify-content: flex-end;
   gap: 10px;
   padding: 22px;
-  background: light-dark(#ebedec, #151816);
+  background: light-dark(#ececf3, #171623);
   border: 1px solid var(--border);
   border-radius: 5px;
 }
@@ -253,7 +253,7 @@
 .product-figures dt {
   font-size: 13px;
   line-height: 1.6;
-  color: light-dark(#374233, #b1beac);
+  color: light-dark(#413a5d, #b9b8d0);
 }
 /* Comparison table; one card per criterion on narrow screens. */
 .comparison {
@@ -274,7 +274,7 @@
   font-size: 11px;
   letter-spacing: 1.2px;
   text-transform: uppercase;
-  color: light-dark(#47543c, #9cab90);
+  color: light-dark(#574971, #ae9fcd);
   font-weight: 500;
 }
 .comparison tbody th {
@@ -283,11 +283,11 @@
   color: var(--foreground);
 }
 .comparison td {
-  color: light-dark(#374233, #b1beac);
+  color: light-dark(#413a5d, #b9b8d0);
 }
 .comparison .ours {
-  background: light-dark(#e0e5de, #192017);
-  color: light-dark(#171c11, #e4ecdc);
+  background: light-dark(#e1e3ef, #1e1b33);
+  color: light-dark(#1a1731, #eae7fc);
 }
 .comparison thead .ours {
   color: var(--primary);
@@ -321,7 +321,7 @@
     font-size: 10px;
     letter-spacing: 1.2px;
     text-transform: uppercase;
-    color: light-dark(#56644b, #8b9a7f);
+    color: light-dark(#665983, #9d8ebc);
   }
   .comparison tr > :last-child {
     border-bottom: 0;
@@ -368,15 +368,15 @@
 }
 .card-refs span {
   padding: 4px 7px;
-  border: 1px solid light-dark(#b2bfb4, #354037);
+  border: 1px solid light-dark(#babace, #3d3a56);
   border-radius: 4px;
   font-size: 10px;
-  color: light-dark(#3e483e, #aab5aa);
+  color: light-dark(#46425e, #b3b0c2);
 }
 .card-badge {
   align-self: flex-start;
   padding: 3px 8px;
-  border: 1px solid light-dark(#93a582, #4c5c3c);
+  border: 1px solid light-dark(#a597d1, #5f4e83);
   border-radius: 4px;
   font-size: 10px;
   letter-spacing: 1.5px;
@@ -397,13 +397,13 @@
   font-size: 10px;
   letter-spacing: 1.2px;
   text-transform: uppercase;
-  color: light-dark(#56644b, #8b9a7f);
+  color: light-dark(#665983, #9d8ebc);
 }
 .service-facts dd {
   margin: 2px 0 0;
   font-size: 13px;
   line-height: 1.6;
-  color: light-dark(#202918, #d1ddc7);
+  color: light-dark(#2c213d, #ded4f8);
 }
 @media (max-width: 760px) {
   .card-list {

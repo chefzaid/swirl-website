@@ -3,8 +3,8 @@
 .lifecycle-figure {
   margin: 0;
   padding: 28px;
-  background: light-dark(#e7ece6, #151b14);
-  border: 1px solid light-dark(#afc0a5, #35432d);
+  background: light-dark(#ece9f5, #19172c);
+  border: 1px solid light-dark(#c1b4e3, #44395f);
   border-radius: 8px;
 }
 .lifecycle-heading {
@@ -17,7 +17,7 @@
   gap: 15px;
   font-size: 8px;
   letter-spacing: 1.6px;
-  color: light-dark(#47543c, #9cab90);
+  color: light-dark(#574971, #ae9fcd);
 }
 .lifecycle-heading > span svg {
   color: var(--primary);
@@ -48,14 +48,14 @@
 .lifecycle-number {
   font-size: 10px;
   letter-spacing: 1px;
-  color: light-dark(#46533a, #9ead91);
+  color: light-dark(#554872, #aca2d1);
   line-height: 1;
   padding-top: 21px;
 }
 .lifecycle-stage-content {
   padding: 16px;
-  background: light-dark(#dce2d9, #1b2318);
-  border: 1px solid light-dark(#b3c1ab, #35402e);
+  background: light-dark(#dfdfee, #221d38);
+  border: 1px solid light-dark(#c3b7dd, #413857);
   border-radius: 5px;
 }
 .lifecycle-stage-title {
@@ -74,7 +74,7 @@
 }
 .lifecycle-stage-content > p {
   margin-top: 7px;
-  color: light-dark(#414c37, #a6b39b);
+  color: light-dark(#4d4366, #b4a9d2);
   font-size: 10px;
   line-height: 1.75;
 }
@@ -82,11 +82,11 @@
   position: absolute;
   left: calc(50% + 11px);
   bottom: -17px;
-  color: light-dark(#6e7f5e, #6f805f);
+  color: light-dark(#8171a8, #8272a9);
 }
 .lifecycle-stage-2 .lifecycle-stage-content {
-  border-color: light-dark(#708554, #697e4e);
-  background: light-dark(#c9d6c0, #252f1e);
+  border-color: light-dark(#8871c0, #826ab7);
+  background: light-dark(#d5cdf3, #312744);
 }
 .lifecycle-modules {
   border: 0;
@@ -104,11 +104,11 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  border: 1px solid light-dark(#93a582, #4c5c3c);
-  background: light-dark(#e0e6dd, #192016);
+  border: 1px solid light-dark(#a597d1, #5f4e83);
+  background: light-dark(#e3e3f2, #211a33);
   border-radius: 4px;
   padding: 13px 5px;
-  color: light-dark(#202a09, #d0dfb8);
+  color: light-dark(#2d1d4e, #e0d3ff);
 }
 .lifecycle-module > span {
   font-size: 9px;
@@ -122,8 +122,8 @@
   gap: 9px;
   margin-top: 23px;
   padding-top: 17px;
-  border-top: 1px solid light-dark(#b2c0aa, #35412e);
-  color: light-dark(#404e2d, #a3b48e);
+  border-top: 1px solid light-dark(#c2b6dc, #433859);
+  color: light-dark(#524075, #b6a5e3);
   font-size: 10px;
 }
 .cloud-link {

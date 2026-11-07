@@ -16,7 +16,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  color: light-dark(#20241f, #d8ded7);
+  color: light-dark(#232132, #dcdbe8);
 }
 h1 {
   font-family: 'Manrope Variable', sans-serif;
@@ -33,7 +33,7 @@ h1 > span {
   color: var(--primary);
 }
 .hero-description {
-  color: light-dark(#464d47, #a5ada7);
+  color: light-dark(#4b495f, #aaaab6);
   font-size: 14px;
   line-height: 1.9;
   max-width: 410px;
@@ -103,7 +103,7 @@ h1 > span {
   font-size: 9px;
   letter-spacing: 2px;
   text-align: center;
-  color: light-dark(#656f68, #7e8981);
+  color: light-dark(#6c6a84, #858595);
 }
 .client-logos {
   display: grid;
@@ -125,7 +125,7 @@ h1 > span {
 }
 .client-row + .client-row {
   padding-top: 26px;
-  border-top: 1px solid light-dark(#cbd5cc, #252d26);
+  border-top: 1px solid light-dark(#d1d1e2, #2c283f);
 }
 .client-logo {
   display: flex;
@@ -274,7 +274,7 @@ h1 > span {
     padding-block: 2px 12px;
     gap: 24px;
     scrollbar-width: thin;
-    scrollbar-color: light-dark(#8b9783, #596451) transparent;
+    scrollbar-color: light-dark(#998eb0, #645c7d) transparent;
   }
   .client-row {
     min-width: 900px;

@@ -5,6 +5,9 @@
   --color-foreground: var(--foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+  --color-cta: var(--cta);
+  --color-cta-hover: var(--cta-hover);
+  --color-cta-foreground: var(--cta-foreground);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-border: var(--border);
@@ -24,18 +27,21 @@
 :root,
 .dark {
   color-scheme: dark;
-  --background: light-dark(#f6f7f2, #101211);
-  --foreground: light-dark(#151a12, #f2f3ed);
-  --primary: light-dark(#4c6b13, #d7ee92);
-  --primary-hover: light-dark(#3b530f, #e7f8b9);
-  --primary-foreground: light-dark(#ffffff, #171c11);
-  --muted: light-dark(#dce0de, #1e2220);
-  --muted-foreground: light-dark(#484f4a, #a3aaa5);
-  --border: light-dark(#c0c8c3, #303632);
-  --input: light-dark(#b3bbb4, #3a413b);
-  --ring: light-dark(#4c6b13, #d7ee92);
+  --background: light-dark(#f5f6ff, #12101b);
+  --foreground: light-dark(#18162b, #f4f1fb);
+  --primary: light-dark(#732acf, #c4a3ff);
+  --primary-foreground: light-dark(#ffffff, #1a1731);
+  /* Filled calls to action: the same purple in both themes, white text. */
+  --cta: #8c40ef;
+  --cta-hover: #7e2ee0;
+  --cta-foreground: #ffffff;
+  --muted: light-dark(#e0dee6, #221f2d);
+  --muted-foreground: light-dark(#4d4b60, #a8a7b3);
+  --border: light-dark(#c5c5d2, #333345);
+  --input: light-dark(#b7b8c6, #3f3d52);
+  --ring: light-dark(#732acf, #c4a3ff);
   --radius: 0.5rem;
-  --popover: light-dark(#dee2df, #1c211d);
+  --popover: light-dark(#e1e0ea, #1f1e2f);
 }
 /* Dark by default; the header's theme switch sets data-theme="light"
    (src/layouts/Layout.astro). Colours are light-dark() pairs. */

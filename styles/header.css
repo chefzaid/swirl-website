@@ -82,15 +82,15 @@ nav a.active::before {
   display: block;
 }
 .language span {
-  color: light-dark(#707972, #757e77);
+  color: light-dark(#77748d, #7c7992);
 }
 .button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 22px;
-  background: var(--primary);
-  color: var(--primary-foreground);
+  background: var(--cta);
+  color: var(--cta-foreground);
   padding: 18px 24px;
   border-radius: 5px;
   font-size: 14px;
@@ -100,6 +100,6 @@ nav a.active::before {
     transform 0.2s;
 }
 .button:hover {
-  background: var(--primary-hover);
+  background: var(--cta-hover);
   transform: translateY(-2px);
 }

@@ -28,7 +28,7 @@
 .footer > p,
 .footer-links {
   font-size: 10px;
-  color: light-dark(#586358, #8b978b);
+  color: light-dark(#5f5d7c, #9392a5);
 }
 .footer .social-link {
   display: inline-flex;
@@ -39,7 +39,7 @@
   height: 40px;
   border: 1px solid var(--border);
   border-radius: 50%;
-  color: light-dark(#586358, #8b978b);
+  color: light-dark(#5f5d7c, #9392a5);
 }
 .footer .social-link:hover {
   background: var(--muted);
@@ -69,7 +69,7 @@
   margin-top: 26px;
   font-size: clamp(16px, 2vw, 20px);
   line-height: 1.8;
-  color: light-dark(#374233, #b1beac);
+  color: light-dark(#413a5d, #b9b8d0);
   max-width: 760px;
 }
 .case-tags {
@@ -100,7 +100,7 @@
   margin-top: 8px;
   font-size: 15px;
   line-height: 1.9;
-  color: light-dark(#374233, #b1beac);
+  color: light-dark(#413a5d, #b9b8d0);
 }
 .case-page h2 {
   font-size: clamp(24px, 3vw, 34px);
@@ -110,7 +110,7 @@
   font-size: 15px;
   line-height: 1.9;
   margin-top: 20px;
-  color: light-dark(#374233, #b1beac);
+  color: light-dark(#413a5d, #b9b8d0);
 }
 .case-body .case-attribution {
   font-size: 12px;
@@ -119,8 +119,8 @@
 .case-contact {
   margin-block: 55px 64px;
   padding: clamp(25px, 4vw, 46px);
-  border: 1px solid light-dark(#abbaa6, #394635);
-  background: light-dark(#e0e5de, #192017);
+  border: 1px solid light-dark(#bcb0d4, #453e5d);
+  background: light-dark(#e1e3ef, #1e1b33);
   border-radius: 8px;
 }
 .case-contact p {
@@ -148,7 +148,7 @@
   font-size: 22px;
 }
 .case-related-grid p {
-  color: light-dark(#374233, #b1beac);
+  color: light-dark(#413a5d, #b9b8d0);
   font-size: 13px;
   line-height: 1.8;
   margin-bottom: 20px;
@@ -169,11 +169,11 @@
   max-height: 85dvh;
   overflow: auto;
   padding: 42px;
-  border: 1px solid light-dark(#a0b099, #42503c);
+  border: 1px solid light-dark(#b2a5ce, #4f476b);
   border-radius: 7px;
   gap: 21px;
-  background: light-dark(#dee2df, #1c211d);
-  color: light-dark(#13160f, #edf2e8);
+  background: light-dark(#e1e0ea, #1f1e2f);
+  color: light-dark(#161225, #f0effd);
 }
 .project-dialog .section-kicker {
   margin: 0;
@@ -194,7 +194,7 @@
 .project-dialog p:not(.eyebrow) {
   font-size: 13px;
   line-height: 1.9;
-  color: light-dark(#3d4638, #adb8a8);
+  color: light-dark(#453f60, #b6b2c9);
 }
 .project-dialog .button {
   width: fit-content;
@@ -205,17 +205,17 @@
   position: absolute;
   right: 14px;
   top: 14px;
-  color: light-dark(#31392c, #bcc7b7);
+  color: light-dark(#363352, #c5c1d8);
   border: 0;
   background: transparent;
   padding: 5px;
 }
 .language a {
-  color: light-dark(#646d63, #818b80);
+  color: light-dark(#6c6784, #8a8697);
   padding-block: 8px;
 }
 .language a[aria-current='page'] {
-  color: light-dark(#12130d, #f4f5ed);
+  color: light-dark(#131021, #f5f3fe);
 }
 .menu-toggle[data-slot='button'] {
   display: none;
@@ -225,8 +225,8 @@
   top: 10px;
   left: 10px;
   z-index: 100;
-  background: var(--primary);
-  color: light-dark(#ffffff, #171c11);
+  background: var(--cta);
+  color: var(--cta-foreground);
   padding: 12px;
   transform: translateY(-150%);
 }
@@ -271,7 +271,7 @@
 }
 .privacy-page p {
   font-size: 14px;
-  color: light-dark(#3a4337, #b1bbad);
+  color: light-dark(#403d5b, #b8b6ca);
   line-height: 1.9;
   margin-bottom: 16px;
 }

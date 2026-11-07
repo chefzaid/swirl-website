@@ -208,7 +208,7 @@ Odoo's widget (about 700 KB) replaces it once the chat is open, and after 20
 seconds without it the button offers the contact form instead. Because the
 widget runs on Odoo's origin, the page's CSP only adds
 `frame-src https://odoo.swirlit.dev`. The origin and channel ID are in
-`data/site.ts`; the channel's colours (`#d7ee92`, text `#171c11`) are set in
+`data/site.ts`; the channel's colours (`#8c40ef`, text `#ffffff`) are set in
 Odoo under **Live Chat → Configuration → Channels**. Agents answer in Odoo
 **Discuss**; when none is online, the chatbot collects the visitor's email and
 request and creates a lead.

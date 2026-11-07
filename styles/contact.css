@@ -1,8 +1,8 @@
 /* Contact section and form. */
 .contact-section {
   padding-block: 92px;
-  background: light-dark(#dae1d9, #1b241a);
-  border-block: 1px solid light-dark(#afbea8, #374331);
+  background: light-dark(#dedeeb, #221e39);
+  border-block: 1px solid light-dark(#bfb4da, #463a59);
 }
 .contact-grid {
   display: grid;
@@ -18,7 +18,7 @@
 .contact-copy > p:not(.eyebrow) {
   font-size: 13px;
   line-height: 1.9;
-  color: light-dark(#424c3b, #a6b29e);
+  color: light-dark(#4b4562, #b4a9cb);
   max-width: 350px;
   margin-top: 25px;
 }
@@ -31,7 +31,7 @@
   letter-spacing: -0.6px;
   margin-top: 35px;
   padding-bottom: 12px;
-  border-bottom: 1px solid light-dark(#86967b, #59684e);
+  border-bottom: 1px solid light-dark(#988ab8, #6b5c88);
 }
 .contact-email:hover {
   color: var(--primary);
@@ -45,12 +45,12 @@
 .contact-footnote span {
   font-size: 12px;
   line-height: 1.6;
-  color: light-dark(#36422b, #b2c0a5);
+  color: light-dark(#44385e, #c1b5e2);
 }
 .contact-form-shell {
   align-self: start;
-  background: light-dark(#dfe6de, #182016);
-  border: 1px solid light-dark(#aab8a1, #3c4834);
+  background: light-dark(#e3e3f0, #1f1a34);
+  border: 1px solid light-dark(#b9aed5, #493f61);
   border-radius: 6px;
   padding: 32px;
 }
@@ -72,24 +72,24 @@
 .form-field label {
   font-size: 11px;
   font-weight: 400;
-  color: light-dark(#202918, #d1ddc7);
+  color: light-dark(#2c213d, #ded4f8);
 }
 .form-field label span {
-  color: light-dark(#4c5b3e, #95a586);
+  color: light-dark(#5f4e7e, #a798cc);
 }
 .form-field input,
 .form-field textarea {
-  background: light-dark(#d0dccc, #20291d) !important;
-  border: 1px solid light-dark(#a4b29a, #414d38);
+  background: light-dark(#d9d6ed, #262340) !important;
+  border: 1px solid light-dark(#b2a8d1, #4d4468);
   border-radius: 4px;
   padding: 13px;
   font-size: 12px;
   height: 43px;
-  color: light-dark(#12160f, #edf3e8);
+  color: light-dark(#161225, #f3effe);
 }
 .form-field input::placeholder,
 .form-field textarea::placeholder {
-  color: light-dark(#56644b, #8b9a7f);
+  color: light-dark(#665983, #9d8ebc);
 }
 .form-field textarea {
   height: auto;
@@ -103,7 +103,7 @@
   gap: 9px;
   font-size: 10px;
   line-height: 1.65;
-  color: light-dark(#3c4a34, #a7b79d);
+  color: light-dark(#4b4066, #baabd8);
 }
 .consent input {
   accent-color: var(--primary);
@@ -130,7 +130,7 @@
   justify-content: center;
   gap: 7px;
   font-size: 9px;
-  color: light-dark(#495740, #99a88f);
+  color: light-dark(#574d75, #a99dc9);
   align-items: center;
 }
 .form-error {
@@ -157,7 +157,7 @@
   line-height: 1.25;
 }
 .form-success p {
-  color: light-dark(#37462d, #abbda0);
+  color: light-dark(#463b66, #bfb0e2);
   line-height: 1.8;
   font-size: 13px;
 }

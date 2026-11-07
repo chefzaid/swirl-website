@@ -10,7 +10,7 @@
   margin-bottom: 44px;
 }
 .section-kicker {
-  color: light-dark(#3e463a, #aeb7a9);
+  color: light-dark(#44405e, #b5b2c6);
   margin-bottom: 23px;
   font-size: 10px;
 }
@@ -22,7 +22,7 @@ h2 {
   letter-spacing: -1.7px;
 }
 h2 span {
-  color: light-dark(#485049, #a0aaa1);
+  color: light-dark(#4f4b63, #a6a6b7);
 }
 .section-intro {
   font-size: 13px;
@@ -41,11 +41,11 @@ h2 span {
   border: 1px solid var(--border);
   border-radius: 5px;
   padding: 30px 27px;
-  background: light-dark(#ebedec, #151816);
+  background: light-dark(#ececf3, #171623);
   transition: border-color 0.2s;
 }
 .service-card:hover {
-  border-color: light-dark(#667558, #79896b);
+  border-color: light-dark(#766999, #887db0);
 }
 .service-top {
   display: flex;
@@ -56,7 +56,7 @@ h2 span {
 }
 .service-top > span {
   font-size: 11px;
-  color: light-dark(#606d62, #778579);
+  color: light-dark(#6a6687, #7f8094);
   font-family: monospace;
 }
 .service-card h3 {
@@ -77,19 +77,19 @@ h2 span {
   flex-wrap: wrap;
 }
 .tags > span {
-  border: 1px solid light-dark(#b2bfb4, #354037);
+  border: 1px solid light-dark(#babace, #3d3a56);
   border-radius: 4px;
   padding: 5px 8px;
-  color: light-dark(#3e483e, #aab5aa);
+  color: light-dark(#46425e, #b3b0c2);
   font-size: 9px;
 }
 .service-card .tags {
   margin-top: 27px;
 }
 .projects-section {
-  background: light-dark(#e6eae7, #171b18);
+  background: light-dark(#e9e8f2, #1b1827);
   padding-block: 100px;
-  border-block: 1px solid light-dark(#c7d0c9, #29302a);
+  border-block: 1px solid light-dark(#cfccda, #2e2c41);
 }
 .filters {
   border: 0;
@@ -103,7 +103,7 @@ h2 span {
 }
 .filter[data-slot='button'] {
   height: 38px;
-  color: light-dark(#414a42, #a8b2a9);
+  color: light-dark(#47455e, #aeaebf);
   font-size: 11px;
   padding-inline: 15px;
   border-radius: 4px;
@@ -111,16 +111,16 @@ h2 span {
   gap: 10px;
 }
 .filter[data-slot='button'].selected {
-  border-color: light-dark(#788a65, #647652);
-  color: light-dark(#151f00, #def0bc);
-  background: light-dark(#c5d1bf, #293224);
+  border-color: light-dark(#8b7bb8, #7767a3);
+  color: light-dark(#241042, #eee5ff);
+  background: light-dark(#cdcbe3, #312b4b);
 }
 .filter > span {
   display: inline-flex;
   padding: 0 5px;
   border-radius: 3px;
-  background: light-dark(#8d9b7e, #566348);
-  color: light-dark(#151a0e, #e8efde);
+  background: light-dark(#9a90c0, #645885);
+  color: light-dark(#1a142f, #eeeafe);
   font-size: 9px;
 }
 .projects-grid {
@@ -130,8 +130,8 @@ h2 span {
 }
 .project-card {
   position: relative;
-  border: 1px solid light-dark(#b6c2b7, #333d34);
-  background: light-dark(#eef1ef, #121613);
+  border: 1px solid light-dark(#bebdd1, #3b3752);
+  background: light-dark(#eff0f6, #151322);
   border-radius: 5px;
   overflow: hidden;
   display: flex;
@@ -189,7 +189,7 @@ h2 span {
 }
 .project-info > p {
   font-size: 11px;
-  color: light-dark(#444f46, #a1ada3);
+  color: light-dark(#4d4965, #aaa8ba);
   line-height: 1.85;
 }
 .project-info .tags {
@@ -211,7 +211,7 @@ h2 span {
   border-radius: 5px;
 }
 .project-card:hover {
-  border-color: light-dark(#667558, #79896b);
+  border-color: light-dark(#766999, #887db0);
 }
 .more-projects {
   text-align: center;
@@ -249,7 +249,7 @@ h2 span {
 }
 .client-note {
   text-align: center;
-  color: light-dark(#5f6a61, #808c82);
+  color: light-dark(#676481, #898799);
   font-size: 10px;
   margin-top: 22px;
 }
@@ -273,8 +273,8 @@ h2 span {
   border-radius: 50%;
   overflow: hidden;
   margin-top: 37px;
-  border: 7px solid light-dark(#cfdace, #222a21);
-  outline: 1px solid light-dark(#adbaa9, #3a4537);
+  border: 7px solid light-dark(#d7d5e8, #27253e);
+  outline: 1px solid light-dark(#b5b4cc, #423e60);
 }
 .about-photo img {
   width: 100%;
@@ -308,7 +308,7 @@ h2 span {
   height: 5px;
   border-radius: 50%;
   background: var(--primary);
-  box-shadow: 0 0 0 3px light-dark(rgb(91 127 23 / 15%), rgb(215 238 146 / 10%));
+  box-shadow: 0 0 0 3px light-dark(rgb(115 42 207 / 15%), rgb(196 163 255 / 14%));
 }
 .founder-title {
   color: var(--primary);
@@ -324,7 +324,7 @@ h2 span {
   font-size: clamp(9px, 3.4cqi, 12px);
   line-height: 1.8;
   font-style: italic;
-  color: light-dark(#3c4a34, #a6b79d);
+  color: light-dark(#4b4066, #b9abd8);
   max-width: 100%;
   white-space: nowrap;
 }
@@ -343,12 +343,12 @@ h2 span {
 .about-copy > p {
   font-size: 13px;
   line-height: 1.95;
-  color: light-dark(#424c43, #a4b0a5);
+  color: light-dark(#4b4661, #adabbd);
   margin-top: 23px;
 }
 .about-copy > p:first-of-type {
   font-size: 16px;
-  color: light-dark(#1f251d, #d7dfd4);
+  color: light-dark(#222137, #dcdbec);
 }
 .values {
   list-style: none;
@@ -364,7 +364,7 @@ h2 span {
   gap: 11px;
   font-size: 12px;
   line-height: 1.6;
-  color: light-dark(#293228, #c4d0c3);
+  color: light-dark(#312c47, #cfcade);
 }
 .values svg {
   color: var(--primary);
@@ -379,7 +379,7 @@ h2 span {
   font-size: 11px;
   padding-top: 23px;
   border-top: 1px solid var(--border);
-  color: light-dark(#343d33, #b6c2b5);
+  color: light-dark(#3c3752, #c1bcd0);
 }
 
 .location {
@@ -409,12 +409,12 @@ h2 span {
   line-height: 1.9;
   flex-shrink: 0;
   letter-spacing: 1.5px;
-  color: light-dark(#627063, #7d8b7e);
+  color: light-dark(#6e688b, #88859a);
 }
 .partners > div {
   display: flex;
   flex-wrap: wrap;
   gap: 17px 25px;
   font-size: 12px;
-  color: light-dark(#3d473c, #aab6a9);
+  color: light-dark(#44415f, #b5b0c4);
 }
