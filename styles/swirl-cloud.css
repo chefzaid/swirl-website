@@ -53,6 +53,34 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 20px;
 }
+/* Current technologies, one row per platform layer. */
+.product-stack {
+  margin: 28px 0 0;
+  border-top: 1px solid var(--border);
+}
+.product-stack > div {
+  display: grid;
+  grid-template-columns: minmax(0, 240px) minmax(0, 1fr);
+  align-items: center;
+  gap: 12px 32px;
+  padding-block: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.product-stack dt {
+  font-size: 14px;
+  font-weight: 600;
+}
+.product-stack dd {
+  margin: 0;
+}
+.product-stack .case-tags {
+  margin: 0;
+}
+@media (max-width: 760px) {
+  .product-stack > div {
+    grid-template-columns: 1fr;
+  }
+}
 .product-layers .service-card > span {
   font-family: monospace;
   font-size: 11px;

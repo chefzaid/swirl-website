@@ -3,8 +3,9 @@ import type { Bilingual } from './portfolio.ts';
 // Swirl Cloud product page. State only what the platform already does (its
 // features guide in the platform repository); anything still being built goes
 // in `roadmap`. Describe capabilities, not the technologies or products behind
-// them: the detail pages carry the architecture.
+// them; each layer's `stack` is the one place on the page that names them.
 type Card = { title: Bilingual; text: Bilingual };
+type Layer = Card & { stack: string[] };
 
 export const product = {
   name: 'Swirl Cloud',
@@ -97,6 +98,7 @@ export const product = {
         fr: 'Un ou plusieurs serveurs, loués ou à vous, reliés par un réseau privé. Stockage répliqué avec volumes chiffrés au choix, et une archive de restauration quotidienne, chiffrable et copiable hors site.',
         en: 'One or more servers, rented or owned, joined by a private network. Replicated storage with optional encrypted volumes, and a daily recovery archive that can be encrypted and copied off site.',
       },
+      stack: ['Ubuntu', 'Kubernetes', 'Longhorn', 'restic'],
     },
     {
       title: { fr: 'Accès et identité', en: 'Access and identity' },
@@ -104,6 +106,7 @@ export const product = {
         fr: 'Une authentification SSO, en français et en anglais, pour tous les outils d’administration. Les droits d’administrateur sont accordés pour 1 à 24 heures, approuvés, enregistrés et retirés automatiquement.',
         en: 'Single sign-on, in English and French, for every administration tool. Administrator rights are granted for 1 to 24 hours, approved, recorded and removed automatically.',
       },
+      stack: ['Keycloak', 'OAuth2 Proxy', 'Traefik', 'Cloudflare'],
     },
     {
       title: { fr: 'Livraison des applications', en: 'Application delivery' },
@@ -111,6 +114,7 @@ export const product = {
         fr: 'Hébergement du code, pipelines d’intégration continue et registre d’images ; les déploiements partent du dépôt vers les environnements int, uat et prod. Chaque application rejoint la plateforme par un contrat déclaratif et un premier déploiement vérifié.',
         en: 'Code hosting, CI pipelines and a container registry; deployments go from the repository to int, uat and prod environments. Each application joins through a declarative contract and a verified first deployment.',
       },
+      stack: ['GitLab', 'Argo CD'],
     },
     {
       title: { fr: 'Données et secrets', en: 'Data and secrets' },
@@ -118,6 +122,14 @@ export const product = {
         fr: 'Bases de données relationnelles et documentaires, cache et flux d’événements, avec des identifiants distincts par environnement. Un coffre-fort conserve les secrets et les transmet aux applications.',
         en: 'Relational and document databases, caching and event streaming, with separate credentials per environment. A secure store holds the secrets and delivers them to applications.',
       },
+      stack: [
+        'PostgreSQL',
+        'MongoDB',
+        'Redis',
+        'Kafka',
+        'Vault',
+        'External Secrets',
+      ],
     },
     {
       title: { fr: 'Supervision et coûts', en: 'Monitoring and costs' },
@@ -125,6 +137,14 @@ export const product = {
         fr: 'Métriques, journaux centralisés et tableaux de bord par application. Chaque adresse publique est sondée face à un objectif de disponibilité de 99,5 %, et le coût mensuel de chaque serveur est réparti par environnement et par application.',
         en: 'Metrics, centralized logs and dashboards per application. Every public address is probed against a 99.5% availability objective, and each server’s monthly cost is shown per environment and application.',
       },
+      stack: [
+        'Prometheus',
+        'Alertmanager',
+        'Grafana',
+        'Elasticsearch',
+        'Kibana',
+        'Fluent Bit',
+      ],
     },
     {
       title: { fr: 'Sécurité opérationnelle', en: 'Security operations' },
@@ -132,6 +152,14 @@ export const product = {
         fr: 'Analyse des vulnérabilités et des configurations, qualité du code, protection contre les intrusions sur les serveurs exposés, politiques d’admission, et alertes sur les connexions suspectes, les changements de droits et les accès aux secrets.',
         en: 'Vulnerability and configuration scanning, code quality analysis, intrusion prevention on exposed servers, admission policies, and alerts on suspicious logins, permission changes and secret access.',
       },
+      stack: [
+        'Trivy',
+        'SonarQube',
+        'CrowdSec',
+        'Fail2ban',
+        'Lynis',
+        'AppArmor',
+      ],
     },
     {
       title: { fr: 'Preuves de conformité', en: 'Compliance evidence' },
@@ -139,6 +167,7 @@ export const product = {
         fr: 'Des contrôles rattachés à NIS2, ISO/IEC 27001, DORA, au RGPD et aux benchmarks CIS, évalués en continu, un dossier de preuves signé, des revues d’accès, un registre des traitements RGPD et un rapport mensuel conservé 13 mois.',
         en: 'Controls mapped to NIS2, ISO/IEC 27001, DORA, GDPR and the CIS benchmarks, evaluated continuously, a signed evidence pack, access reviews, GDPR records of processing and a monthly report kept for 13 months.',
       },
+      stack: ['Prometheus', 'Grafana', 'CycloneDX', 'OpenVEX'],
     },
     {
       title: { fr: 'Applications métier', en: 'Business applications' },
@@ -146,8 +175,17 @@ export const product = {
         fr: 'Un ERP avec authentification SSO, dont le CRM et le chat en direct qui reçoivent les demandes de ce site.',
         en: 'An ERP with single sign-on, including the CRM and live chat that handle this website’s inquiries.',
       },
+      stack: ['Odoo'],
     },
-  ] satisfies Card[],
+  ] satisfies Layer[],
+  stackHeading: {
+    fr: 'Les technologies actuelles',
+    en: 'The current technology stack',
+  },
+  stackIntro: {
+    fr: 'Swirl Cloud utilise actuellement les technologies suivantes, couche par couche. Cette pile n’est pas figée : elle peut être adaptée et évoluer selon vos besoins.',
+    en: 'Swirl Cloud currently uses the technologies below, layer by layer. The stack is not fixed: it can be adapted and evolve with your needs.',
+  },
   deliveryIntro: {
     fr: 'Un premier serveur demande au moins 64 Go de mémoire et 500 Go NVMe.',
     en: 'A first server needs at least 64 GB of memory and 500 GB NVMe.',
