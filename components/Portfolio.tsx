@@ -15,10 +15,13 @@ import {
   projects,
   type Lang,
 } from '@/data/portfolio';
-import { clientRows } from '@/data/client-logos';
 import { product } from '@/data/product';
-import { productPath, resourcesPath, servicePath } from '@/data/site';
-import ClientLogo from './ClientLogo';
+import {
+  productPath,
+  projectsPath,
+  resourcesPath,
+  servicePath,
+} from '@/data/site';
 import SoftwareLifecycle from './SoftwareLifecycle';
 import SiteFooter from './SiteFooter';
 interface Props {
@@ -132,36 +135,17 @@ export default function Portfolio({
               )}
               <ArrowUpRight size={16} aria-hidden="true" />
             </a>
+            <a className="text-link" href={projectsPath(lang)}>
+              {t('Nos études de cas', 'Our case studies')}
+              <ArrowUpRight size={16} aria-hidden="true" />
+            </a>
+            <p className="cloud-teaser-note">
+              {t(
+                'Projets réalisés directement ou dans le cadre de partenariats de conseil.',
+                'Projects delivered directly or through consulting partnerships.',
+              )}
+            </p>
           </div>
-        </section>
-        <section
-          className="trust wrap"
-          aria-label={t('Quelques références', 'Selected clients')}
-        >
-          <p>
-            {t(
-              'DES PROJETS POUR DES ÉQUIPES EXIGEANTES',
-              'PROJECTS FOR TEAMS WITH HIGH STANDARDS',
-            )}
-          </p>
-          {/* oxlint-disable jsx-a11y/no-noninteractive-tabindex -- Keyboard users need focus to scroll both client rows. */}
-          <section
-            className="client-logos"
-            aria-label={t(
-              'Clients — deux lignes défilantes',
-              'Clients — two scrollable rows',
-            )}
-            tabIndex={0}
-          >
-            {clientRows.map((row) => (
-              <div className="client-row" key={row[0]}>
-                {row.map((id) => (
-                  <ClientLogo key={id} id={id} />
-                ))}
-              </div>
-            ))}
-          </section>
-          {/* oxlint-enable jsx-a11y/no-noninteractive-tabindex */}
         </section>
         <section className="section wrap" id="expertises">
           <div className="section-heading">

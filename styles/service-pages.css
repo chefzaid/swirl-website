@@ -11,13 +11,6 @@
   padding-top: 24px;
   color: var(--primary);
 }
-.client-note .text-link {
-  font-size: 10px;
-  gap: 6px;
-  margin-left: 6px;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
 .case-intro .hero-actions {
   margin-top: 34px;
 }

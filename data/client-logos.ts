@@ -33,8 +33,3 @@ export const clientLogos = {
   ingenico: [{ src: 'ingenico.svg', name: 'Ingenico', width: 177, height: 50 }],
   engie: [{ src: 'engie.svg', name: 'ENGIE', width: 154, height: 56 }],
 } satisfies Record<Project['id'], readonly Logo[]>;
-
-export const clientRows = [
-  ['cacib', 'bpce', 'sg', 'enedis', 'bouygues'],
-  ['engie', 'allianz', 'cdc', 'ingenico', 'idemia'],
-] as const satisfies readonly (readonly Project['id'][])[];

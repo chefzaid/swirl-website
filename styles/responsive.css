@@ -174,12 +174,6 @@
     grid-row: 3;
     line-height: 1.6;
   }
-  .project-dialog[data-slot='dialog-content'] {
-    padding: 30px 24px;
-  }
-  .project-dialog .dialog-title {
-    font-size: 27px;
-  }
   .privacy-page h1 {
     font-size: 33px;
   }

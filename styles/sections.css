@@ -165,11 +165,55 @@ h2 span {
   letter-spacing: 0.5px;
   color: var(--project-color);
 }
+.client-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 10px;
+  width: 250px;
+  max-width: 100%;
+  height: 84px;
+}
+.client-logo img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 56px;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+  opacity: 0.78;
+}
+.client-logo--bpce img {
+  max-width: min(100%, 128px);
+  max-height: 32px;
+}
+.client-logo--sg img,
+.client-logo--bpce img,
+.client-logo--bouygues img {
+  /* Preserve the light/dark details inside these symbols. */
+  filter: grayscale(1) invert(1);
+}
+/* Logos are drawn for a dark background: make them dark on the light theme. */
+:root[data-theme='light'] .client-logo img {
+  filter: brightness(0);
+  opacity: 0.72;
+}
+:root[data-theme='light'] .client-logo--sg img,
+:root[data-theme='light'] .client-logo--bpce img,
+:root[data-theme='light'] .client-logo--bouygues img {
+  filter: grayscale(1);
+  opacity: 0.6;
+}
+.client-logo--cdc img,
+.client-logo--bouygues img {
+  max-height: 84px;
+}
 .project-client {
   background: var(--project-background);
   padding: 24px 23px;
 }
-.project-dialog > .client-logo,
 .case-intro > .client-logo {
   margin-bottom: 24px;
 }
@@ -212,46 +256,6 @@ h2 span {
 }
 .project-card:hover {
   border-color: light-dark(#766999, #887db0);
-}
-.more-projects {
-  text-align: center;
-  margin-top: 36px;
-}
-.more-projects summary {
-  display: inline-flex;
-  list-style: none;
-  cursor: pointer;
-  font-size: 11px;
-  padding: 20px 22px;
-  border-radius: 4px;
-  gap: 10px;
-  border: 1px solid var(--border);
-  margin-bottom: 26px;
-}
-.more-projects summary::-webkit-details-marker {
-  display: none;
-}
-.more-projects summary:focus-visible {
-  outline: 2px solid var(--primary);
-  outline-offset: 5px;
-}
-.more-projects summary span {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-}
-.more-projects:not([open]) .when-open,
-.more-projects[open] .when-closed {
-  display: none;
-}
-.more-projects .projects-grid {
-  text-align: left;
-}
-.client-note {
-  text-align: center;
-  color: light-dark(#676481, #898799);
-  font-size: 10px;
-  margin-top: 22px;
 }
 .about {
   display: grid;
