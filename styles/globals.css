@@ -1,5 +1,4 @@
 @import '../node_modules/tailwindcss/index.css';
-@import '../node_modules/tw-animate-css/dist/tw-animate.css';
 /* Site styles by area, in cascade order: later files override earlier ones,
    so keep the order when adding rules. Pages add swirl-cloud.css and articles.css. */
 @import './base.css';
