@@ -13,11 +13,10 @@ export type CaseStudyView = ReturnType<typeof localizeCaseStudy>;
 // Serialize only what the cards show, in the active language, into the
 // interactive gallery.
 export function projectViews(lang: Lang) {
-  return projects.map(({ id, sector, date, color, title, text, tags }) => ({
+  return projects.map(({ id, sector, date, title, text, tags }) => ({
     id,
     sector,
     date,
-    color,
     title: title[lang],
     text: text[lang],
     tags: tags[lang],

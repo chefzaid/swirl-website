@@ -74,7 +74,10 @@ export default function ProjectGallery({
         </p>
         <div className="projects-grid">
           {matching.map((p) => (
-            <article className={`project-card ${p.color}`} key={p.id}>
+            <article
+              className={`project-card project-card--${p.id}`}
+              key={p.id}
+            >
               <div className="project-top">
                 <span>{sectorLabel(p.sector)}</span>
                 <span>{p.date}</span>

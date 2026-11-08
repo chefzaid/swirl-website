@@ -97,14 +97,10 @@
   padding-bottom: 22px;
   max-width: 760px;
 }
-.service-section .case-attribution,
-.case-page > .case-attribution {
+.case-more {
   margin-top: 24px;
-  font-size: 12px;
-  color: var(--muted-foreground);
 }
-.case-attribution .text-link {
-  margin-left: 8px;
+.case-more .text-link {
   color: var(--primary);
 }
 .case-related-grid .client-logo {

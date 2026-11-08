@@ -26,3 +26,25 @@ contrast and text alternative in `components/ClientLogo.tsx`. Theme rules live i
 The Commons sources identify the Caisse des Dépôts and Bouygues marks as
 public-domain text/geometry while noting trademark protection. All company
 marks remain those of their respective owners.
+
+## Card colours
+
+Each project card's header takes the main colour of the client's colour logo,
+not of the monochrome file shown on it. `styles/sections.css` keeps the brand's
+OKLCH hue at the site's lightness, with capped chroma: background L 0.34
+(C ≤ 0.085) and labels L 0.92 (C ≤ 0.04) in the dark theme, background L 0.86
+(C ≤ 0.055) and labels L 0.30 (C ≤ 0.07) in the light theme. Labels stay above
+8:1 against their header.
+
+| Client | Logo colour | Taken from |
+| --- | --- | --- |
+| Crédit Agricole CIB | `#007959` | `cacib.svg` |
+| Enedis | `#1423dc` | `enedis.svg` |
+| Groupe BPCE, Natixis | `#674175` | `bpce.png` |
+| Société Générale | `#e60028` | `sg.svg` |
+| Allianz Trade | `#003781` | `allianz.svg` |
+| Caisse des Dépôts | `#e30613` | [Commons logo](https://commons.wikimedia.org/wiki/File:Caisse_des_D%C3%A9p%C3%B4ts_et_Consignations_Logo_2022.svg) |
+| Bouygues Construction | `#ff661e` | `bouygues.svg` |
+| IDEMIA | `#420098` | [Commons logo](https://commons.wikimedia.org/wiki/File:IDEMIA_logo.svg); the 2021 logo is one colour |
+| Ingenico | `#00b5d0` | [Commons 2021 logo](https://commons.wikimedia.org/wiki/File:Ingenico_2021_logo.svg), its only colour beside slate grey |
+| ENGIE | `#00bdff` | [Commons logo](https://commons.wikimedia.org/wiki/File:Logo-engie.svg) |

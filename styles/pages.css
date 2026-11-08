@@ -114,10 +114,6 @@
   margin-top: 20px;
   color: light-dark(#413a5d, #b9b8d0);
 }
-.case-body .case-attribution {
-  font-size: 12px;
-  color: var(--muted-foreground);
-}
 .case-contact {
   margin-block: 55px 64px;
   padding: clamp(25px, 4vw, 46px);

@@ -73,7 +73,6 @@ export const projects = [
       fr: ['XVA', 'Intelligence artificielle', 'Supervision'],
       en: ['XVA', 'Artificial intelligence', 'Monitoring'],
     },
-    color: 'green',
   },
   {
     id: 'enedis',
@@ -106,7 +105,6 @@ export const projects = [
       fr: ['Objets connectés', 'Systèmes embarqués', 'Supervision'],
       en: ['Connected devices', 'Embedded systems', 'Monitoring'],
     },
-    color: 'blue',
   },
   {
     id: 'bpce',
@@ -139,7 +137,6 @@ export const projects = [
       fr: ['Parcours client', 'Sécurité des accès', 'Applications web'],
       en: ['Customer journeys', 'Access security', 'Web applications'],
     },
-    color: 'purple',
   },
   {
     id: 'sg',
@@ -172,7 +169,6 @@ export const projects = [
       fr: ['Factoring', 'Scoring', 'Gestion des accès'],
       en: ['Factoring', 'Scoring', 'Access management'],
     },
-    color: 'red',
   },
   {
     id: 'allianz',
@@ -205,7 +201,6 @@ export const projects = [
       fr: ['Applications métier', 'Modernisation', 'Automatisation'],
       en: ['Business applications', 'Modernization', 'Automation'],
     },
-    color: 'blue',
   },
   {
     id: 'cdc',
@@ -238,7 +233,6 @@ export const projects = [
       fr: ['Banque en ligne', 'Dématérialisation', 'Parcours client'],
       en: ['Online banking', 'Digital services', 'Customer journeys'],
     },
-    color: 'red',
   },
   {
     id: 'bouygues',
@@ -275,7 +269,6 @@ export const projects = [
         'Business applications',
       ],
     },
-    color: 'orange',
   },
   {
     id: 'idemia',
@@ -308,7 +301,6 @@ export const projects = [
       fr: ['Cybersécurité', 'Authentification', 'Messagerie'],
       en: ['Cybersecurity', 'Authentication', 'Messaging'],
     },
-    color: 'purple',
   },
   {
     id: 'ingenico',
@@ -341,7 +333,6 @@ export const projects = [
       fr: ['Paiement', 'Supervision', 'Administration web'],
       en: ['Payments', 'Monitoring', 'Web administration'],
     },
-    color: 'blue',
   },
   {
     id: 'engie',
@@ -374,7 +365,6 @@ export const projects = [
       fr: ['Portail client', 'Souscription en ligne', 'Personnalisation'],
       en: ['Customer portal', 'Online sign-up', 'Personalization'],
     },
-    color: 'green',
   },
 ] as const;
 export type Project = (typeof projects)[number];

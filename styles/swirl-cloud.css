@@ -32,15 +32,6 @@
   font-size: 13px;
   color: var(--primary);
 }
-/* Wraps to the links' width rather than widening their column. */
-.cloud-teaser-note {
-  justify-self: stretch;
-  contain: inline-size;
-  margin-top: -6px;
-  font-size: 11px;
-  line-height: 1.6;
-  color: var(--muted-foreground);
-}
 @media (max-width: 760px) {
   .cloud-teaser {
     flex-direction: column;

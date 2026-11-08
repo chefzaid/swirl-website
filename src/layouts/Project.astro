@@ -41,7 +41,6 @@ const caseStudy = {
     <section class="case-body" aria-labelledby="project-heading">
       <h2 id="project-heading">{en ? 'The project' : 'Le projet'}</h2>
       <ProjectCaseStudy lang={lang} caseStudy={localizeCaseStudy(project.caseStudy, lang)} />
-      <p class="case-attribution">{en ? 'Project delivered directly or through consulting partnerships.' : 'Projet réalisé directement ou dans le cadre de partenariats de conseil.'}</p>
       <p class="case-expertise">{en ? 'Related expertise:' : 'Expertises associées :'} {expertise.map((service, index) => <>{index > 0 && ', '}<a href={servicePath(service.id, lang)}>{service.title[lang]}</a></>)}</p>
     </section>
     <ContactCta lang={lang} action="project"

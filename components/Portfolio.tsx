@@ -139,12 +139,6 @@ export default function Portfolio({
               {t('Nos études de cas', 'Our case studies')}
               <ArrowUpRight size={16} aria-hidden="true" />
             </a>
-            <p className="cloud-teaser-note">
-              {t(
-                'Projets réalisés directement ou dans le cadre de partenariats de conseil.',
-                'Projects delivered directly or through consulting partnerships.',
-              )}
-            </p>
           </div>
         </section>
         <section className="section wrap" id="expertises">

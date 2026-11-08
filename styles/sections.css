@@ -136,24 +136,59 @@ h2 span {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  --project-color: light-dark(#223951, #aac5e3);
-  --project-background: light-dark(#c3d5e5, #1e2c38);
 }
-.project-card.green {
-  --project-color: light-dark(#213400, #bfd9a1);
-  --project-background: light-dark(#bfcfbd, #283527);
+/* Card headers take each client's logo colour (docs/client-logos.md) at the
+   site's own lightness, with capped chroma, so the brands stay recognisable
+   without leaving the muted palette. */
+.project-card--cacib {
+  /* #007959 */
+  --project-color: light-dark(#003727, #cceedf);
+  --project-background: light-dark(#afddc9, #024330);
 }
-.project-card.purple {
-  --project-color: light-dark(#3c2d48, #cfbddf);
-  --project-background: light-dark(#d1cadb, #302b38);
+.project-card--enedis {
+  /* #1423dc */
+  --project-color: light-dark(#1d2c51, #d9e5ff);
+  --project-background: light-dark(#c0d1f6, #233564);
 }
-.project-card.red {
-  --project-color: light-dark(#4a2d2c, #deb9b7);
-  --project-background: light-dark(#dac9c9, #372a2a);
+.project-card--bpce {
+  /* #674175 */
+  --project-color: light-dark(#3b2145, #f0ddf7);
+  --project-background: light-dark(#e0c6ea, #492855);
 }
-.project-card.orange {
-  --project-color: light-dark(#42270c, #e8c6a8);
-  --project-background: light-dark(#d3c8bb, #382f25);
+.project-card--sg {
+  /* #e60028 */
+  --project-color: light-dark(#4b1d1c, #ffdbd7);
+  --project-background: light-dark(#f3c4bf, #5c2321);
+}
+.project-card--allianz {
+  /* #003781 */
+  --project-color: light-dark(#162d50, #d6e6ff);
+  --project-background: light-dark(#bcd3f6, #1a3763);
+}
+.project-card--cdc {
+  /* #e30613 */
+  --project-color: light-dark(#4b1e19, #fedbd6);
+  --project-background: light-dark(#f3c4bd, #5c231e);
+}
+.project-card--bouygues {
+  /* #ff661e */
+  --project-color: light-dark(#4a200f, #fdddd0);
+  --project-background: light-dark(#f2c6b6, #5b2610);
+}
+.project-card--idemia {
+  /* #420098 */
+  --project-color: light-dark(#2e274e, #e3e1fe);
+  --project-background: light-dark(#d0ccf3, #382f60);
+}
+.project-card--ingenico {
+  /* #00b5d0 */
+  --project-color: light-dark(#01343d, #c7ecf5);
+  --project-background: light-dark(#a8dbe7, #01404a);
+}
+.project-card--engie {
+  /* #00bdff */
+  --project-color: light-dark(#003248, #cbeafb);
+  --project-background: light-dark(#aed8f0, #023d56);
 }
 .project-top {
   background: var(--project-background);
