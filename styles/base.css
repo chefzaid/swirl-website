@@ -30,13 +30,14 @@
   --background: light-dark(#f7f6f9, #121115);
   --foreground: light-dark(#1a181f, #f3f2f6);
   /* Plum, a deeper shade of Scaleway's purple; text and fills keep at least
-     7:1 contrast. A warm amber marks focus and the brand's full stop. */
+     7:1 contrast. A Walkman orange, the same in both themes, marks keyboard
+     focus and the brand's full stop (at least 3:1 on both backgrounds). */
   --primary: light-dark(#5e2b93, #b9a1de);
   --primary-foreground: light-dark(#ffffff, #1d1922);
   --cta: light-dark(#6a33a6, #7646ad);
   --cta-hover: light-dark(#5a2b8e, #6a33a6);
   --cta-foreground: #ffffff;
-  --highlight: light-dark(#b8731a, #e8a33d);
+  --highlight: #e8650f;
   /* Odoo's Live Chat header (set on the channel in Odoo) and the window drawn
      in its place while it loads (styles/chat.css). */
   --chat-header: #6a33a6;
