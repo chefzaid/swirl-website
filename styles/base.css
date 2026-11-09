@@ -37,6 +37,9 @@
   --cta-hover: light-dark(#5a2b8e, #6a33a6);
   --cta-foreground: #ffffff;
   --highlight: light-dark(#b8731a, #e8a33d);
+  /* Odoo's Live Chat header (set on the channel in Odoo) and the window drawn
+     in its place while it loads (styles/chat.css). */
+  --chat-header: #6a33a6;
   --muted: light-dark(#e0dee6, #222025);
   --muted-foreground: light-dark(#4f4c54, #a9a8ac);
   --border: light-dark(#c7c5ca, #36343a);

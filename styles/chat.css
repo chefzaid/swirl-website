@@ -14,16 +14,13 @@
   font-size: 13px;
   font-weight: 600;
   box-shadow: 0 8px 24px rgb(0 0 0 / 35%);
-  transition:
-    background 0.2s,
-    transform 0.2s;
+  transition: background 0.2s;
 }
 button.chat-launcher {
   cursor: pointer;
 }
 button.chat-launcher:hover {
   background: var(--cta-hover);
-  transform: translateY(-2px);
 }
 .chat-launcher-text {
   display: flex;
@@ -76,9 +73,9 @@ button.chat-launcher:hover {
   height: 41px;
   padding-left: 12px;
   border-bottom: 1px solid #dee2e6;
-  /* Odoo's chat header colours, in both themes. */
-  background: var(--cta);
-  color: var(--cta-foreground);
+  /* The Live Chat channel's header colour in Odoo, the same in both themes. */
+  background: var(--chat-header);
+  color: #ffffff;
 }
 .chat-shell img {
   width: 24px;
@@ -112,7 +109,7 @@ button.chat-launcher:hover {
   width: 22px;
   height: 25px;
   margin-right: 17px;
-  color: var(--cta-foreground);
+  color: #ffffff;
   opacity: 0.7;
   cursor: pointer;
 }
