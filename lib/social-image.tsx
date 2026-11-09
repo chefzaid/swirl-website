@@ -92,7 +92,7 @@ export async function socialCardPng(card: SocialCard) {
         color: colors.foreground,
         backgroundColor: colors.background,
         backgroundImage:
-          'radial-gradient(circle at 92% 8%, rgba(140, 64, 239, 0.3), rgba(18, 16, 27, 0) 46%)',
+          'radial-gradient(circle at 92% 8%, rgba(118, 70, 173, 0.3), rgba(18, 17, 21, 0) 46%)',
       }}
     >
       <div

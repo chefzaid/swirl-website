@@ -80,6 +80,7 @@ Swirl Cloud answers, with sources and dates as for the existing ones.
 - [x] Privacy page (FR and EN): Odoo CRM leads, chat transcripts and the chat's cookies and storage. *(2026-10-07)*
 - [x] Chloé, the chat persona (`infra/odoo/chat-persona.json`, avatar and FR/EN texts), and answering chats by email, explained on the privacy page. *(2026-10-07)*
 - [x] Chat on every page; Chloé shown online (green dot) on the button and in the chat; a chat window opens at once on click while Odoo's chat starts; her closing message promises a quick answer without naming email. *(2026-10-09)*
+- [x] The chat in the site's plum end to end: Odoo's button and header from `colors` in `chat-persona.json` (a test keeps them equal to `--chat-header`), Odoo's window themed by the platform add-on, the loading window matching it, and Chloé's avatar and the social cards' glow off the old Scaleway purple. *(2026-11-09)*
 
 ## Swirl Cloud product pages (added 2026-10-04)
 

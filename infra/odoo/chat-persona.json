@@ -1,6 +1,7 @@
 {
   "name": "Chloé",
   "avatar": "chloe.png",
+  "colors": { "background": "#6a33a6", "text": "#ffffff" },
   "messages": [
     {
       "type": "text",

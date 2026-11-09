@@ -208,16 +208,19 @@ Odoo's widget (about 700 KB) replaces it once the chat is open, and after 20
 seconds without it the button offers the contact form instead. Because the
 widget runs on Odoo's origin, the page's CSP only adds
 `frame-src https://odoo.swirlit.dev`. The origin and channel ID are in
-`data/site.ts`; the channel's colours (`#6a33a6`, text `#ffffff`) are set in
-Odoo under **Live Chat → Configuration → Channels**. Agents answer in Odoo
+`data/site.ts`. Odoo draws the chat in the site's plum: the channel's button
+and header (`#6a33a6`, text `#ffffff`) come from `colors` in
+`infra/odoo/chat-persona.json` (applied with the command below), and the
+platform's add-on themes the rest of the window. Agents answer in Odoo
 **Discuss**; when none is online, the chatbot collects the visitor's email and
 request and creates a lead.
 
 ### Chloé and answering by email
 
 `infra/odoo/chat-persona.json` defines Chloé: her name, avatar (`chloe.png`,
-drawn from the site's `public/assets/chloe.svg`) and the French and English
-text of each chatbot step (one message per step, in order). New visitor messages
+drawn from the site's `public/assets/chloe.svg`), the chat's colours (the same
+as `--chat-header`) and the French and English text of each chatbot step (one
+message per step, in order). New visitor messages
 are emailed to the team, and replying to that email answers in the chat as
 Chloé, by email too if the visitor has left. Apply the persona and email
 settings from the platform host:

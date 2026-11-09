@@ -137,7 +137,8 @@ button.chat-launcher:hover {
   height: 46px;
   margin: 0 8px 8px;
   padding-right: 2px;
-  border: 1px solid #a29dab;
+  /* Odoo's focused composer: its plum at 65% over white. */
+  border: 1px solid #9e7ac5;
   border-radius: 7.5px;
   background: #fff;
   color: #212529;
@@ -151,7 +152,7 @@ button.chat-launcher:hover {
 .chat-shell-composer > span {
   flex: 1;
   padding-left: 8px;
-  color: #c4c3c6;
+  color: #bec5cc;
 }
 .chat-typing {
   display: inline-flex;
@@ -165,7 +166,7 @@ button.chat-launcher:hover {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #9d90b2;
+  background: #adb5bd;
   animation: chat-typing 1.2s ease-in-out infinite;
 }
 .chat-typing i:nth-child(2) {
