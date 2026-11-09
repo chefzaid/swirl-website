@@ -30,7 +30,7 @@
 .footer > p,
 .footer-links {
   font-size: 10px;
-  color: light-dark(#5f5d7c, #9392a5);
+  color: light-dark(#635f6a, #959399);
 }
 .footer .social-link {
   display: inline-flex;
@@ -41,7 +41,7 @@
   height: 40px;
   border: 1px solid var(--border);
   border-radius: 50%;
-  color: light-dark(#5f5d7c, #9392a5);
+  color: light-dark(#635f6a, #959399);
 }
 .footer .social-link:hover {
   background: var(--muted);
@@ -71,7 +71,7 @@
   margin-top: 26px;
   font-size: clamp(16px, 2vw, 20px);
   line-height: 1.8;
-  color: light-dark(#413a5d, #b9b8d0);
+  color: light-dark(#423e4a, #bcb9c1);
   max-width: 760px;
 }
 .case-tags {
@@ -102,7 +102,7 @@
   margin-top: 8px;
   font-size: 15px;
   line-height: 1.9;
-  color: light-dark(#413a5d, #b9b8d0);
+  color: light-dark(#423e4a, #bcb9c1);
 }
 .case-page h2 {
   font-size: clamp(24px, 3vw, 34px);
@@ -112,13 +112,13 @@
   font-size: 15px;
   line-height: 1.9;
   margin-top: 20px;
-  color: light-dark(#413a5d, #b9b8d0);
+  color: light-dark(#423e4a, #bcb9c1);
 }
 .case-contact {
   margin-block: 55px 64px;
   padding: clamp(25px, 4vw, 46px);
-  border: 1px solid light-dark(#bcb0d4, #453e5d);
-  background: light-dark(#e1e3ef, #1e1b33);
+  border: 1px solid light-dark(#b9b5c1, #45414c);
+  background: light-dark(#e4e3e7, #201d25);
   border-radius: 8px;
 }
 .case-contact p {
@@ -146,7 +146,7 @@
   font-size: 22px;
 }
 .case-related-grid p {
-  color: light-dark(#413a5d, #b9b8d0);
+  color: light-dark(#423e4a, #bcb9c1);
   font-size: 13px;
   line-height: 1.8;
   margin-bottom: 20px;
@@ -163,11 +163,11 @@
   }
 }
 .language a {
-  color: light-dark(#6c6784, #8a8697);
+  color: light-dark(#6d6a73, #8a888e);
   padding-block: 8px;
 }
 .language a[aria-current='page'] {
-  color: light-dark(#131021, #f5f3fe);
+  color: light-dark(#141218, #f5f4f8);
 }
 .menu-toggle[data-slot='button'] {
   display: none;
@@ -223,7 +223,7 @@
 }
 .privacy-page p {
   font-size: 14px;
-  color: light-dark(#403d5b, #b8b6ca);
+  color: light-dark(#433f4a, #bab7be);
   line-height: 1.9;
   margin-bottom: 16px;
 }

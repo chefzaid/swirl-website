@@ -42,7 +42,7 @@
   gap: 20px;
 }
 .service-steps li {
-  border-top: 1px solid light-dark(#a597d1, #5f4e83);
+  border-top: 1px solid light-dark(#a898c3, #605178);
   padding-top: 20px;
 }
 .service-steps span {
@@ -59,7 +59,7 @@
 .service-faq p {
   font-size: 14px;
   line-height: 1.8;
-  color: light-dark(#413a5d, #b9b8d0);
+  color: light-dark(#423e4a, #bcb9c1);
 }
 .service-faq {
   margin-top: 20px;
@@ -112,7 +112,7 @@
   max-height: 40px;
 }
 .case-related-grid > a:hover {
-  border-color: light-dark(#766999, #887db0);
+  border-color: light-dark(#786b8e, #8c7ea3);
 }
 .case-body .case-expertise {
   font-size: 14px;

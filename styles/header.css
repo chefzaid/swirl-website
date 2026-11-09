@@ -24,9 +24,11 @@
   width: 40px;
   margin-right: -4px;
 }
+/* The full stop sits against the name, not a flex gap away. */
 .brand i {
   font-style: normal;
-  color: var(--primary);
+  color: var(--highlight);
+  margin-left: -5px;
 }
 nav {
   display: flex;
@@ -43,7 +45,7 @@ nav a.active::before {
   display: inline-block;
   width: 5px;
   height: 5px;
-  background: var(--primary);
+  background: var(--highlight);
   border-radius: 50%;
   margin-right: 8px;
   vertical-align: middle;
@@ -84,7 +86,7 @@ nav a.active::before {
   display: block;
 }
 .language span {
-  color: light-dark(#77748d, #7c7992);
+  color: light-dark(#79767e, #7e7b83);
 }
 .button {
   display: inline-flex;

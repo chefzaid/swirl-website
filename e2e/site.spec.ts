@@ -12,7 +12,20 @@ test('the language links switch between French and English', async ({
   await expect(page).toHaveURL('/');
 });
 
+test('the theme follows the system until the visitor picks one', async ({
+  page,
+}) => {
+  const html = page.locator('html');
+  await page.emulateMedia({ colorScheme: 'light' });
+  await page.goto('/en/');
+  await expect(html).toHaveAttribute('data-theme', 'light');
+  await page.emulateMedia({ colorScheme: 'dark' });
+  await page.reload();
+  await expect(html).toHaveAttribute('data-theme', 'dark');
+});
+
 test('the theme choice is kept on other pages', async ({ page }) => {
+  await page.emulateMedia({ colorScheme: 'dark' });
   await page.goto('/en/');
   const html = page.locator('html');
   await expect(html).toHaveAttribute('data-theme', 'dark');

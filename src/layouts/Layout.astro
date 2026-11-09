@@ -57,7 +57,8 @@ if (path === homePath(lang)) {
     name: applicationService.name[lang], description: applicationService.description[lang],
     provider: { '@id': organizationId }, url: canonical + '#home' });
 }
-// Dark by default. Applies the visitor's light or dark choice before the page
+// Follows the system theme (light without one) until the visitor picks one with
+// the header's switch. Applies the visitor's light or dark choice before the page
 // paints, handles every [data-theme-toggle] button (components/SiteHeader), and
 // keeps a tap on the chat button that comes before the button is ready
 // (components/ChatLauncher). It runs at the start of <body>, after the policy
@@ -67,12 +68,12 @@ const pageScript = `(() => {
   const apply = (light) => {
     root.dataset.theme = light ? 'light' : 'dark';
     root.classList.toggle('dark', !light);
-    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', light ? '#f5f6ff' : '#12101b');
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', light ? '#f7f6f9' : '#121115');
     for (const button of document.querySelectorAll('[data-theme-toggle]')) button.setAttribute('aria-pressed', String(light));
   };
   let stored = null;
   try { stored = localStorage.getItem('theme'); } catch {}
-  apply(stored === 'light');
+  apply(stored ? stored === 'light' : !matchMedia('(prefers-color-scheme: dark)').matches);
   document.addEventListener('DOMContentLoaded', () => apply(root.dataset.theme === 'light'));
   document.addEventListener('click', (event) => {
     if (event.target.closest?.('.chat-launcher') && !root.dataset.chatReady) root.dataset.chatPending = '1';
@@ -94,7 +95,7 @@ const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': [...
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta name="robots" content={noindex ? 'noindex, follow' : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'} />
-    <meta name="theme-color" content="#12101b" />
+    <meta name="theme-color" content="#121115" />
     <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="icon" type="image/svg+xml" href="/assets/mark.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />

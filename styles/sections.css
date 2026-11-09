@@ -10,7 +10,7 @@
   margin-bottom: 44px;
 }
 .section-kicker {
-  color: light-dark(#44405e, #b5b2c6);
+  color: light-dark(#46434d, #b6b4ba);
   margin-bottom: 23px;
   font-size: 10px;
 }
@@ -22,7 +22,7 @@ h2 {
   letter-spacing: -1.7px;
 }
 h2 span {
-  color: light-dark(#4f4b63, #a6a6b7);
+  color: light-dark(#504d55, #a9a7ac);
 }
 .section-intro {
   font-size: 13px;
@@ -41,11 +41,11 @@ h2 span {
   border: 1px solid var(--border);
   border-radius: 5px;
   padding: 30px 27px;
-  background: light-dark(#ececf3, #171623);
+  background: light-dark(#ececf3, #18171b);
   transition: border-color 0.2s;
 }
 .service-card:hover {
-  border-color: light-dark(#766999, #887db0);
+  border-color: light-dark(#786b8e, #8c7ea3);
 }
 .service-top {
   display: flex;
@@ -56,7 +56,7 @@ h2 span {
 }
 .service-top > span {
   font-size: 11px;
-  color: light-dark(#6a6687, #7f8094);
+  color: light-dark(#6c6974, #838187);
   font-family: monospace;
 }
 .service-card h3 {
@@ -77,19 +77,19 @@ h2 span {
   flex-wrap: wrap;
 }
 .tags > span {
-  border: 1px solid light-dark(#babace, #3d3a56);
+  border: 1px solid light-dark(#bdbbc2, #403c46);
   border-radius: 4px;
   padding: 5px 8px;
-  color: light-dark(#46425e, #b3b0c2);
+  color: light-dark(#48444e, #b4b1b8);
   font-size: 9px;
 }
 .service-card .tags {
   margin-top: 27px;
 }
 .projects-section {
-  background: light-dark(#e9e8f2, #1b1827);
+  background: light-dark(#eae9ec, #1b1a1f);
   padding-block: 100px;
-  border-block: 1px solid light-dark(#cfccda, #2e2c41);
+  border-block: 1px solid light-dark(#cfcdd2, #302e35);
 }
 .filters {
   border: 0;
@@ -103,7 +103,7 @@ h2 span {
 }
 .filter[data-slot='button'] {
   height: 38px;
-  color: light-dark(#47455e, #aeaebf);
+  color: light-dark(#4a474f, #b1afb4);
   font-size: 11px;
   padding-inline: 15px;
   border-radius: 4px;
@@ -111,16 +111,16 @@ h2 span {
   gap: 10px;
 }
 .filter[data-slot='button'].selected {
-  border-color: light-dark(#8b7bb8, #7767a3);
-  color: light-dark(#241042, #eee5ff);
-  background: light-dark(#cdcbe3, #312b4b);
+  border-color: light-dark(#8e7daa, #7a6995);
+  color: light-dark(#241538, #ebe8f1);
+  background: light-dark(#cfccd5, #322e39);
 }
 .filter > span {
   display: inline-flex;
   padding: 0 5px;
   border-radius: 3px;
-  background: light-dark(#9a90c0, #645885);
-  color: light-dark(#1a142f, #eeeafe);
+  background: light-dark(#9e91b4, #66597b);
+  color: light-dark(#1b1720, #eeecf3);
   font-size: 9px;
 }
 .projects-grid {
@@ -130,8 +130,8 @@ h2 span {
 }
 .project-card {
   position: relative;
-  border: 1px solid light-dark(#bebdd1, #3b3752);
-  background: light-dark(#eff0f6, #151322);
+  border: 1px solid light-dark(#c0bec5, #3d3943);
+  background: light-dark(#eff0f6, #161419);
   border-radius: 5px;
   overflow: hidden;
   display: flex;
@@ -146,12 +146,12 @@ h2 span {
   --project-background: light-dark(#afddc9, #024330);
 }
 .project-card--enedis {
-  /* #1423dc */
+  /* #6620a7 */
   --project-color: light-dark(#1d2c51, #d9e5ff);
   --project-background: light-dark(#c0d1f6, #233564);
 }
 .project-card--bpce {
-  /* #674175 */
+  /* #5a4973 */
   --project-color: light-dark(#3b2145, #f0ddf7);
   --project-background: light-dark(#e0c6ea, #492855);
 }
@@ -161,7 +161,7 @@ h2 span {
   --project-background: light-dark(#f3c4bf, #5c2321);
 }
 .project-card--allianz {
-  /* #003781 */
+  /* #462c68 */
   --project-color: light-dark(#162d50, #d6e6ff);
   --project-background: light-dark(#bcd3f6, #1a3763);
 }
@@ -176,7 +176,7 @@ h2 span {
   --project-background: light-dark(#f2c6b6, #5b2610);
 }
 .project-card--idemia {
-  /* #420098 */
+  /* #4b1c7a */
   --project-color: light-dark(#2e274e, #e3e1fe);
   --project-background: light-dark(#d0ccf3, #382f60);
 }
@@ -268,7 +268,7 @@ h2 span {
 }
 .project-info > p {
   font-size: 11px;
-  color: light-dark(#4d4965, #aaa8ba);
+  color: light-dark(#4f4b55, #aba9af);
   line-height: 1.85;
 }
 .project-info .tags {
@@ -290,7 +290,7 @@ h2 span {
   border-radius: 5px;
 }
 .project-card:hover {
-  border-color: light-dark(#766999, #887db0);
+  border-color: light-dark(#786b8e, #8c7ea3);
 }
 .about {
   display: grid;
@@ -312,8 +312,8 @@ h2 span {
   border-radius: 50%;
   overflow: hidden;
   margin-top: 37px;
-  border: 7px solid light-dark(#d7d5e8, #27253e);
-  outline: 1px solid light-dark(#b5b4cc, #423e60);
+  border: 7px solid light-dark(#d8d6dd, #2a272f);
+  outline: 1px solid light-dark(#b8b5bd, #45414c);
 }
 .about-photo img {
   width: 100%;
@@ -347,8 +347,7 @@ h2 span {
   height: 5px;
   border-radius: 50%;
   background: var(--primary);
-  box-shadow: 0 0 0 3px
-    light-dark(rgb(115 42 207 / 15%), rgb(196 163 255 / 14%));
+  box-shadow: 0 0 0 3px light-dark(rgb(94 43 147 / 15%), rgb(185 161 222 / 14%));
 }
 .founder-title {
   color: var(--primary);
@@ -364,7 +363,7 @@ h2 span {
   font-size: clamp(9px, 3.4cqi, 12px);
   line-height: 1.8;
   font-style: italic;
-  color: light-dark(#4b4066, #b9abd8);
+  color: light-dark(#4c425d, #b9adce);
   max-width: 100%;
   white-space: nowrap;
 }
@@ -383,12 +382,12 @@ h2 span {
 .about-copy > p {
   font-size: 13px;
   line-height: 1.95;
-  color: light-dark(#4b4661, #adabbd);
+  color: light-dark(#4c4952, #aeacb2);
   margin-top: 23px;
 }
 .about-copy > p:first-of-type {
   font-size: 16px;
-  color: light-dark(#222137, #dcdbec);
+  color: light-dark(#25222a, #dedce2);
 }
 .values {
   list-style: none;
@@ -404,7 +403,7 @@ h2 span {
   gap: 11px;
   font-size: 12px;
   line-height: 1.6;
-  color: light-dark(#312c47, #cfcade);
+  color: light-dark(#322f38, #ceccd3);
 }
 .values svg {
   color: var(--primary);
@@ -419,7 +418,7 @@ h2 span {
   font-size: 11px;
   padding-top: 23px;
   border-top: 1px solid var(--border);
-  color: light-dark(#3c3752, #c1bcd0);
+  color: light-dark(#3d3a43, #c0bec5);
 }
 
 .location {
@@ -449,12 +448,12 @@ h2 span {
   line-height: 1.9;
   flex-shrink: 0;
   letter-spacing: 1.5px;
-  color: light-dark(#6e688b, #88859a);
+  color: light-dark(#6f6b77, #89878e);
 }
 .partners > div {
   display: flex;
   flex-wrap: wrap;
   gap: 17px 25px;
   font-size: 12px;
-  color: light-dark(#44415f, #b5b0c4);
+  color: light-dark(#47434d, #b4b2b9);
 }

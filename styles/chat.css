@@ -62,7 +62,7 @@ button.chat-launcher:hover {
   border: 1px solid var(--border);
   border-radius: 12px;
   background: #f8f9fa;
-  color: #1a1731;
+  color: #1d1922;
   font-family:
     -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
     Ubuntu, 'Noto Sans', Arial, sans-serif;
@@ -140,7 +140,7 @@ button.chat-launcher:hover {
   height: 46px;
   margin: 0 8px 8px;
   padding-right: 2px;
-  border: 1px solid #a399c0;
+  border: 1px solid #a29dab;
   border-radius: 7.5px;
   background: #fff;
   color: #212529;
@@ -154,7 +154,7 @@ button.chat-launcher:hover {
 .chat-shell-composer > span {
   flex: 1;
   padding-left: 8px;
-  color: #bec5cc;
+  color: #c4c3c6;
 }
 .chat-typing {
   display: inline-flex;
@@ -168,7 +168,7 @@ button.chat-launcher:hover {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #9d8ebc;
+  background: #9d90b2;
   animation: chat-typing 1.2s ease-in-out infinite;
 }
 .chat-typing i:nth-child(2) {

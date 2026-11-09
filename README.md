@@ -76,9 +76,12 @@ blocks requests to Odoo. Install its browser once with
 
 ## Conventions
 
-- **Colours.** The site is dark by default; the header switches to light. Every
-  colour is a `light-dark(<light>, <dark>)` pair with at least 4.5:1 contrast;
-  the axe scan checks every page template in both themes.
+- **Colours.** The site follows the visitor's system theme (light without one);
+  the header switches it. Every colour is a `light-dark(<light>, <dark>)` pair
+  with at least 4.5:1 contrast; the axe scan checks every page template in both
+  themes. The brand is plum (`--primary`, `--cta`), a deeper shade of Scaleway's
+  purple, with amber (`--highlight`) for focus rings and the brand's full stop;
+  the platform's portal and sign-in pages use the same colours.
 - **Styles.** `styles/globals.css` imports the site-wide files in cascade order: later
   files override earlier ones, so keep the order. In a layout, import its
   stylesheet before new components, or the stylesheet order on the page changes.

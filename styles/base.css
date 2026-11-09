@@ -27,24 +27,27 @@
 :root,
 .dark {
   color-scheme: dark;
-  --background: light-dark(#f5f6ff, #12101b);
-  --foreground: light-dark(#18162b, #f4f1fb);
-  --primary: light-dark(#732acf, #c4a3ff);
-  --primary-foreground: light-dark(#ffffff, #1a1731);
-  /* Filled calls to action: the same purple in both themes, white text. */
-  --cta: #8c40ef;
-  --cta-hover: #7e2ee0;
+  --background: light-dark(#f7f6f9, #121115);
+  --foreground: light-dark(#1a181f, #f3f2f6);
+  /* Plum, a deeper shade of Scaleway's purple; text and fills keep at least
+     7:1 contrast. A warm amber marks focus and the brand's full stop. */
+  --primary: light-dark(#5e2b93, #b9a1de);
+  --primary-foreground: light-dark(#ffffff, #1d1922);
+  --cta: light-dark(#6a33a6, #7646ad);
+  --cta-hover: light-dark(#5a2b8e, #6a33a6);
   --cta-foreground: #ffffff;
-  --muted: light-dark(#e0dee6, #221f2d);
-  --muted-foreground: light-dark(#4d4b60, #a8a7b3);
-  --border: light-dark(#c5c5d2, #333345);
-  --input: light-dark(#b7b8c6, #3f3d52);
-  --ring: light-dark(#732acf, #c4a3ff);
+  --highlight: light-dark(#b8731a, #e8a33d);
+  --muted: light-dark(#e0dee6, #222025);
+  --muted-foreground: light-dark(#4f4c54, #a9a8ac);
+  --border: light-dark(#c7c5ca, #36343a);
+  --input: light-dark(#bab8bd, #413e46);
+  --ring: var(--highlight);
   --radius: 0.5rem;
-  --popover: light-dark(#e1e0ea, #1f1e2f);
+  --popover: light-dark(#e2e1e4, #211f25);
 }
-/* Dark by default; the header's theme switch sets data-theme="light"
-   (src/layouts/Layout.astro). Colours are light-dark() pairs. */
+/* The visitor's system theme (light without one) until the header's theme
+   switch sets data-theme (src/layouts/Layout.astro). Colours are light-dark()
+   pairs. */
 :root[data-theme='light'] {
   color-scheme: light;
 }
@@ -79,7 +82,7 @@ a {
 }
 a:focus-visible,
 button:focus-visible {
-  outline: 2px solid var(--primary);
+  outline: 2px solid var(--ring);
   outline-offset: 5px;
 }
 button {
