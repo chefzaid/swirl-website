@@ -23,7 +23,7 @@ spec:
         - name: swirl-website-registry-auth
       containers:
         - name: db-setup
-          image: registry.swirlit.dev/swirlit/swirl-website/site:bootstrap
+          image: registry.swirlit.dev/swirl/swirl-website/site:bootstrap
           command: [node, dist/runtime/provision-postgres.js]
           envFrom:
             - secretRef:
@@ -68,7 +68,7 @@ spec:
         - name: swirl-website-registry-auth
       containers:
         - name: schema-migration
-          image: registry.swirlit.dev/swirlit/swirl-website/site:bootstrap
+          image: registry.swirlit.dev/swirl/swirl-website/site:bootstrap
           command: [node, dist/runtime/migrate-postgres.js, --initialize]
           env:
             - name: DATABASE_URL

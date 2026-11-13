@@ -2,7 +2,7 @@
 
 Production is `https://swirlit.dev`; `https://www.swirlit.dev` redirects to it.
 The source lives in two private repositories kept in sync: GitHub
-`chefzaid/swirl-website` and GitLab `swirlit/swirl-website`.
+`chefzaid/swirl-website` and GitLab `swirl/swirl-website`.
 
 This repository owns the website's image, its Kubernetes resources in the `apps`
 namespace, its Argo CD Application, its DNS records and an operator playbook.
@@ -53,7 +53,7 @@ registry credentials in Vault KV v2 at `secret/apps/swirl-website/registry`:
 
 `infra/k8s/registry-credentials.yaml` turns them into the image pull Secret and
 `infra/argocd/repository-credentials.yaml` into Argo CD's access to
-`http://gitlab.swirlit.internal/swirlit/swirl-website.git`. The
+`http://gitlab.swirl.internal/swirl/swirl-website.git`. The
 `vault-backend` ClusterSecretStore must be ready. Let the first pipeline commit
 an image digest, then, from an operator host:
 
@@ -81,7 +81,7 @@ renewed before it expires. To reconcile the secrets and the GitLab webhook, with
 the command line):
 
 ```sh
-GITLAB_PROJECT_PATH=swirlit/swirl-website \
+GITLAB_PROJECT_PATH=swirl/swirl-website \
 GITHUB_OWNER=chefzaid GITHUB_REPOSITORY=swirl-website \
   infra/scripts/configure-repository-sync.sh
 ```
@@ -176,7 +176,7 @@ PostgreSQL has a [retry queue](high-availability.md#contact-delivery-across-repl
 ## Odoo CRM and Live Chat
 
 The platform's Odoo receives every inquiry as a lead and hosts the chat (see the
-platform's [Odoo website guide](https://gitlab.swirlit.dev/swirlit/swirl-cloud/-/blob/main/docs/guides/odoo-website.md)).
+platform's [Odoo website guide](https://gitlab.swirlit.dev/swirl/swirl-cloud/-/blob/main/docs/guides/odoo-website.md)).
 Set it up once from the platform host:
 
 ```sh

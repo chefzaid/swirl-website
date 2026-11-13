@@ -90,7 +90,7 @@ spec:
       containers:
         - name: purge
           # The release image is already on the node and Kustomize pins its digest.
-          image: registry.swirlit.dev/swirlit/swirl-website/site:bootstrap
+          image: registry.swirlit.dev/swirl/swirl-website/site:bootstrap
           imagePullPolicy: IfNotPresent
           command: [node, --input-type=module, -e]
           args:

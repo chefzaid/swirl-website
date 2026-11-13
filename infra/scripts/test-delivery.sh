@@ -161,7 +161,7 @@ with tempfile.TemporaryDirectory(prefix='swirl-website-delivery-test.') as direc
                        APP_ONBOARDING='true', ONBOARDING_EXPECTED_SHA=revision,
                        CI_PIPELINE_SOURCE='api', CI_PIPELINE_ID='73', CI_COMMIT_BRANCH='main',
                        CI_PROJECT_DIR=str(workspace), DOCKER_CONFIG=str(temporary / 'docker-config'),
-                       CI_DEFAULT_BRANCH='main', CI_PROJECT_PATH='swirlit/swirl-website',
+                       CI_DEFAULT_BRANCH='main', CI_PROJECT_PATH='swirl/swirl-website',
                        CI_REGISTRY_USER='fixture', CI_REGISTRY_PASSWORD='fixture-secret',
                        REGISTRY_PUSH_HOST='registry.internal:5050',
                        REGISTRY_PULL_IMAGE=image_name,

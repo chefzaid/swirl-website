@@ -12,5 +12,5 @@ resources:
   - observability.yaml
   - cache-purge.yaml
 images:
-  - name: registry.swirlit.dev/swirlit/swirl-website/site
+  - name: registry.swirlit.dev/swirl/swirl-website/site
     digest: sha256:dccb3a529eba9730359749a528163bca1828712a8cc9a3f5e7e374a7aef8884c
