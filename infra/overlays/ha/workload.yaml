@@ -3,6 +3,9 @@ kind: Deployment
 metadata:
   name: swirl-website
   namespace: apps
+  annotations:
+    # Inquiries live in PostgreSQL here, which the platform backup dumps.
+    swirl-cloud.io/backup-sqlite: null
 spec:
   replicas: 2
   minReadySeconds: 5

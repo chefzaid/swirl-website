@@ -20,6 +20,9 @@ metadata:
   name: swirl-website
   labels:
     app: swirl-website
+  annotations:
+    # Swirl Cloud's nightly backup keeps a consistent copy (VACUUM INTO).
+    swirl-cloud.io/backup-sqlite: /data/contact.sqlite
 spec:
   # The contact database uses one SQLite writer on one persistent volume.
   replicas: 1

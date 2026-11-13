@@ -124,9 +124,11 @@ One replica stores `contact.sqlite` on the `swirl-website-data` Longhorn volume
 at `/data` and applies `db/migrations` at startup. The `Recreate` strategy
 prevents two writers during an update, at the cost of a short interruption. The
 volume has `Prune=false`, so removing it from the manifests does not delete
-inquiries. Longhorn replicas are not a backup: include the volume in the
-platform backups, and back up SQLite with its online backup or a consistent
-volume snapshot, never by copying the open file. PostgreSQL and two replicas
+inquiries. Longhorn replicas are not a backup. The Deployment declares
+`contact.sqlite` (`swirl-cloud.io/backup-sqlite`), so Swirl Cloud's nightly
+archive keeps a consistent copy taken with `VACUUM INTO`; elsewhere, back up
+SQLite with its online backup or a consistent volume snapshot, never by copying
+the open file. PostgreSQL and two replicas
 are in [PostgreSQL and HA](high-availability.md).
 
 Each build renews the 180-day expiry of `/.well-known/security.txt`, so release
