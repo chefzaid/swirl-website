@@ -1,0 +1,24 @@
+# CI packages its already verified build (01-build's dist/) with this file.
+# Keep it a single stage: Kaniko wipes the job container's filesystem between
+# stages, and the release job still needs its tools after the build.
+FROM node:26.13.1-alpine@sha256:6bd9ab43c0ec0190ca7b2d193906cb8b7edf6e7f4afa43ddeccd6452710bffb5
+ENV NODE_ENV=production PORT=8080 DATA_DIR=/data PUBLIC_ORIGIN=https://swirlit.dev
+WORKDIR /app
+# Runtime dependencies, including the PostgreSQL driver, are bundled by Vite.
+RUN apk upgrade --no-cache \
+    && rm -rf /usr/local/lib/node_modules/npm /opt/yarn-* \
+    && rm -f /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/yarn /usr/local/bin/yarnpkg \
+    && mkdir -p /data /app/dist/client /app/dist/runtime \
+    && chmod 0755 /app/dist /app/dist/client /app/dist/runtime \
+    && chown node:node /data
+COPY --chown=node:node package.json ./
+COPY --chown=node:node db/migrations ./db/migrations
+COPY --chown=node:node dist/client ./dist/client
+COPY --chown=node:node dist/runtime ./dist/runtime
+USER node
+EXPOSE 8080
+# Check runtime readability and parseability as the container's unprivileged user.
+RUN test -r ./dist/runtime/main.js && test -r ./dist/client/robots.txt \
+    && test -r ./dist/client/.well-known/security.txt \
+    && node --check ./dist/runtime/main.js
+CMD ["node", "dist/runtime/main.js"]

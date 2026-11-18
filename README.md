@@ -73,7 +73,7 @@ blocks requests to Odoo. Install its browser once with
 | Social cards and icons       | `lib/social-image.tsx`, `src/pages/og/`                            |
 | Contact form, CRM and email  | `server/`, `runtime/`, `db/migrations/`                            |
 | End-to-end tests             | `e2e/`, `playwright.config.ts`                                     |
-| Deployment                   | `infra/`, `Dockerfile`, `.gitlab-ci.yml`                           |
+| Deployment and releases      | `infra/`, `Dockerfile*`, `.gitlab-ci.yml`, `VERSION`               |
 
 ## Conventions
 

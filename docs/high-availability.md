@@ -84,7 +84,8 @@ Then persist `spec.source.path: infra/overlays/ha` in the app-owned
 `infra/argocd/application.yaml` and apply that Application through the normal
 operator playbook. A temporary live Argo path override is insufficient because
 bootstrap can reapply the repository's Application. Image releases still
-update the base Kustomization digest, inherited by the HA profile and hooks.
+update the base Kustomization's version tag and digest, inherited by the HA
+profile and hooks.
 Keep the old PVC as a recovery snapshot; the HA Deployment does not mount it
 and its existing `Prune=false` protection remains. Once PostgreSQL accepts new
 writes, returning to SQLite requires reconciling those writes first.

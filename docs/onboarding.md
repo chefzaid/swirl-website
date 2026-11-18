@@ -6,8 +6,9 @@ flow. Re-selecting an imported repository reconciles its configuration again.
 
 The platform reads [`infra/onboarding.json`](../infra/onboarding.json) to configure registry/Vault credentials,
 the repository credential and delivery observation permissions, public DNS,
-and an automatic first pipeline. `verify`, `image-build` and `release` must
-succeed, followed by the Swirl Website Deployment readiness check.
+and an automatic first pipeline. `01-build`, `03-package`, `01-release` and
+`02-deploy` must succeed, followed by the Swirl Website Deployment readiness
+check.
 
 The public inputs are:
 
@@ -43,9 +44,10 @@ It also initializes `apps/swirl-website/cloudflare` with empty `purge_token` and
 
 Onboarding pins the requested revision with `APP_ONBOARDING=true` and
 `ONBOARDING_EXPECTED_SHA`. An outdated revision fails rather than replacing newer
-source. The GitOps commit records `Onboarding-Pipeline` and `Onboarding-Source`
-trailers. If rollout fails after publication, retry the release job while that
-commit is still the default-branch tip; it resumes the existing publication.
+source. The release's `chore: prepare` commit records `Onboarding-Pipeline` and
+`Onboarding-Source` trailers. If rollout fails after publication, retry
+`02-deploy` while that commit is still the default-branch tip; it resumes the
+existing publication.
 
 `python3 infra/scripts/test-onboarding.py` and `bash infra/scripts/test-delivery.sh`
 check this contract with temporary repositories and mock tools, without

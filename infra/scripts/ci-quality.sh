@@ -6,6 +6,6 @@ mkdir -p quality-reports
 : "${SONAR_TOKEN:?SONAR_TOKEN is required}"
 sonar-scanner-npm \
   -Dsonar.host.url="$SONAR_HOST_URL" \
-  -Dsonar.projectVersion="$(node -p 'require("./package.json").version')" \
+  -Dsonar.projectVersion="${APP_VERSION:-$(node -p 'require("./package.json").version')}" \
   -Dsonar.qualitygate.wait=false
 cp .scannerwork/report-task.txt quality-reports/report-task.txt

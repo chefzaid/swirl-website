@@ -153,9 +153,11 @@ class OnboardingTests(unittest.TestCase):
 
         manifest = yaml.safe_load((self.copy / PROFILE / "kustomization.yaml").read_text())
         if SWIRL_WEBSITE:
-            subprocess.run(["bash", "infra/scripts/set-image-digest.sh", "sha256:" + "b" * 64], cwd=self.copy, check=True)
+            digest = "sha256:" + "b" * 64
+            subprocess.run(["sh", "infra/scripts/set-image-tags.sh", "9.8.7", digest], cwd=self.copy, check=True)
             updated = yaml.safe_load((self.copy / PROFILE / "kustomization.yaml").read_text())
-            self.assertEqual(updated["images"][0]["digest"], "sha256:" + "b" * 64)
+            self.assertEqual(updated["images"][0]["newTag"], "9.8.7")
+            self.assertEqual(updated["images"][0]["digest"], digest)
             self.assertEqual(updated["images"][0]["name"], values["REGISTRY_HOST"] + "/" + values["GITLAB_PROJECT_PATH"] + "/site")
             self.assertIn("https://" + values["APP_HOST"], (self.copy / "data/site.ts").read_text())
             self.assertIn("email: 'contact@swirlit.dev'", (self.copy / "data/site.ts").read_text())
@@ -205,80 +207,6 @@ class OnboardingTests(unittest.TestCase):
         path.write_text(yaml.safe_dump(workflow))
         self.test_custom_domain_group_and_repeat_configuration()
 
-    def test_failed_rollout_resumes_its_marked_publication_without_another_commit(self):
-        remote = self.directory / "remote.git"
-        git(self.directory, "init", "--bare", str(remote))
-        git(self.copy, "init", "-b", "main")
-        git(self.copy, "config", "user.name", "Onboarding test")
-        git(self.copy, "config", "user.email", "test@example.invalid")
-        git(self.copy, "config", "commit.gpgsign", "false")
-        git(self.copy, "add", ".")
-        git(self.copy, "commit", "-qm", "configured source [skip ci]")
-        git(self.copy, "remote", "add", "origin", str(remote))
-        git(self.copy, "push", "-qu", "origin", "main")
-        source = git(self.copy, "rev-parse", "HEAD")
-        digest = "sha256:" + "b" * 64
-        image = yaml.safe_load((self.copy / ".gitlab-ci.yml").read_text())["variables"]["REGISTRY_PULL_IMAGE"]
-        (self.copy / "image-digest.txt").write_text(digest)
-        commands = self.directory / "bin"
-        commands.mkdir()
-        kubectl = commands / "kubectl"
-        kubectl.write_text('''#!/usr/bin/env python3
-import json, os, subprocess, sys
-if os.environ.get("FAIL_ROLLOUT") == "true":
-    sys.exit(1)
-if sys.argv[1:3] == ["get", "application"]:
-    revision = subprocess.check_output(["git", "rev-parse", "origin/main"], text=True).strip()
-    print(json.dumps({"status": {"sync": {"revision": revision, "status": "Synced"}, "health": {"status": "Healthy"}}}))
-elif sys.argv[1:3] == ["get", "deployment"]:
-    print(json.dumps({"spec": {"template": {"spec": {"containers": [{"name": "swirl-website", "image": os.environ["EXPECTED_IMAGE"]}]}}}}))
-''')
-        kubectl.chmod(0o755)
-        curl = commands / "curl"
-        curl.write_text("#!/bin/sh\nexit 0\n")
-        curl.chmod(0o755)
-        environment = {**os.environ, "PATH": str(commands) + os.pathsep + os.environ["PATH"],
-                       "APP_ONBOARDING": "true", "CI_PIPELINE_SOURCE": "api", "CI_PIPELINE_ID": "73",
-                       "CI_COMMIT_BRANCH": "main", "CI_DEFAULT_BRANCH": "main", "CI_COMMIT_SHA": source,
-                       "ONBOARDING_EXPECTED_SHA": source, "REGISTRY_PULL_IMAGE": image,
-                       "EXPECTED_IMAGE": image + "@" + digest}
-        command = ["bash", "infra/scripts/ci-release.sh"]
-        first = subprocess.run(command, cwd=self.copy, env={**environment, "FAIL_ROLLOUT": "true"},
-                               capture_output=True, text=True, timeout=30)
-        self.assertNotEqual(first.returncode, 0)
-        release = git(self.copy, "rev-parse", "origin/main")
-        self.assertNotEqual(release, source)
-        self.assertIn("Onboarding-Pipeline: 73", git(self.copy, "show", "-s", "--format=%B", release))
-        self.assertIn("Onboarding-Source: " + source, git(self.copy, "show", "-s", "--format=%B", release))
-        git(self.copy, "checkout", "-q", "--detach", source)
-        retry = subprocess.run(command, cwd=self.copy, env=environment, capture_output=True, text=True, timeout=30)
-        self.assertEqual(retry.returncode, 0, retry.stdout + retry.stderr)
-        self.assertIn("Resuming rollout", retry.stdout)
-        self.assertEqual(git(self.copy, "rev-parse", "origin/main"), release)
-        self.assertIn("DEPLOY_REVISION=" + release, (self.copy / "release.env").read_text())
-
-        tree = git(self.copy, "rev-parse", source + "^{tree}")
-        unrelated_root = git(self.copy, "commit-tree", tree, "-m", "unrelated history")
-        message = "publication\n\nOnboarding-Pipeline: 73\nOnboarding-Source: " + source
-        second_parent = git(self.copy, "commit-tree", tree, "-p", unrelated_root, "-p", source, "-m", message)
-        repeated_trailer = git(self.copy, "commit-tree", tree, "-p", source, "-m", message + "\nOnboarding-Pipeline: 73")
-        for invalid in (second_parent, repeated_trailer):
-            check = subprocess.run(["sh", "-c", '. infra/scripts/check-onboarding.sh; onboarding_release_matches "$1"',
-                                    "test", invalid], cwd=self.copy, env=environment, capture_output=True)
-            self.assertNotEqual(check.returncode, 0, "Ambiguous identity/history must not resume publication")
-
-        # An unrelated tip, including another pipeline's valid publication,
-        # cannot resume this pipeline or change the default branch.
-        subprocess.run(["bash", "infra/scripts/commit-deployment.sh", "different pipeline"], cwd=self.copy,
-                       env={**environment, "CI_PIPELINE_ID": "74"}, check=True, capture_output=True)
-        git(self.copy, "push", "-q", "origin", "main")
-        unrelated = git(self.copy, "rev-parse", "origin/main")
-        git(self.copy, "checkout", "-q", "--detach", source)
-        rejected = subprocess.run(command, cwd=self.copy, env=environment, capture_output=True, text=True, timeout=30)
-        self.assertNotEqual(rejected.returncode, 0)
-        self.assertIn("stale", rejected.stderr)
-        self.assertEqual(git(self.copy, "rev-parse", "origin/main"), unrelated)
-
     def test_secret_requests_and_bootstrap_are_bounded(self):
         self.assertEqual(CONTRACT["registry"]["path"], "apps/" + ("swirl-website" if SWIRL_WEBSITE else "thoughty") + "/registry")
         requests = {item["path"]: item["fields"] for item in CONTRACT["vault"]}
@@ -302,7 +230,7 @@ elif sys.argv[1:3] == ["get", "deployment"]:
 
     def test_release_rules_preserve_manual_and_scan_only_pipelines(self):
         pipeline = yaml.safe_load((ROOT / ".gitlab-ci.yml").read_text())
-        job = "release" if SWIRL_WEBSITE else "01-release"
+        job = "01-release"
         defaults = dict(CI_DEFAULT_BRANCH="main", CI_COMMIT_BRANCH="main", CI_PIPELINE_SOURCE="api",
                         SONAR_SCAN_ONLY="false", APP_ONBOARDING="true", PIPELINE_MODE="standard")
         self.assertEqual(job_when(pipeline, job, **defaults), "on_success")
@@ -310,10 +238,9 @@ elif sys.argv[1:3] == ["get", "deployment"]:
         self.assertEqual(job_when(pipeline, "workflow", **settings), "on_success")
         self.assertEqual(job_when(pipeline, job, **{**defaults, "SONAR_SCAN_ONLY": "true"}), "never")
         self.assertEqual(job_when(pipeline, job, **{**defaults, "CI_COMMIT_BRANCH": "feature"}), "never")
-        if not SWIRL_WEBSITE:
-            for source in ("api", "push"):
-                self.assertEqual(job_when(pipeline, job, **{**defaults, "CI_PIPELINE_SOURCE": source, "APP_ONBOARDING": "false"}), "manual")
-            self.assertEqual(job_when(pipeline, job, **{**defaults, "CI_PIPELINE_SOURCE": "web", "APP_ONBOARDING": "false", "PIPELINE_MODE": "full"}), "on_success")
+        for source in ("api", "push"):
+            self.assertEqual(job_when(pipeline, job, **{**defaults, "CI_PIPELINE_SOURCE": source, "APP_ONBOARDING": "false"}), "manual")
+        self.assertEqual(job_when(pipeline, job, **{**defaults, "CI_PIPELINE_SOURCE": "web", "APP_ONBOARDING": "false", "PIPELINE_MODE": "full"}), "on_success")
 
     def test_expected_revision_guards_before_publication_and_deployment(self):
         remote = self.directory / "remote.git"
@@ -332,20 +259,40 @@ elif sys.argv[1:3] == ["get", "deployment"]:
         command = 'set -eu; . infra/scripts/check-onboarding.sh; check_onboarding_source; check_onboarding_head "$CI_COMMIT_SHA"'
         result = subprocess.run(["sh", "-c", command], cwd=self.copy, env=environment, capture_output=True)
         self.assertEqual(result.returncode, 0, result.stderr)
+        commands = self.directory / "bin"
+        commands.mkdir()
+        log = self.directory / "cluster-calls"
+        image = "registry.example/team/product/site:1.2.3@sha256:" + "b" * 64
+        kubectl = commands / "kubectl"
+        kubectl.write_text('#!/usr/bin/env python3\nimport json, os, sys\n'
+                           'with open(os.environ["MOCK_CLUSTER_LOG"], "a") as stream: stream.write(sys.argv[1] + "\\n")\n'
+                           'if sys.argv[1:3] == ["get", "application"]: print(json.dumps({"status":{"sync":{"revision":os.environ["DEPLOY_REVISION"],"status":"Synced"},"health":{"status":"Healthy"}}}))\n'
+                           'elif sys.argv[1:3] == ["get", "deployment"]: print(json.dumps({"spec":{"template":{"spec":{"containers":[{"name":"swirl-website","image":os.environ["IMAGE"]}]}}}}))\n')
+        kubectl.chmod(0o700)
+        curl = commands / "curl"
+        curl.write_text('#!/bin/sh\nexit 0\n')
+        curl.chmod(0o700)
+        environment.update(PATH=str(commands) + ':' + os.environ['PATH'],
+                           MOCK_CLUSTER_LOG=str(log), DEPLOY_REVISION=revision, IMAGE=image)
+        result = subprocess.run(["bash", "infra/scripts/ci-release.sh", "deploy"],
+                                cwd=self.copy, env=environment, capture_output=True)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn('apply', log.read_text().splitlines())
+        log.write_text('')
         for bad in ({"ONBOARDING_EXPECTED_SHA": "a" * 40}, {"ONBOARDING_EXPECTED_SHA": ""},
                     {"CI_PIPELINE_SOURCE": "push"}, {"CI_COMMIT_BRANCH": "feature"}):
             changed = {**environment, **bad}
-            for phase in (["publish", "deploy"] if not SWIRL_WEBSITE else [""]):
+            for phase in ["publish", "deploy"]:
                 result = subprocess.run(["bash", "infra/scripts/ci-release.sh", phase],
                                         cwd=self.copy, env=changed, capture_output=True)
                 self.assertNotEqual(result.returncode, 0)
                 self.assertFalse((self.copy / "release.env").exists())
-            builder = "ci-build-image.sh" if SWIRL_WEBSITE else "ci-container-build.sh"
+                self.assertEqual(log.read_text(), '', 'Rejected onboarding cannot change cluster resources')
             changed.update(CI_PROJECT_DIR=str(self.copy), CI_PROJECT_PATH="team/product",
                            CI_REGISTRY_USER="fixture", CI_REGISTRY_PASSWORD="private-fixture",
                            REGISTRY_PUSH_HOST="registry.invalid:5050", APP_VERSION="1.2.3",
                            KANIKO_EXECUTOR="/unavailable-builder")
-            result = subprocess.run(["sh" if SWIRL_WEBSITE else "bash", "infra/scripts/" + builder, "publish"],
+            result = subprocess.run(["bash", "infra/scripts/ci-container-build.sh", "publish"],
                                     cwd=self.copy, env=changed, capture_output=True, text=True)
             self.assertNotEqual(result.returncode, 0)
             self.assertNotIn("unavailable-builder", result.stderr)

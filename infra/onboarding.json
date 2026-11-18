@@ -137,9 +137,10 @@
       "APP_ONBOARDING": "true"
     },
     "jobs": [
-      "verify",
-      "image-build",
-      "release"
+      "01-build",
+      "03-package",
+      "01-release",
+      "02-deploy"
     ]
   },
   "readiness": {

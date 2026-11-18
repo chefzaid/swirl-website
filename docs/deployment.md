@@ -13,17 +13,45 @@ Vault/External Secrets, Longhorn storage, Traefik ingress, Cloudflare and the
 
 ## Delivery
 
-Push to `main` to deploy. GitLab runs:
+| Stage | Jobs | Behavior |
+| --- | --- | --- |
+| `build` | `01-build` → `02-test` → `03-package` | All must pass. `01-build` runs the onboarding and delivery tests, renders the manifests, type-checks (`astro check`), builds, and checks the build's security and SEO. `02-test` runs lint, the format check, unit tests with coverage and the dependency audit. `03-package` builds the image from `Dockerfile.runtime` with Kaniko without pushing it. |
+| `verify` | `01-e2e`, `02-quality`, `03-security` | `01-e2e`, the Playwright and axe suite on the build, must pass. SonarQube runs automatically on `main` and only reports. Trivy is manual and only reports. |
+| `release` | `01-release` → `02-deploy` | Needs the build, the package and E2E. |
+| `version` | `set-major-version` | Manual; sets `<NEW_MAJOR_VERSION>.0.0`. |
 
-1. **`verify`:** type check, lint, format check, unit tests with coverage,
-   build, security and SEO checks of the build, the dependency audit and the
-   delivery and onboarding tests.
-2. **`e2e`:** the Playwright and axe suite on the build, in the Playwright image.
-3. **`image-build`:** once both pass, Kaniko builds the Dockerfile's `prebuilt`
-   target from the verified build and pushes it under the commit SHA.
-4. **`release`:** commits the image digest to `infra/k8s/kustomization.yaml`
-   with `[skip ci]`, waits for Argo CD to report it Synced and Healthy, then
-   checks the image and `/healthz`.
+Release is manual on `main`. It runs automatically from **Run pipeline** with
+`PIPELINE_MODE=full` (which also runs quality and security) and from onboarding
+pipelines. It never runs on other branches, merge requests, or
+`SONAR_SCAN_ONLY=true` pipelines, which run only `01-build`, `02-test` and
+`02-quality`.
+
+`01-release`:
+
+1. Stops if `main` moved during the pipeline, checked before and after the image
+   build.
+2. Builds `Dockerfile.runtime` from `01-build`'s output with Kaniko and pushes
+   `registry.swirlit.dev/swirl/swirl-website/site:<version>`.
+3. Commits `release: <version>` with the version tag and the image digest in
+   `infra/k8s/kustomization.yaml`, tags `v<version>`, commits the next minor
+   baseline, and pushes.
+4. Creates a GitLab Release.
+
+`02-deploy` applies the `Application`, hard-refreshes it, waits up to 15 minutes
+for the pushed commit to be `Synced` and `Healthy`, then checks that the
+Deployment runs `site:<version>@<digest>` and answers `/healthz`. If a newer
+commit reaches `main` meanwhile, it stops waiting without failing. After each
+sync, Argo CD purges the Cloudflare cache ([below](#cloudflare-edge-cache)).
+Argo CD follows `infra/k8s` on `main`, so manifest changes apply once merged; a
+new image ships only through `01-release`. Release jobs share the
+`swirl-website-production` resource group. CI artifacts expire after 7 days.
+
+**Versioning.** [`VERSION`](../VERSION) holds the baseline (first `1.0.0`). Each
+later first-parent commit adds one to the patch. Releasing `1.0.3` prepares
+`1.1.0`. Only `set-major-version` changes the major number.
+`infra/scripts/set-project-version.sh` keeps `package.json` and
+`package-lock.json` on the same version. The pods run the image by version tag
+and digest, so the portal shows the running version.
 
 The dependency audit (`scripts/audit.mjs`) runs `npm audit` and fails on any
 high or critical advisory except the exceptions listed in the script, each with
@@ -32,17 +60,16 @@ fails again, once its expiry date has passed or a fix exists: `npm audit fix`
 can apply one, or the package's latest release is not affected. The job log
 lists each excepted advisory and its reason.
 
-`sonar` runs after `verify` on `main` without blocking; on other branches it is
-manual. A pipeline with `SONAR_SCAN_ONLY=true` runs only `verify` and `sonar`.
-The platform creates the Sonar project and token from `.sonar-auto.json`.
-Astro templates are not a Sonar language; `astro check` and the build checks
-cover them.
+`02-quality` (SonarQube) runs after `02-test` on `main` without blocking; on
+other branches it is manual. The platform creates the Sonar project and token
+from `.sonar-auto.json`. Astro templates are not a Sonar language; `astro check`
+and the build checks cover them.
 
-Releases share the `swirl-website-production` resource group, so a newer commit
-supersedes an older one and nothing is overwritten. Artifacts are kept seven
-days. The CI job token must be allowed to push to this project's protected
-`main`. The shared runner can only read the `apps/swirl-website` Deployment
-(`infra/k8s/delivery-rbac.yaml`); it cannot change workloads or read Secrets.
+`01-release` pushes with the CI job token, which must be allowed to push to this
+project's protected `main` and to create `v*` tags, and creates the GitLab
+Release with it. The shared runner can only read the `apps/swirl-website`
+Deployment (`infra/k8s/delivery-rbac.yaml`); it cannot change workloads or read
+Secrets.
 
 Check the manifests locally with `kubectl kustomize infra/k8s` and
 `ansible-playbook --syntax-check infra/ansible/site.yaml`.
@@ -61,8 +88,8 @@ registry credentials in Vault KV v2 at `secret/apps/swirl-website/registry`:
 `infra/k8s/registry-credentials.yaml` turns them into the image pull Secret and
 `infra/argocd/repository-credentials.yaml` into Argo CD's access to
 `http://gitlab.swirl.internal/swirl/swirl-website.git`. The
-`vault-backend` ClusterSecretStore must be ready. Let the first pipeline commit
-an image digest, then, from an operator host:
+`vault-backend` ClusterSecretStore must be ready. Let the first pipeline release
+the site (`01-release`), then, from an operator host:
 
 ```sh
 kubectl apply -f infra/argocd/repository-credentials.yaml

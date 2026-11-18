@@ -14,15 +14,8 @@ USER node
 EXPOSE 8080
 CMD ["node", "dist/runtime/main.js"]
 
-# CI can package its already validated build with --target prebuilt.
-FROM runtime-base AS prebuilt
-COPY --chown=node:node dist/client ./dist/client
-COPY --chown=node:node dist/runtime ./dist/runtime
-# Check runtime readability and parseability as the container's unprivileged user.
-RUN test -r ./dist/runtime/main.js && test -r ./dist/client/robots.txt \
-    && test -r ./dist/client/.well-known/security.txt \
-    && node --check ./dist/runtime/main.js
-
+# This file builds the site from source; CI packages its verified build with
+# Dockerfile.runtime instead.
 FROM node:26.13.1-alpine@sha256:6bd9ab43c0ec0190ca7b2d193906cb8b7edf6e7f4afa43ddeccd6452710bffb5 AS build
 WORKDIR /app
 COPY package.json package-lock.json ./

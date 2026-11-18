@@ -66,7 +66,17 @@ assert role['rules'] == [{'apiGroups':['apps'], 'resources':['deployments'],
                           'resourceNames':['swirl-website'], 'verbs':['get','list','watch']}]
 assert binding['subjects'] == [{'kind':'ServiceAccount', 'name':'gitlab-ci-job', 'namespace':'gitlab-runners'}]
 pipeline = yaml.safe_load((source / '.gitlab-ci.yml').read_text())
-assert not pipeline['verify'].get('allow_failure', False)
+# Every check the site ran before versioned releases stays in a blocking job.
+for name in ('01-build', '02-test', '03-package', '01-e2e'):
+    assert not pipeline[name].get('allow_failure', False), name
+assert pipeline['01-build']['script'] == ['infra/scripts/ci-verify.sh build']
+assert pipeline['02-test']['script'] == ['infra/scripts/ci-verify.sh test']
+assert pipeline['01-e2e']['script'][-1] == 'npm run test:e2e'
+verify = (source / 'infra/scripts/ci-verify.sh').read_text()
+for check in ('npm run check', 'npm run build', 'scripts/check-built-security.py', 'scripts/check-built-seo.py',
+              'infra/scripts/test-delivery.sh', 'infra/scripts/test-onboarding.py', 'npm run lint',
+              'npm run format:check', 'npm run test:coverage', 'node scripts/audit.mjs'):
+    assert check in verify, check
 if shutil.which('kubectl'):
     rendered = list(yaml.safe_load_all(subprocess.check_output(['kubectl', 'kustomize', str(source/'infra/overlays/ha')], text=True)))
     ha = next(doc for doc in rendered if doc['kind'] == 'Deployment')
@@ -86,11 +96,14 @@ if shutil.which('kubectl'):
         hook = next(doc for doc in rendered if doc['kind'] == 'Job' and doc['metadata']['name'] == hook_name)
         assert hook['metadata']['annotations']['argocd.argoproj.io/hook'] == 'PreSync'
         assert hook['spec']['template']['spec']['containers'][0]['image'] == app_container['image']
-assert pipeline['release']['resource_group'] == 'swirl-website-production'
-assert pipeline['image-build']['needs'] == [{'job': 'verify', 'artifacts': True}, {'job': 'e2e', 'artifacts': False}]
-assert pipeline['e2e']['needs'] == [{'job': 'verify', 'artifacts': True}] and not pipeline['e2e'].get('allow_failure', False)
-assert pipeline['release']['needs'] == [{'job': 'image-build', 'artifacts': True}]
-assert pipeline['image-build']['image']['entrypoint'] == ['']
+for name in ('01-release', '02-deploy', 'set-major-version'):
+    assert pipeline[name]['resource_group'] == 'swirl-website-production' and pipeline[name]['interruptible'] is False, name
+assert pipeline['03-package']['needs'] == [{'job': '01-build', 'artifacts': True}, {'job': '02-test', 'artifacts': False}]
+assert pipeline['01-e2e']['needs'] == [{'job': '01-build', 'artifacts': True}, {'job': '03-package', 'artifacts': False}]
+assert pipeline['01-release']['needs'] == [{'job': '01-build', 'artifacts': True}, {'job': '03-package', 'artifacts': False},
+                                           {'job': '01-e2e', 'artifacts': False}]
+assert pipeline['02-deploy']['needs'] == [{'job': '01-release', 'artifacts': True}]
+assert pipeline['01-release']['artifacts']['reports']['dotenv'] == 'release.env'
 
 mock = r'''#!/usr/bin/env python3
 import json, os, pathlib, subprocess, sys
@@ -104,22 +117,23 @@ if name == 'kaniko':
     inherited_umask = os.umask(0)
     os.umask(inherited_umask)
     assert inherited_umask == 0o022, f'Kaniko inherited unsafe image umask {inherited_umask:04o}'
-    docker_config = pathlib.Path(os.environ['DOCKER_CONFIG'])
-    assert docker_config.stat().st_mode & 0o777 == 0o700
-    assert (docker_config/'config.json').stat().st_mode & 0o777 == 0o600
-    pathlib.Path(args[args.index('--digest-file')+1]).write_text(os.environ['MOCK_DIGEST'])
+    if '--digest-file' in args:
+        docker_config = pathlib.Path(os.environ['DOCKER_CONFIG'])
+        assert docker_config.stat().st_mode & 0o777 == 0o700
+        assert (docker_config/'config.json').stat().st_mode & 0o777 == 0o600
+        pathlib.Path(args[args.index('--digest-file')+1]).write_text(os.environ['MOCK_DIGEST'])
     if os.environ.get('MOCK_ADVANCE_REPO'):
         repository = pathlib.Path(os.environ['MOCK_ADVANCE_REPO'])
         (repository/'new-source.txt').write_text('A newer source push during the image build\n')
         for command in (['git','add','.'], ['git','commit','-qm','newer source'], ['git','push','-q','origin','HEAD:main']):
             subprocess.run(command,cwd=repository,check=True)
 elif name == 'kubectl' and args[:3] == ['get','application','swirl-website']:
-    revision = subprocess.check_output(['git','rev-parse','HEAD'], text=True).strip()
+    revision = subprocess.check_output(['git','rev-parse','origin/main'], text=True).strip()
     print(json.dumps({'status':{'sync':{'revision':revision,'status':'Synced'},'health':{'status':'Healthy'}}}))
 elif name == 'kubectl' and args[:3] == ['get','deployment','swirl-website']:
     print(json.dumps({'spec':{'template':{'spec':{'containers':[{'name':'swirl-website','image':os.environ['MOCK_IMAGE']}]}}}}))
 elif name == 'curl':
-    print('{"ok":true}')
+    print('{}')
 '''
 
 def git(directory, *args):
@@ -136,12 +150,17 @@ with tempfile.TemporaryDirectory(prefix='swirl-website-delivery-test.') as direc
     git(workspace, 'config', 'user.email', 'test@example.invalid')
     git(workspace, 'remote', 'add', 'origin', str(remote))
     shutil.copytree(source / 'infra', workspace / 'infra')
+    (workspace / 'VERSION').write_text('1.0.0\n')
+    (workspace / 'package.json').write_text('{\n  "name": "swirl-website",\n  "version": "1.0.0"\n}\n')
+    (workspace / 'package-lock.json').write_text(
+        '{\n  "name": "swirl-website",\n  "version": "1.0.0",\n  "lockfileVersion": 3,\n  "packages": {\n'
+        '    "": {\n      "name": "swirl-website",\n      "version": "1.0.0"\n    }\n  }\n}\n')
     (workspace / 'dist/client').mkdir(parents=True)
     (workspace / 'dist/runtime').mkdir(parents=True)
     (workspace / 'dist/runtime/main.js').write_text('// verified runtime artifact\n')
     (workspace / 'dist/runtime/migrate-postgres.js').write_text('// verified migration artifact\n')
     (workspace / 'dist/client/site.css').write_text('body{}\n')
-    (workspace / 'Dockerfile').write_text('FROM scratch\n')
+    (workspace / 'Dockerfile.runtime').write_text('FROM scratch\n')
     git(workspace, 'add', '.')
     git(workspace, 'commit', '-qm', 'source fixture')
     git(workspace, 'push', '-q', '-u', 'origin', 'main')
@@ -154,60 +173,109 @@ with tempfile.TemporaryDirectory(prefix='swirl-website-delivery-test.') as direc
         path.chmod(0o700)
     digest = 'sha256:' + 'a' * 64
     image_name = yaml.safe_load((source/'infra/k8s/kustomization.yaml').read_text())['images'][0]['name']
-    image = image_name + '@' + digest
+    image = image_name + ':1.0.0@' + digest
     log = temporary / 'calls.jsonl'
     environment = dict(os.environ, PATH=str(commands)+':'+os.environ['PATH'], MOCK_LOG=str(log),
                        MOCK_DIGEST=digest, MOCK_IMAGE=image, CI_COMMIT_SHA=revision,
                        APP_ONBOARDING='true', ONBOARDING_EXPECTED_SHA=revision,
                        CI_PIPELINE_SOURCE='api', CI_PIPELINE_ID='73', CI_COMMIT_BRANCH='main',
                        CI_PROJECT_DIR=str(workspace), DOCKER_CONFIG=str(temporary / 'docker-config'),
-                       CI_DEFAULT_BRANCH='main', CI_PROJECT_PATH='swirl/swirl-website',
+                       CI_DEFAULT_BRANCH='main', CI_PROJECT_PATH='swirl/swirl-website', CI_PROJECT_ID='42',
+                       CI_SERVER_URL='https://gitlab.example', CI_API_V4_URL='https://gitlab.example/api/v4',
+                       CI_JOB_TOKEN='fixture-job-token',
                        CI_REGISTRY_USER='fixture', CI_REGISTRY_PASSWORD='fixture-secret',
                        REGISTRY_PUSH_HOST='registry.internal:5050',
                        REGISTRY_PULL_IMAGE=image_name,
                        KANIKO_EXECUTOR=str(commands / 'kaniko'))
+    for stale in ('APP_VERSION', 'DEPLOY_REVISION', 'IMAGE', 'NEW_MAJOR_VERSION'):
+        environment.pop(stale, None)
 
-    def execute(script, shell='bash'):
+    def execute(script, *arguments, succeed=True):
         log.write_text('')
-        result = subprocess.run([shell, 'infra/scripts/'+script], cwd=workspace,
+        result = subprocess.run(['bash', 'infra/scripts/'+script, *arguments], cwd=workspace,
                                 env=environment, capture_output=True, text=True)
-        assert result.returncode == 0, result.stdout + result.stderr
+        assert (result.returncode == 0) == succeed, result.stdout + result.stderr
         assert 'fixture-secret' not in result.stdout + result.stderr + log.read_text()
         return [json.loads(line) for line in log.read_text().splitlines()]
 
-    image_calls = execute('ci-build-image.sh', 'sh')
+    # The commit that sets VERSION is its baseline.
+    version = subprocess.check_output(['sh', 'infra/scripts/current-version.sh'], cwd=workspace,
+                                      env=environment, text=True).strip()
+    assert version == '1.0.0', version
+    environment['APP_VERSION'] = version
+
+    # 03-package builds the verified dist/ without pushing.
+    calls = execute('ci-container-build.sh', 'verify')
+    builder = next(call for call in calls if call['tool'] == 'kaniko')
+    assert '--no-push' in builder['args'] and '--digest-file' not in builder['args']
+    assert builder['args'][builder['args'].index('--dockerfile')+1].endswith('/Dockerfile.runtime')
+    assert builder['args'][builder['args'].index('--destination')+1] == 'registry.internal:5050/swirl/swirl-website/site:1.0.0'
+
+    # 01-release pushes <version>, records it with the digest, tags it and prepares the next minor.
+    calls = execute('ci-release.sh', 'publish')
     assert not (temporary / 'docker-config/config.json').exists()
-    calls = execute('ci-release.sh')
-    assert 'DEPLOY_SKIPPED=false' in (workspace / 'release.env').read_text()
-    assert image in (workspace / 'release.env').read_text()
-    assert '[skip ci]' in git(workspace, 'log', '-1', '--format=%s')
-    assert git(workspace, 'rev-parse', 'HEAD') == git(remote, 'rev-parse', 'refs/heads/main')
-    builder = next(call for call in image_calls if call['tool'] == 'kaniko')
-    assert builder['args'][builder['args'].index('--target')+1] == 'prebuilt'
-    assert builder['args'][builder['args'].index('--destination')+1].endswith(':'+revision)
+    builder = next(call for call in calls if call['tool'] == 'kaniko')
+    assert '--no-push' not in builder['args']
+    assert builder['args'][builder['args'].index('--destination')+1] == 'registry.internal:5050/swirl/swirl-website/site:1.0.0'
+    tip = git(remote, 'rev-parse', 'refs/heads/main')
+    release = git(remote, 'rev-parse', 'v1.0.0^{commit}')
+    assert git(remote, 'log', '-1', '--format=%s', release) == 'release: 1.0.0 [skip ci]'
+    assert git(remote, 'log', '-1', '--format=%s', tip) == 'chore: prepare 1.1.0 [skip ci]'
+    assert git(remote, 'rev-parse', tip + '^') == release and git(remote, 'rev-parse', release + '^') == revision
+    assert 'Onboarding-Source: ' + revision in git(remote, 'show', '-s', '--format=%B', tip)
+    released = yaml.safe_load(git(remote, 'show', release + ':infra/k8s/kustomization.yaml'))['images'][0]
+    assert (released['name'], released['newTag'], released['digest']) == (image_name, '1.0.0', digest)
+    assert git(remote, 'show', release + ':VERSION') == '1.0.0' and git(remote, 'show', tip + ':VERSION') == '1.1.0'
+    assert '"version": "1.1.0"' in git(remote, 'show', tip + ':package.json')
+    published = (workspace / 'release.env').read_text().splitlines()
+    assert 'DEPLOY_REVISION=' + tip in published and 'IMAGE=' + image in published and 'RELEASE_TAG=v1.0.0' in published
+    gitlab = next(call for call in calls if call['tool'] == 'curl')
+    assert gitlab['args'][-1] == 'https://gitlab.example/api/v4/projects/42/releases'
+    assert json.loads(gitlab['args'][gitlab['args'].index('--data')+1])['tag_name'] == 'v1.0.0'
+
+    # 02-deploy starts from the pipeline's source checkout with the release artifact.
+    git(workspace, 'checkout', '-q', '--detach', revision)
+    calls = execute('ci-release.sh', 'deploy')
+    assert next(call for call in calls if call['tool'] == 'kubectl')['args'] == ['apply', '-f', 'infra/argocd/application.yaml']
     assert any(call['tool'] == 'curl' and call['args'][-1].endswith('/healthz') for call in calls)
 
-    # Retrying an old pipeline never overwrites the newer GitOps commit.
+    # Retrying the released pipeline cannot publish again: main has moved.
     environment['APP_ONBOARDING'] = 'false'
-    git(workspace, 'checkout', '-q', '--detach', revision)
-    calls = execute('ci-release.sh')
-    assert 'DEPLOY_SKIPPED=true' in (workspace / 'release.env').read_text()
+    (workspace / 'release.env').unlink()
+    calls = execute('ci-release.sh', 'publish', succeed=False)
     assert not calls
+    assert git(remote, 'rev-parse', 'refs/heads/main') == tip
+    assert not (workspace / 'release.env').exists()
 
-    # A source push while the image is being built also prevents deployment.
+    # A source push while the image is being built also stops the release.
     git(workspace, 'checkout', '-q', '-B', 'main', 'origin/main')
     environment['CI_COMMIT_SHA'] = git(workspace, 'rev-parse', 'HEAD')
+    environment['APP_VERSION'] = '1.1.0'
     racing = temporary / 'racing-source'
     git(temporary, 'clone', '-q', '-b', 'main', str(remote), str(racing))
     git(racing, 'config', 'user.name', 'Delivery test')
     git(racing, 'config', 'user.email', 'test@example.invalid')
     environment['MOCK_ADVANCE_REPO'] = str(racing)
-    image_calls = execute('ci-build-image.sh', 'sh')
-    assert [call['tool'] for call in image_calls] == ['kaniko']
-    calls = execute('ci-release.sh')
-    assert 'DEPLOY_SKIPPED=true' in (workspace / 'release.env').read_text()
-    assert not calls
+    calls = execute('ci-release.sh', 'publish', succeed=False)
+    assert [call['tool'] for call in calls] == ['kaniko']
     assert git(remote, 'rev-parse', 'refs/heads/main') == git(racing, 'rev-parse', 'HEAD')
+    assert 'v1.1.0' not in git(remote, 'tag').split()
+    assert not (workspace / 'release.env').exists()
+    environment.pop('MOCK_ADVANCE_REPO')
 
-print('PASS: canonical www redirect, persistent single-writer deployment, private repository credentials, immutable delivery, and stale-pipeline guards')
+    # Each later first-parent commit adds one to the patch; set-major-version starts a new major.
+    counter = temporary / 'version-check'
+    git(temporary, 'clone', '-q', '-b', 'main', str(remote), str(counter))
+    environment['CI_COMMIT_SHA'] = git(counter, 'rev-parse', 'HEAD')
+    version = subprocess.check_output(['sh', 'infra/scripts/current-version.sh'], cwd=counter,
+                                      env=environment, text=True).strip()
+    assert version == '1.1.1', version
+    environment['NEW_MAJOR_VERSION'] = '2'
+    result = subprocess.run(['bash', 'infra/scripts/ci-set-major-version.sh'], cwd=counter,
+                            env=environment, capture_output=True, text=True)
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert git(remote, 'show', 'main:VERSION') == '2.0.0'
+    assert git(remote, 'log', '-1', '--format=%s', 'main') == 'chore: set version 2.0.0 [skip ci]'
+
+print('PASS: canonical www redirect, persistent single-writer deployment, private repository credentials, versioned immutable releases, and stale-pipeline guards')
 PY
