@@ -13,4 +13,5 @@ resources:
   - cache-purge.yaml
 images:
   - name: registry.swirlit.dev/swirl/swirl-website/site
-    digest: sha256:41a53309bb96c1f961166fc823c11c27618b65879a79defe31db949a837fdeaa
+    newTag: 1.0.3
+    digest: sha256:870af6f3b4a6bb0310cbf7cf0777ef02646a3b88d44d1fcdda6a5d47dc831887
