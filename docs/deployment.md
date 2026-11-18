@@ -16,7 +16,7 @@ Vault/External Secrets, Longhorn storage, Traefik ingress, Cloudflare and the
 Push to `main` to deploy. GitLab runs:
 
 1. **`verify`:** type check, lint, format check, unit tests with coverage,
-   build, security and SEO checks of the build, `npm audit` (high) and the
+   build, security and SEO checks of the build, the dependency audit and the
    delivery and onboarding tests.
 2. **`e2e`:** the Playwright and axe suite on the build, in the Playwright image.
 3. **`image-build`:** once both pass, Kaniko builds the Dockerfile's `prebuilt`
@@ -24,6 +24,13 @@ Push to `main` to deploy. GitLab runs:
 4. **`release`:** commits the image digest to `infra/k8s/kustomization.yaml`
    with `[skip ci]`, waits for Argo CD to report it Synced and Healthy, then
    checks the image and `/healthz`.
+
+The dependency audit (`scripts/audit.mjs`) runs `npm audit` and fails on any
+high or critical advisory except the exceptions listed in the script, each with
+its package, reason and expiry date. An exception stops applying, and the job
+fails again, once its expiry date has passed or a fix exists: `npm audit fix`
+can apply one, or the package's latest release is not affected. The job log
+lists each excepted advisory and its reason.
 
 `sonar` runs after `verify` on `main` without blocking; on other branches it is
 manual. A pipeline with `SONAR_SCAN_ONLY=true` runs only `verify` and `sonar`.

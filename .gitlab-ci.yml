@@ -33,7 +33,7 @@ variables:
 
 verify:
   stage: verify
-  image: node:24.22.3-bookworm-slim@sha256:dc26ae92c9fb15cf6b1d63e20f0944b2efe0f115b20e00be48fb23fceb061c54
+  image: node:26.13.1-bookworm-slim@sha256:5df79989ed685e09f0a98019db4cebfb22fb9df1a53c0161664a011f7ff6b0f1
   cache:
     key:
       files:
@@ -53,7 +53,7 @@ verify:
     - npm run build
     - python3 scripts/check-built-security.py
     - python3 scripts/check-built-seo.py
-    - npm audit --audit-level=high
+    - node scripts/audit.mjs
     - bash infra/scripts/test-delivery.sh
     - python3 infra/scripts/test-onboarding.py
   artifacts:
@@ -140,7 +140,7 @@ release:
 
 sonar:
   stage: verify
-  image: node:24.22.3-bookworm-slim@sha256:dc26ae92c9fb15cf6b1d63e20f0944b2efe0f115b20e00be48fb23fceb061c54
+  image: node:26.13.1-bookworm-slim@sha256:5df79989ed685e09f0a98019db4cebfb22fb9df1a53c0161664a011f7ff6b0f1
   needs:
     - job: verify
       artifacts: true

@@ -2,7 +2,7 @@
 
 Swirl's bilingual company website (French at `/`, English at `/en/`), live at
 `https://swirlit.dev`. Pages are built with Astro 7 and React 19 and served by a
-Node 24 application on Swirl's bare-metal Kubernetes cluster. Only the chat
+Node 26 application on Swirl's bare-metal Kubernetes cluster. Only the chat
 button hydrates on every page; the homepage also hydrates its project gallery,
 contact form and, on small screens, its header.
 
@@ -17,7 +17,7 @@ contact form and, on small screens, its header.
 
 ## Run it locally
 
-Requires Node 24.15+ and npm.
+Requires Node 26.13.1+ and npm.
 
 ```sh
 npm ci
@@ -50,6 +50,7 @@ npm run format:check
 npm test                               # unit tests (CI also measures coverage)
 npm run build
 npm run test:e2e                       # Playwright and axe, on the build
+node scripts/audit.mjs                 # npm audit, high and critical
 python3 scripts/check-built-security.py
 python3 scripts/check-built-seo.py
 bash infra/scripts/test-delivery.sh
