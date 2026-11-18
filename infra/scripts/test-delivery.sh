@@ -125,11 +125,18 @@ if name == 'kaniko':
     inherited_umask = os.umask(0)
     os.umask(inherited_umask)
     assert inherited_umask == 0o022, f'Kaniko inherited unsafe image umask {inherited_umask:04o}'
+    # Base images come through the Dependency Proxy, with or without its :443.
+    assert args[args.index('--registry-mirror')+1] == os.environ['CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX']
+    docker_config = pathlib.Path(os.environ['DOCKER_CONFIG'])
+    assert docker_config.stat().st_mode & 0o777 == 0o700
+    assert (docker_config/'config.json').stat().st_mode & 0o777 == 0o600
+    auths = json.loads((docker_config/'config.json').read_text())['auths']
+    assert {'gitlab.example:443', 'gitlab.example'} <= set(auths)
     if '--digest-file' in args:
-        docker_config = pathlib.Path(os.environ['DOCKER_CONFIG'])
-        assert docker_config.stat().st_mode & 0o777 == 0o700
-        assert (docker_config/'config.json').stat().st_mode & 0o777 == 0o600
+        assert 'registry.internal:5050' in auths
         pathlib.Path(args[args.index('--digest-file')+1]).write_text(os.environ['MOCK_DIGEST'])
+    else:
+        assert 'registry.internal:5050' not in auths
     if os.environ.get('MOCK_ADVANCE_REPO'):
         repository = pathlib.Path(os.environ['MOCK_ADVANCE_REPO'])
         (repository/'new-source.txt').write_text('A newer source push during the image build\n')
@@ -192,6 +199,9 @@ with tempfile.TemporaryDirectory(prefix='swirl-website-delivery-test.') as direc
                        CI_SERVER_URL='https://gitlab.example', CI_API_V4_URL='https://gitlab.example/api/v4',
                        CI_JOB_TOKEN='fixture-job-token',
                        CI_REGISTRY_USER='fixture', CI_REGISTRY_PASSWORD='fixture-secret',
+                       CI_DEPENDENCY_PROXY_SERVER='gitlab.example:443',
+                       CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX='gitlab.example:443/swirl/dependency_proxy/containers',
+                       CI_DEPENDENCY_PROXY_USER='gitlab-ci-token', CI_DEPENDENCY_PROXY_PASSWORD='fixture-proxy-secret',
                        REGISTRY_PUSH_HOST='registry.internal:5050',
                        REGISTRY_PULL_IMAGE=image_name,
                        KANIKO_EXECUTOR=str(commands / 'kaniko'))
@@ -203,7 +213,8 @@ with tempfile.TemporaryDirectory(prefix='swirl-website-delivery-test.') as direc
         result = subprocess.run(['bash', 'infra/scripts/'+script, *arguments], cwd=workspace,
                                 env=environment, capture_output=True, text=True)
         assert (result.returncode == 0) == succeed, result.stdout + result.stderr
-        assert 'fixture-secret' not in result.stdout + result.stderr + log.read_text()
+        for secret in ('fixture-secret', 'fixture-proxy-secret'):
+            assert secret not in result.stdout + result.stderr + log.read_text()
         return [json.loads(line) for line in log.read_text().splitlines()]
 
     # The commit that sets VERSION is its baseline.
@@ -218,6 +229,7 @@ with tempfile.TemporaryDirectory(prefix='swirl-website-delivery-test.') as direc
     assert '--no-push' in builder['args'] and '--digest-file' not in builder['args']
     assert builder['args'][builder['args'].index('--dockerfile')+1].endswith('/Dockerfile.runtime')
     assert builder['args'][builder['args'].index('--destination')+1] == 'registry.internal:5050/swirl/swirl-website/site:1.0.0'
+    assert not (temporary / 'docker-config/config.json').exists()
 
     # 01-release pushes <version>, records it with the digest, tags it and prepares the next minor.
     calls = execute('ci-release.sh', 'publish')

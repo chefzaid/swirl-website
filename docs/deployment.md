@@ -25,7 +25,10 @@ Jobs start as soon as the jobs they need finish, not stage by stage. `01-build`,
 12 GiB). Node's test runner and Playwright size their worker pools from the
 node's threads, not the job's CPU quota, so CI caps them with
 `infra/scripts/job-cpus.sh`. The page scans in `e2e/accessibility.spec.ts` run
-in parallel.
+in parallel. Kaniko (`03-package`, `01-release`) pulls base images through the
+`swirl` group's GitLab Dependency Proxy, with the job's Dependency Proxy
+credentials, and falls back to Docker Hub, so Docker Hub's anonymous pull limit
+does not fail builds.
 
 Release is manual on `main`. It runs automatically from **Run pipeline** with
 `PIPELINE_MODE=full` (which also runs quality and security) and from onboarding

@@ -17,30 +17,54 @@ case "$REGISTRY_PUSH_HOST" in
   ''|*[!A-Za-z0-9.:-]*) echo 'Invalid private registry address' >&2; exit 1 ;;
 esac
 
+# Registry credentials for Kaniko: built with shell builtins and base64 on
+# stdin, so no secret reaches a process argument, and removed on exit.
+auth_entry() {
+  printf '"%s":{"auth":"%s"}' "$1" "$(printf '%s:%s' "$2" "$3" | base64 | tr -d '\n')"
+}
+auths=()
+options=()
+
 case "$mode" in
   verify)
-    options=(--no-push --cache=false)
+    options+=(--no-push --cache=false)
     ;;
   publish)
     check_onboarding_source
     check_onboarding_head "${CI_COMMIT_SHA:-}"
     : "${CI_REGISTRY_USER:?CI_REGISTRY_USER is required}"
     : "${CI_REGISTRY_PASSWORD:?CI_REGISTRY_PASSWORD is required}"
-    DOCKER_CONFIG="${DOCKER_CONFIG:-/kaniko/.docker}"
-    export DOCKER_CONFIG
-    mkdir -p "$DOCKER_CONFIG"
-    trap 'rm -f -- "$DOCKER_CONFIG/config.json"' EXIT
-    registry_auth="$(printf '%s:%s' "$CI_REGISTRY_USER" "$CI_REGISTRY_PASSWORD" | base64 | tr -d '\n')"
-    printf '{"auths":{"%s":{"auth":"%s"}}}\n' "$REGISTRY_PUSH_HOST" "$registry_auth" > "$DOCKER_CONFIG/config.json"
-    unset registry_auth CI_REGISTRY_PASSWORD
+    auths+=("$(auth_entry "$REGISTRY_PUSH_HOST" "$CI_REGISTRY_USER" "$CI_REGISTRY_PASSWORD")")
+    unset CI_REGISTRY_PASSWORD
     rm -f image-digest.txt
-    options=(--cache=false --digest-file "$repository_root/image-digest.txt")
+    options+=(--cache=false --digest-file "$repository_root/image-digest.txt")
     ;;
   *)
     printf 'Usage: %s [verify|publish]\n' "$0" >&2
     exit 2
     ;;
 esac
+
+# Base images come through the group's GitLab Dependency Proxy, which avoids
+# Docker Hub's anonymous pull limit; Kaniko falls back to Docker Hub itself.
+if [[ -n "${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX:-}" && -n "${CI_DEPENDENCY_PROXY_SERVER:-}" &&
+      -n "${CI_DEPENDENCY_PROXY_USER:-}" && -n "${CI_DEPENDENCY_PROXY_PASSWORD:-}" ]]; then
+  auths+=("$(auth_entry "$CI_DEPENDENCY_PROXY_SERVER" "$CI_DEPENDENCY_PROXY_USER" "$CI_DEPENDENCY_PROXY_PASSWORD")")
+  if [[ "${CI_DEPENDENCY_PROXY_SERVER%:443}" != "$CI_DEPENDENCY_PROXY_SERVER" ]]; then
+    auths+=("$(auth_entry "${CI_DEPENDENCY_PROXY_SERVER%:443}" "$CI_DEPENDENCY_PROXY_USER" "$CI_DEPENDENCY_PROXY_PASSWORD")")
+  fi
+  unset CI_DEPENDENCY_PROXY_PASSWORD
+  options+=(--registry-mirror "$CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX")
+fi
+
+if (( ${#auths[@]} )); then
+  DOCKER_CONFIG="${DOCKER_CONFIG:-/kaniko/.docker}"
+  export DOCKER_CONFIG
+  mkdir -p "$DOCKER_CONFIG"
+  trap 'rm -f -- "$DOCKER_CONFIG/config.json"' EXIT
+  (IFS=,; printf '{"auths":{%s}}\n' "${auths[*]}") > "$DOCKER_CONFIG/config.json"
+  unset auths
+fi
 
 [[ -s dist/runtime/main.js && -s dist/runtime/migrate-postgres.js && -d dist/client ]] || {
   echo 'The verified build artifacts from 01-build are missing' >&2
