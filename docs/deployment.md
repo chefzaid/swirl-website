@@ -15,10 +15,17 @@ Vault/External Secrets, Longhorn storage, Traefik ingress, Cloudflare and the
 
 | Stage | Jobs | Behavior |
 | --- | --- | --- |
-| `build` | `01-build` → `02-test` → `03-package` | All must pass. `01-build` runs the onboarding and delivery tests, renders the manifests, type-checks (`astro check`), builds, and checks the build's security and SEO. `02-test` runs lint, the format check, unit tests with coverage and the dependency audit. `03-package` builds the image from `Dockerfile.runtime` with Kaniko without pushing it. |
-| `verify` | `01-e2e`, `02-quality`, `03-security` | `01-e2e`, the Playwright and axe suite on the build, must pass. SonarQube runs automatically on `main` and only reports. Trivy is manual and only reports. |
-| `release` | `01-release` → `02-deploy` | Needs the build, the package and E2E. |
+| `build` | `01-build`, `02-test: [static, unit, delivery, audit]`, `03-package` | All must pass. `01-build` builds and checks the build's security and SEO. `02-test` starts with it and runs four suites side by side: `static` (`astro check`, lint, format check), `unit` (unit tests with coverage), `delivery` (onboarding and delivery tests, manifest renders) and `audit` (the dependency audit). `03-package` builds the image from `Dockerfile.runtime` with Kaniko, without pushing it, as soon as `01-build` is done. |
+| `verify` | `01-e2e`, `02-quality`, `03-security` | `01-e2e`, the Playwright and axe suite on the build, starts after `01-build` and must pass. SonarQube starts after `02-test: [unit]` (its coverage), runs automatically on `main` and only reports. Trivy is manual and only reports. |
+| `release` | `01-release` → `02-deploy` | Needs `01-build`, every `02-test` suite, `03-package` and `01-e2e`. |
 | `version` | `set-major-version` | Manual; sets `<NEW_MAJOR_VERSION>.0.0`. |
+
+Jobs start as soon as the jobs they need finish, not stage by stage. `01-build`,
+`02-test` and `01-e2e` run with 8 CPUs (`KUBERNETES_CPU_LIMIT`, `01-e2e` with
+12 GiB). Node's test runner and Playwright size their worker pools from the
+node's threads, not the job's CPU quota, so CI caps them with
+`infra/scripts/job-cpus.sh`. The page scans in `e2e/accessibility.spec.ts` run
+in parallel.
 
 Release is manual on `main`. It runs automatically from **Run pipeline** with
 `PIPELINE_MODE=full` (which also runs quality and security) and from onboarding

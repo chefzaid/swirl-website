@@ -71,7 +71,14 @@ for name in ('01-build', '02-test', '03-package', '01-e2e'):
     assert not pipeline[name].get('allow_failure', False), name
 assert pipeline['01-build']['script'] == ['infra/scripts/ci-verify.sh build']
 assert pipeline['02-test']['script'] == ['infra/scripts/ci-verify.sh test']
-assert pipeline['01-e2e']['script'][-1] == 'npm run test:e2e'
+assert pipeline['01-e2e']['script'][-1].startswith('npm run test:e2e')
+# Jobs start once their inputs exist; heavy ones size their workers to the job's CPUs.
+assert pipeline['02-test']['needs'] == [] and pipeline['02-test']['parallel']['matrix'] == [
+    {'SUITE': ['static', 'unit', 'delivery', 'audit']}]
+assert pipeline['02-quality']['needs'] == [{'job': '02-test', 'parallel': {'matrix': [{'SUITE': 'unit'}]}, 'artifacts': True}]
+for name in ('01-build', '02-test', '01-e2e'):
+    assert pipeline[name]['variables']['KUBERNETES_CPU_LIMIT'] == '8', name
+assert 'job-cpus.sh' in pipeline['01-e2e']['script'][-1]
 verify = (source / 'infra/scripts/ci-verify.sh').read_text()
 for check in ('npm run check', 'npm run build', 'scripts/check-built-security.py', 'scripts/check-built-seo.py',
               'infra/scripts/test-delivery.sh', 'infra/scripts/test-onboarding.py', 'npm run lint',
@@ -98,10 +105,11 @@ if shutil.which('kubectl'):
         assert hook['spec']['template']['spec']['containers'][0]['image'] == app_container['image']
 for name in ('01-release', '02-deploy', 'set-major-version'):
     assert pipeline[name]['resource_group'] == 'swirl-website-production' and pipeline[name]['interruptible'] is False, name
-assert pipeline['03-package']['needs'] == [{'job': '01-build', 'artifacts': True}, {'job': '02-test', 'artifacts': False}]
-assert pipeline['01-e2e']['needs'] == [{'job': '01-build', 'artifacts': True}, {'job': '03-package', 'artifacts': False}]
-assert pipeline['01-release']['needs'] == [{'job': '01-build', 'artifacts': True}, {'job': '03-package', 'artifacts': False},
-                                           {'job': '01-e2e', 'artifacts': False}]
+assert pipeline['03-package']['needs'] == [{'job': '01-build', 'artifacts': True}]
+assert pipeline['01-e2e']['needs'] == [{'job': '01-build', 'artifacts': True}]
+# Every check still gates the release.
+assert pipeline['01-release']['needs'] == [{'job': '01-build', 'artifacts': True}, {'job': '02-test', 'artifacts': False},
+                                           {'job': '03-package', 'artifacts': False}, {'job': '01-e2e', 'artifacts': False}]
 assert pipeline['02-deploy']['needs'] == [{'job': '01-release', 'artifacts': True}]
 assert pipeline['01-release']['artifacts']['reports']['dotenv'] == 'release.env'
 

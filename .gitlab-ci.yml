@@ -43,13 +43,15 @@ variables:
 01-build:
   stage: build
   image: node:26.13.1-alpine@sha256:6bd9ab43c0ec0190ca7b2d193906cb8b7edf6e7f4afa43ddeccd6452710bffb5
+  variables:
+    KUBERNETES_CPU_LIMIT: "8"
   cache:
     - key: swirl-website-npm-v1
       paths:
         - .cache/npm/
       policy: pull-push
   before_script:
-    - apk add --no-cache bash git jq kubectl python3 py3-yaml
+    - apk add --no-cache bash git python3
     - export APP_VERSION="$(infra/scripts/current-version.sh)"
   script:
     - infra/scripts/ci-verify.sh build
@@ -64,22 +66,25 @@ variables:
 
 02-test:
   stage: build
-  needs:
-    - job: 01-build
-      artifacts: false
+  needs: []
   image: node:26.13.1-alpine@sha256:6bd9ab43c0ec0190ca7b2d193906cb8b7edf6e7f4afa43ddeccd6452710bffb5
+  variables:
+    KUBERNETES_CPU_LIMIT: "8"
+  parallel:
+    matrix:
+      - SUITE: [static, unit, delivery, audit]
   cache:
     - key: swirl-website-npm-v1
       paths:
         - .cache/npm/
-      policy: pull-push
+      policy: pull
   before_script:
-    - apk add --no-cache bash git
+    - apk add --no-cache bash git jq kubectl python3 py3-yaml
     - export APP_VERSION="$(infra/scripts/current-version.sh)"
   script:
     - infra/scripts/ci-verify.sh test
   artifacts:
-    name: "swirl-website-tests-$CI_COMMIT_SHORT_SHA"
+    name: "swirl-website-tests-$SUITE-$CI_COMMIT_SHORT_SHA"
     when: always
     expire_in: 7 days
     paths:
@@ -93,8 +98,6 @@ variables:
   needs:
     - job: 01-build
       artifacts: true
-    - job: 02-test
-      artifacts: false
   image:
     name: docker.io/library/alpine:3.24.4@sha256:f59abe656b692d901e184be3445e084786602108599d2a51d229c0f5a48c71bf
     entrypoint: [""]
@@ -123,9 +126,10 @@ variables:
   needs:
     - job: 01-build
       artifacts: true
-    - job: 03-package
-      artifacts: false
   image: mcr.microsoft.com/playwright:v1.65.0-noble@sha256:9beb546099e11f52d62e505537914870e01a67e0e6b00ae41da4775324e73dbe
+  variables:
+    KUBERNETES_CPU_LIMIT: "8"
+    KUBERNETES_MEMORY_LIMIT: "12Gi"
   cache:
     - key: swirl-website-npm-v1
       paths:
@@ -133,7 +137,8 @@ variables:
       policy: pull
   script:
     - npm ci --no-fund --prefer-offline
-    - npm run test:e2e
+    # Playwright sizes its pool from the node's threads, not the job's CPUs.
+    - npm run test:e2e -- --workers="$(infra/scripts/job-cpus.sh)"
   artifacts:
     name: "swirl-website-e2e-$CI_COMMIT_SHORT_SHA"
     expose_as: "Playwright E2E report"
@@ -153,6 +158,9 @@ variables:
   stage: verify
   needs:
     - job: 02-test
+      parallel:
+        matrix:
+          - SUITE: unit
       artifacts: true
   image:
     name: node:26.13.1-bookworm-slim@sha256:5df79989ed685e09f0a98019db4cebfb22fb9df1a53c0161664a011f7ff6b0f1
@@ -191,6 +199,7 @@ variables:
 
 03-security:
   stage: verify
+  needs: []
   image:
     name: docker.io/aquasec/trivy:0.76.2@sha256:8f6bb947dbc528902e11f2f5be52f7b519f6a39d5d148f41166f2040499768fb
     entrypoint: [""]
@@ -233,6 +242,8 @@ variables:
   needs:
     - job: 01-build
       artifacts: true
+    - job: 02-test
+      artifacts: false
     - job: 03-package
       artifacts: false
     - job: 01-e2e

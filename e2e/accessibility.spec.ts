@@ -1,6 +1,9 @@
 import AxeBuilder from '@axe-core/playwright';
 import { devices, expect, test } from '@playwright/test';
 
+// Every page scan is independent, so they spread over all the workers.
+test.describe.configure({ mode: 'parallel' });
+
 // One page per template, alternating languages.
 const pages = [
   '/',
